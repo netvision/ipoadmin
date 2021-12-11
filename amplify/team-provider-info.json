@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-ipoadmin-dev-103856-authRole",
+      "UnauthRoleArn": "arn:aws:iam::710674570349:role/amplify-ipoadmin-dev-103856-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::710674570349:role/amplify-ipoadmin-dev-103856-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-ipoadmin-dev-103856-deployment",
+      "UnauthRoleName": "amplify-ipoadmin-dev-103856-unauthRole",
+      "StackName": "amplify-ipoadmin-dev-103856",
+      "StackId": "arn:aws:cloudformation:ap-south-1:710674570349:stack/amplify-ipoadmin-dev-103856/72c2f970-5a40-11ec-b417-02c72037aa74",
+      "AmplifyAppId": "d3vj6xbryehzjz"
+    },
+    "categories": {
+      "auth": {
+        "ipoadmin8bb3c40d": {}
+      }
+    }
+  }
+}
