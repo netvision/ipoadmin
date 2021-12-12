@@ -1,17 +1,23 @@
 <template>
   <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
+    <router-view />
+  <pre>{{nifty}}</pre>
   </q-page>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
+<script setup>
+  import { axios } from '../boot/axios'
+  import { Authenticator } from "@aws-amplify/ui-vue";
+  import { onMounted, ref } from 'vue'
+  import "@aws-amplify/ui-vue/styles.css";
 
-export default defineComponent({
-  name: 'PageIndex'
-})
+  import Amplify from 'aws-amplify';
+  import awsconfig from '../aws-exports';
+  const nifty = ref([]);
+  Amplify.configure(awsconfig);
+  onMounted(()=>{
+    axios.get('https://stock.netvisionindia.com/stock/').then(r=>{
+      nifty.value = r.data
+    })
+  })
 </script>

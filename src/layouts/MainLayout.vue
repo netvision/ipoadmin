@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="bg-black text-white">
         <q-btn
           flat
           dense
@@ -10,12 +10,11 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-
+        <a href="/"><q-img :src="logo" style="width: 180px" /></a>
         <q-toolbar-title>
-          Quasar App
+          Admin Dashboard
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn flat round dense icon="logout" @click="logout" />
       </q-toolbar>
     </q-header>
 
@@ -24,19 +23,7 @@
       show-if-above
       bordered
     >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+      
     </q-drawer>
 
     <q-page-container>
@@ -46,70 +33,36 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
 
+import logo from '../assets/logo.png'
 import { defineComponent, ref } from 'vue'
+import { Auth } from '@aws-amplify/auth'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    EssentialLink
+    
   },
 
   setup () {
-    const leftDrawerOpen = ref(false)
-
+    const leftDrawerOpen = ref(true)
+    const router = useRouter()
     return {
-      essentialLinks: linksList,
+      logo,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
+      },
+      async logout(){
+        try {
+            await Auth.signOut();
+            router.go()
+        } catch (error) {
+            console.log('error signing out: ', error);
+        }
       }
     }
   }
