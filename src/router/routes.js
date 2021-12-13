@@ -3,7 +3,8 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue'), name: 'UserProfile' }
+      { path: '', component: () => import('pages/Index.vue'), name: 'UserProfile' },
+      { path: '/ipo/:id', component: () => import('pages/Ipo.vue') }
     ],
     meta: {
       requiresAuth: true

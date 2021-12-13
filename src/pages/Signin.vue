@@ -16,14 +16,13 @@
 </template>
 <script setup>
 import { Auth } from '@aws-amplify/auth'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
 const router = useRouter()
 const login = async() =>{
-    console.log(email, password)
     try {
         const user = await Auth.signIn(email.value, password.value);
         console.log(user)
@@ -32,4 +31,9 @@ const login = async() =>{
         console.log('error signing in', error);
     }
 }
+
+onMounted(async()=>{
+  const isSignedIn = await Auth.currentAuthenticatedUser()
+  if(isSignedIn) {router.push('/')}
+})
 </script>

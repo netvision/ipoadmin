@@ -17,15 +17,6 @@
         <q-btn flat round dense icon="logout" @click="logout" />
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      
-    </q-drawer>
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -48,14 +39,11 @@ export default defineComponent({
   },
 
   setup () {
-    const leftDrawerOpen = ref(true)
+    
     const router = useRouter()
     return {
       logo,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      },
+      
       async logout(){
         try {
             await Auth.signOut();
