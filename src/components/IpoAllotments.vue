@@ -34,11 +34,12 @@
   import { ref  } from 'vue' 
   import { api, axios } from '../boot/axios'
   const props = defineProps({
-    ipo_id: String
+    IpoId: String
   })
   const ipo = ref({})
   const init = async () => {
-    const id = +props.ipo_id
+    const id = +props.IpoId
+    console.log(id)
     const ip = await api.get('/ipo/id/'+id).then(r => r.data.data)
     ipo.value = ip
     }

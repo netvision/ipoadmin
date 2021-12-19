@@ -123,6 +123,19 @@
       </div>
     </div>
     <div class="row">
+      <div class="col q-pa-md">
+       <q-input filled label="Quota" :dense="dense" readonly>
+         <template v-slot:append>
+          <q-btn round dense flat icon="chevron_right" />
+        </template>
+       </q-input>
+      </div>
+      <div class="col q-pa-md" v-for="cat in invCategories" :key="cat.id">
+        <q-input v-model="cat_quotas[cat.short_name]" :label="cat.short_name" />
+      </div>
+    </div>
+    <div class="row">
+      
       <div class="col col-4 q-pa-md">
         <q-select filled v-model="overview.listed_at" :options="['BSE', 'NSE', 'BSE & NSE']" label="Listed at" />
       </div>
@@ -217,6 +230,7 @@
         <q-btn color="primary" label="Save and Continue" @click="saveOverview" />
       </div>
     </div>
+    
   </div>
 </template>
 
@@ -227,8 +241,10 @@ const props = defineProps({
   ipo: String
 })
 const overview = ref({})
+const cat_quotas = ref([])
 const ipodata = ref({})
 const sectors = ref([])
+const invCategories = ref([])
 const registrars = ref([])
 const brlms = ref([])
 const newRg = ref({})
@@ -255,13 +271,14 @@ const resetBrlmForm = () => {
 }
 
 const saveOverview = () => {
-  console.log(overview.value.brlms[0])
+  console.log(cat_quotas.value)
 }
 
 onBeforeMount(async()=>{
   const id = +props.ipo
   sectors.value = await axios.get('https://droplet.netserve.in/sectors').then(r => r.data)
   registrars.value = await axios.get('https://droplet.netserve.in/registrars').then(r => r.data)
+  invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories').then(r => r.data)
   brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
   const ipo = await api.get('/ipo/id/'+id).then(r => r.data.data)
   console.log(ipo)
@@ -279,7 +296,7 @@ onBeforeMount(async()=>{
     application_amount: (ipo.application_amount > 0) ? ipo.application_amount : (+ipo.bit_lot)*(+ipo.price_band_high),
     anchor_date: ipo.anchor_date,
     fresh_issue: ipo.fresh_issue,
-    offer_for_sale: ipo.offer_for_sale,
+    offer_for_sale: ipo.offer_for_sale
   }
 })
 </script>

@@ -28,7 +28,7 @@
   <q-tab-panels v-model="tab" animated>
     <q-tab-panel name="info">
       <div class="row q-gutter-md">
-        <div class="col-3 q-pa-md">
+        <div class="col q-pa-md">
           <q-uploader
             label="Update Company Logo"
             field-name="logo"
@@ -37,6 +37,7 @@
             :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}]"
             url="https://droplet.netserve.in/ipo/logo"
             @uploaded = 'logoUpdate'
+            style="max-width: 100%; width:100%"
           />
         </div>
         <div class="col q-pa-md">
@@ -48,7 +49,13 @@
             :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}]"
             url="https://droplet.netserve.in/ipo/header"
             @uploaded = 'headerUpdate'
+            style="max-width: 100%; width:100%"
           />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col q-pa-md">
+          <q-input v-model="info.url" label="Company URL" type="url" />
         </div>
       </div>
       <div class="row q-gutter-md">
@@ -118,6 +125,7 @@ export default defineComponent({
       return {
         swotStrengthScore: 0,
         swotWeaknessScore: 0,
+        info:{}
        }
     },
 

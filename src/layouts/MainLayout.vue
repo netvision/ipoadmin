@@ -2,14 +2,6 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar class="bg-black text-white">
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
         <a href="/"><q-img :src="logo" style="width: 180px" /></a>
         <q-toolbar-title>
           Admin Dashboard
