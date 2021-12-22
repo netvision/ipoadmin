@@ -55,13 +55,13 @@
       </div>
       <div class="row">
         <div class="col q-pa-md">
-          <q-input v-model="info.url" label="Company URL" type="url" />
+          <q-input v-model="ipo.company_url" label="Company URL" type="url" />
         </div>
       </div>
       <div class="row q-gutter-md">
         <div class="col q-pa-md">
           <div class="text-h6">Company Info</div>
-          <Editor :html-content="ipo.about_company_html" @update="saveInfo" />
+          <Editor :html-content="(ipo.about_company_html) ? ipo.about_company_html : ''" @update="saveInfo" />
         </div>
       </div>
     </q-tab-panel>
@@ -152,7 +152,10 @@ export default defineComponent({
         },
 
         saveInfo(value){
-          console.log(value)
+          const id = +props.ipo_id
+          axios.put('https://droplet.netserve.in/ipos/'+id, ipo.value).then(r => {
+            console.log(r.data)
+          })
         }
     }
 })
@@ -164,11 +167,11 @@ export default defineComponent({
   import Editor from './Editor.vue'
   const tab = ref('info')
   const props = defineProps({
-    ipo_id: String
+    IpoId: String
   })
   const ipo = ref({})
-  const company_logo = ref(String)
-  const company_header = ref(String)
+  const company_logo = ref('')
+  const company_header = ref('')
   const logoUpdate = (files) => {
           company_logo.value = JSON.parse(files.xhr.response)
         }
@@ -179,8 +182,8 @@ export default defineComponent({
     console.log(ipo.value.swot_threats_scoring)
   }
   const init = async () => {
-    const id = +props.ipo_id
-    const ip = await api.get('/ipo/id/'+id).then(r => r.data.data)
+    const id = +props.IpoId
+    const ip = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
     ipo.value = ip
     company_logo.value = 'https://uat.ipoinbox.com:5000/resources/images/ipo/'+ip.company_logo
     company_header.value = 'https://uat.ipoinbox.com:5000/resources/images/ipo/'+ip.company_background_logo

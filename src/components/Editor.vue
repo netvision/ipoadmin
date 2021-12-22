@@ -118,6 +118,7 @@ import 'babel-polyfill'; // es6 shim
 export default defineComponent({
   name: 'Editor',
   props: ['htmlContent'],
+  emits: ['update'],
   data() {
     return {
         definitions: {

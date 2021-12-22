@@ -3,10 +3,10 @@
     <h2>{{ipo.company_name}}</h2>
     <q-stepper v-model="step" header-nav ref="stepper" color="secondary" animated>
       <q-step :name="1" title="overview" :done="done1">
-        <ipoOverview :ipo="ipo_id" />
+        <IpoOverview :IpoId="ipo_id" @step='step = 2' />
       </q-step>
       <q-step :name="2" title="About Company" :done="done2">
-        <IpoAboutCompany :ipo_id = "ipo_id" />
+        <IpoAboutCompany :IpoId="ipo_id" />
       </q-step>
       <q-step :name="3" title="Schedule" :done="done3">
         <IpoSchedule :IpoId="ipo_id" />
@@ -45,7 +45,7 @@
   const done5 = ref(false)
   const done6 = ref(false)
   onMounted(async() => {
-    ipo.value = await axios.get('https://uat.ipoinbox.com:5000/api/v1/ipo/id/'+ipo_id).then(r => r.data.data)
+    ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipo_id).then(r => r.data)
     console.log(ipo.value)
   })
 </script>

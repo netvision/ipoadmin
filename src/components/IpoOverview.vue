@@ -6,7 +6,7 @@
         <q-input v-model="overview.company_name" label="Company Name" />
       </div>
       <div class="col q-pa-md">
-        <q-select filled v-model="overview.sector" :options="sectors" option-value="id" option-label="name" label="Sector" />
+        <q-select filled v-model="overview.sector_id" :options="sectors" option-value="id" option-label="name" label="Sector" emit-value map-options />
       </div>
     </div>
     <div class="row">
@@ -59,21 +59,21 @@
     <div class="row">
       <div class="col q-pa-md">
         <q-input v-model="overview.face_value" label="Face Value">
-          <template v-slot:before>
+          <template v-slot:prepend>
             &#8377; 
           </template>
         </q-input>
       </div> 
       <div class="col q-pa-md">
         <q-input v-model="overview.price_band_low" label="Price Band (Low)">
-          <template v-slot:before>
+          <template v-slot:prepend>
             &#8377; 
           </template>
         </q-input>
       </div>
       <div class="col q-pa-md">
-        <q-input v-model="overview.price_band_high" label="Price Band (High)">
-          <template v-slot:before>
+        <q-input v-model="overview.price_band_high" label="Price Band (High)" @blur = 'updateAppAmount'>
+          <template v-slot:prepend>
             &#8377; 
           </template>
         </q-input>
@@ -81,20 +81,20 @@
     </div>
     <div class="row">
       <div class="col q-pa-md">
-        <q-input v-model="overview.lot_size" label="Lot Size">
+        <q-input v-model="overview.lot_size" label="Lot Size" @blur = 'updateAppAmount'>
           
         </q-input>
       </div>
       <div class="col q-pa-md">
-        <q-input v-model="overview.application_amount" label="Application Amount">
-          <template v-slot:before>
+        <q-input readonly v-model="application_amount" label="Application Amount">
+          <template v-slot:prepend>
             &#8377; 
           </template>
         </q-input>
       </div>
       <div class="col q-pa-md">
         <q-input v-model="overview.issue_size" label="Issue Size (in Crore)">
-          <template v-slot:before>
+          <template v-slot:prepend>
             &#8377; 
           </template>
         </q-input>
@@ -113,7 +113,7 @@
       </div>
       <div class="col q-pa-md">
         <q-input v-model="overview.market_cap_at_ipo" label="Market Cap (in Crore)">
-          <template v-slot:before>
+          <template v-slot:prepend>
             &#8377; 
           </template>
           <template v-slot:hint>
@@ -124,7 +124,7 @@
     </div>
     <div class="row">
       <div class="col q-pa-md">
-       <q-input filled label="Quota" :dense="dense" readonly>
+       <q-input filled label="Quota" dense readonly>
          <template v-slot:append>
           <q-btn round dense flat icon="chevron_right" />
         </template>
@@ -147,7 +147,7 @@
     </div>
     <div class="row">
       <div class="col col-4 q-pa-md">
-        <q-select filled v-model="overview.registrar" :options="registrars" option-value="id" option-label="name" label="Registrar">
+        <q-select filled v-model="overview.registrar_id" :options="registrars" option-value="id" option-label="name" label="Registrar" emit-value map-options>
           <template v-slot:append>
             <q-btn round dense flat icon="add" @click="addRegistrarForm = true" />
           </template>
@@ -237,9 +237,12 @@
 <script setup>
 import { ref, onBeforeMount} from 'vue'
 import { api, axios } from '../boot/axios'
+import { useQuasar } from 'quasar'
 const props = defineProps({
-  ipo: String
+  IpoId: String
 })
+const emit = defineEmits(['step'])
+const $q = useQuasar()
 const overview = ref({})
 const cat_quotas = ref([])
 const ipodata = ref({})
@@ -249,6 +252,7 @@ const registrars = ref([])
 const brlms = ref([])
 const newRg = ref({})
 const newBrlm = ref({})
+const application_amount = ref(0)
 const addRegistrarForm = ref(false)
 const addBrlmForm = ref(false)
 const addRegistrar = async() =>{
@@ -258,6 +262,11 @@ const addRegistrar = async() =>{
 }
 const resetRegistrarForm = () => {
   newRg.value = {}
+}
+
+const updateAppAmount = () =>{
+  
+  application_amount.value = (overview.value.price_band_high && overview.value.lot_size ) ? overview.value.price_band_high*overview.value.lot_size : 0
 }
 
 const addBrlm = async() => {
@@ -270,33 +279,31 @@ const resetBrlmForm = () => {
   newBrlm.value= {}
 }
 
-const saveOverview = () => {
-  console.log(cat_quotas.value)
+const saveOverview = async() => {
+  const id = +props.IpoId
+  overview.value.brlms_json = JSON.stringify(overview.value.brlms)
+  const upIpo = await axios.put('https://droplet.netserve.in/ipos/'+id, overview.value)
+  if(upIpo.status == '200'){
+    $q.notify({
+          message: 'Updated Successfully',
+          icon: 'announcement'
+        })
+        emit('step', 'ok')
+  }
+  console.log(upIpo)
 }
 
 onBeforeMount(async()=>{
-  const id = +props.ipo
+  const id = +props.IpoId
   sectors.value = await axios.get('https://droplet.netserve.in/sectors').then(r => r.data)
   registrars.value = await axios.get('https://droplet.netserve.in/registrars').then(r => r.data)
   invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories').then(r => r.data)
   brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
-  const ipo = await api.get('/ipo/id/'+id).then(r => r.data.data)
+  const ipo = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
   console.log(ipo)
-  ipodata.value = ipo
-  overview.value = {
-    company_name: ipo.company_name,
-    market_cap_at_ipo: ipo.market_cap_at_time_of_ipo,
-    open_date: ipo.open_date,
-    close_date: ipo.close_date,
-    price_band_low: ipo.price_band_low,
-    price_band_high: ipo.price_band_high,
-    face_value: ipo.face_value,
-    lot_size: ipo.bit_lot,
-    issue_size: ipo.issue_size,
-    application_amount: (ipo.application_amount > 0) ? ipo.application_amount : (+ipo.bit_lot)*(+ipo.price_band_high),
-    anchor_date: ipo.anchor_date,
-    fresh_issue: ipo.fresh_issue,
-    offer_for_sale: ipo.offer_for_sale
-  }
+  overview.value = ipo
+  overview.value.brlms = JSON.parse(ipo.brlms_json)
+  updateAppAmount()
+  
 })
 </script>
