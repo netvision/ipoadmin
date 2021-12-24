@@ -112,26 +112,21 @@
         </q-input>
       </div>
       <div class="col q-pa-md">
-        <q-input v-model="overview.market_cap_at_ipo" label="Market Cap (in Crore)">
-          <template v-slot:prepend>
-            &#8377; 
-          </template>
-          <template v-slot:hint>
-           in Crore
-          </template>
+        <q-input v-model="overview.no_of_total_shares" label="Number of Total Shares">
+          
         </q-input>
       </div>
     </div>
     <div class="row">
       <div class="col q-pa-md">
-       <q-input filled label="Quota" dense readonly>
+       <q-input color="lime-11" bg-color="cyan-2" filled label="Quota" readonly>
          <template v-slot:append>
-          <q-btn round dense flat icon="chevron_right" />
+          <q-btn round flat icon="chevron_right" />
         </template>
        </q-input>
       </div>
       <div class="col q-pa-md" v-for="cat in invCategories" :key="cat.id">
-        <q-input v-model="cat_quotas[cat.short_name]" :label="cat.short_name" />
+        <q-input v-model="cat_quotas[cat.id]" :label="cat.short_name" @blur="saveQuota(cat.id)" />
       </div>
     </div>
     <div class="row">
@@ -279,6 +274,18 @@ const resetBrlmForm = () => {
   newBrlm.value= {}
 }
 
+const saveQuota = async(id) => {
+  const ipo_id = +props.IpoId
+  const cur_quota = await axios.get('https://droplet.netserve.in/subscriptions?ipo_id='+ipo_id+'&cat_id='+id).then(r => r.data)
+  
+  if(cur_quota.length > 0){
+    await axios.put('https://droplet.netserve.in/subscriptions/'+cur_quota[0].id, {quota: cat_quotas.value[id]})
+  }
+  else await axios.post('https://droplet.netserve.in/subscriptions', {quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
+
+  console.log(cur_quota)
+}
+
 const saveOverview = async() => {
   const id = +props.IpoId
   overview.value.brlms_json = JSON.stringify(overview.value.brlms)
@@ -303,6 +310,11 @@ onBeforeMount(async()=>{
   console.log(ipo)
   overview.value = ipo
   overview.value.brlms = JSON.parse(ipo.brlms_json)
+  const quotas = await axios.get('https://droplet.netserve.in/subscriptions?ipo_id='+id).then(r => r.data)
+  invCategories.value.forEach(cat => {
+    cat_quotas.value[cat.id] = (quotas.filter(qt => qt.cat_id == cat.id)[0]) ? quotas.filter(qt => qt.cat_id == cat.id)[0].quota : 0
+  })
+  console.log(cat_quotas.value)
   updateAppAmount()
   
 })

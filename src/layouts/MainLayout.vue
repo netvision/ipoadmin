@@ -3,10 +3,12 @@
     <q-header elevated>
       <q-toolbar class="bg-black text-white">
         <a href="/"><q-img :src="logo" style="width: 180px" /></a>
+        <q-space />
         <q-toolbar-title>
           Admin Dashboard
         </q-toolbar-title>
-        <q-btn flat round dense icon="logout" @click="logout" />
+        <q-space />
+        <q-btn unelevated square color="accent" @click="logout" icon="logout" label="Logout" />
       </q-toolbar>
     </q-header>
     <q-page-container>

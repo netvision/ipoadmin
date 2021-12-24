@@ -22,6 +22,7 @@
     <q-tab name="peers" label="Peers" />
     <q-tab name="swot" label="SWOT" />
     <q-tab name="review" label="Review" />
+    <q-tab name="conclusion" label="Conclusion" />
   </q-tabs>
   <q-separator />
 
@@ -115,6 +116,10 @@
       <div class="text-h6">Review</div>
       <Editor :html-content="ipo.review_and_ratings_html" @update="saveReview" />
     </q-tab-panel>
+    <q-tab-panel name="conclusion">
+      <div class="text-h6">Conclusion</div>
+      <Editor :html-content="ipo.conclusion_html" @update="saveConclusion" />
+    </q-tab-panel>
   </q-tab-panels>
 </template>
 <script>
@@ -172,11 +177,15 @@ export default defineComponent({
   const ipo = ref({})
   const company_logo = ref('')
   const company_header = ref('')
-  const logoUpdate = (files) => {
+  const logoUpdate = async(files) => {
+          const id = +props.IpoId
           company_logo.value = JSON.parse(files.xhr.response)
+          await axios.put('https://droplet.netserve.in/ipos/'+id, {company_logo: company_logo.value})
         }
-  const headerUpdate = (files) => {
+  const headerUpdate = async(files) => {
+          const id = +props.IpoId
           company_header.value = JSON.parse(files.xhr.response)
+          await axios.put('https://droplet.netserve.in/ipos/'+id, {header_img: company_header.value})
         }
   const saveSwot = () => {
     console.log(ipo.value.swot_threats_scoring)
@@ -185,8 +194,8 @@ export default defineComponent({
     const id = +props.IpoId
     const ip = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
     ipo.value = ip
-    company_logo.value = 'https://uat.ipoinbox.com:5000/resources/images/ipo/'+ip.company_logo
-    company_header.value = 'https://uat.ipoinbox.com:5000/resources/images/ipo/'+ip.company_background_logo
+    company_logo.value = ip.company_logo
+    company_header.value = ip.header_img
   }
 
   init()

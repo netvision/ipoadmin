@@ -3,22 +3,22 @@
     <h2>{{ipo.company_name}}</h2>
     <q-stepper v-model="step" header-nav ref="stepper" color="secondary" animated>
       <q-step :name="1" title="overview" :done="done1">
-        <IpoOverview :IpoId="ipo_id" @step='step = 2' />
+        <IpoOverview :IpoId="ipo_id" @step="() => {step = 2; done1 = true;}" />
       </q-step>
       <q-step :name="2" title="About Company" :done="done2">
         <IpoAboutCompany :IpoId="ipo_id" />
       </q-step>
       <q-step :name="3" title="Schedule" :done="done3">
-        <IpoSchedule :IpoId="ipo_id" />
+        <IpoSchedule :IpoId="ipo_id" @step="() => {step = 4; done3 = true;}" />
       </q-step>
       <q-step :name="4" title="Subscriptions" :done="done4">
         <IpoSubscription :IpoId="ipo_id" />
       </q-step>
       <q-step :name="5" title="Allotments" :done="done5">
-        <IpoAllotments :IpoId="ipo_id" />
+        <IpoAllotments :IpoId="ipo_id" @step="() => {step = 6; done5 = true;}" />
       </q-step>
       <q-step :name="6" title="Listing Data" :done="done6">
-        <IpoListing />
+        <IpoListing :IpoId="ipo_id" />
       </q-step>
     </q-stepper>
   </q-page>
