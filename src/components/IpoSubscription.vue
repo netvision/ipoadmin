@@ -18,7 +18,7 @@
         </template>
         </q-input>
       </td>
-      <td><q-input v-model="item.quota" label="Quota" outlined disable color="lime-11" bg-color="green" /></td>
+      <td><q-input v-model="item.quota" label="Quota" outlined disable bg-color="cyan-2" /></td>
       <td><q-input v-model="item.day1" label="Day1" outlined @blur="saveSubs(item.id, 1, item.day1)" /></td>
       <td><q-input v-model="item.day2" label="Day2" outlined @blur="saveSubs(item.id, 2, item.day2)" /></td>
       <td><q-input v-model="item.day3" label="Day3" outlined @blur="saveSubs(item.id, 3, item.day3)" /></td>

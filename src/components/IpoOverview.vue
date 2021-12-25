@@ -281,9 +281,10 @@ const saveQuota = async(id) => {
   if(cur_quota.length > 0){
     await axios.put('https://droplet.netserve.in/subscriptions/'+cur_quota[0].id, {quota: cat_quotas.value[id]})
   }
+  
   else await axios.post('https://droplet.netserve.in/subscriptions', {quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
 
-  console.log(cur_quota)
+  console.log({quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
 }
 
 const saveOverview = async() => {

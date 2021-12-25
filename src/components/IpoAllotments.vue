@@ -1,8 +1,30 @@
 <template>
   <h4 class="text-h4">Allotments</h4>
-  <div class="row q-gutter-md">
-        <div class="col q-pa-md">
-           <q-uploader
+  <div class="row q-gutter-md" style="max-width:600px">
+        <div class="col q-pa-md" v-if="!ipo.basis_of_allotment_pdf">
+          <q-btn flat color="primary" label="Upload pdf file of Basis of Allotment" @click="pdfUpload = true" />
+        </div>
+        <div class="col q-pa-md" v-else>
+          <q-item>
+            <q-item-section top>
+              <q-item-label>
+                <span class="text-weight-medium">Basis of Allotment (Pdf)</span>
+              </q-item-label>
+              <q-item-label caption lines="1">
+                {{ipo.basis_of_allotment_pdf.slice(33)}}
+              </q-item-label>
+            </q-item-section>
+            <q-item-section top side>
+              <div class="text-grey-8 q-gutter-xs">
+                <q-btn class="gt-xs" size="12px" flat dense round icon="open_in_new" type="a" :href="ipo.basis_of_allotment_pdf" target="__blank" />
+                <q-btn class="gt-xs" size="12px" flat dense round icon="change_circle" @click="pdfUpload = true" />
+              </div>
+            </q-item-section>
+          </q-item>
+          
+        </div>
+        <q-dialog v-model="pdfUpload">
+          <q-uploader
             label="Basis of Allotment PDF"
             field-name="allotment_pdf"
             no-thumbnails
@@ -11,8 +33,7 @@
             url="https://droplet.netserve.in/ipo/pdfupload"
             @uploaded = 'pdfUploaded'
           />
-        </div>
-        
+        </q-dialog>
   </div>
   <div class="row q-gutter-md">
         <div class="col q-pa-md">
@@ -42,6 +63,7 @@
   const emit = defineEmits(['step'])
   const ipo = ref({})
   const pdf_url = ref('')
+  const pdfUpload = ref(false)
   const saveAllotments = async() =>{
     const id = +props.IpoId
     const upIpo = await axios.put('https://droplet.netserve.in/ipos/'+id, ipo.value)
@@ -58,14 +80,14 @@
   const pdfUploaded = async(files) =>{
     const id = +props.IpoId
     pdf_url.value = JSON.parse(files.xhr.response)
-    await axios.put('https://droplet.netserve.in/ipos/'+id, {basis_of_allotment_pdf: pdf_url.value})
+    const res = await axios.put('https://droplet.netserve.in/ipos/'+id, {basis_of_allotment_pdf: pdf_url.value})
+    ipo.value = res.data
+    pdfUpload.value = false
   }
   const init = async() => {
     const id = +props.IpoId
     const ip = await axios.get('https://droplet.netserve.in/ipos/'+id+'?expand=registrar').then(r => r.data)
     ipo.value = ip
-    ipo.value.allotment_status_html = (ipo.value.allotment_status_html) ? ipo.value.allotment_status_html : 'Please input'
-    ipo.value.basis_of_allotment_html = (ipo.value.basis_of_allotment_html) ? ipo.value.basis_of_allotment_html : 'Please input'
   }
 
   init()

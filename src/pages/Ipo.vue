@@ -18,7 +18,7 @@
         <IpoAllotments :IpoId="ipo_id" @step="() => {step = 6; done5 = true;}" />
       </q-step>
       <q-step :name="6" title="Listing Data" :done="done6">
-        <IpoListing :IpoId="ipo_id" />
+        <IpoListing :IpoId="ipo_id" :exchange="ipo.listed_at" />
       </q-step>
     </q-stepper>
   </q-page>
