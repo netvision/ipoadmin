@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md">
     <q-table
-      title="IPOs"
+      title="Initial Public Offerings"
       :rows="ipos"
       :columns="columns"
       row-key="id"
@@ -137,6 +137,8 @@
   const columns = [
       { name: 'id', label: 'IPO ID', field: 'ipo_id', sortable: true },
       { name: 'name', label: 'Company Name', field: 'company_name', sortable: true, align: 'left' },
+      { name: 'price_band_low', label: 'Price Band Low', field: 'price_band_low'},
+      { name: 'price_band_high', label: 'Price Band High', field: 'price_band_high'},
       { name: 'open', label: 'Open Date', field: 'open_date' },
       { name: 'close', label: 'close Date', field: 'close_date' },
     ]

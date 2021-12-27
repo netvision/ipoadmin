@@ -6,7 +6,28 @@
         <q-input v-model="overview.company_name" label="Company Name" />
       </div>
       <div class="col q-pa-md">
-        <q-select filled v-model="overview.sector_id" :options="sectors" option-value="id" option-label="name" label="Sector" emit-value map-options />
+        <q-select filled v-model="overview.sector_id" :options="sectors" option-value="id" option-label="name" label="Sector" emit-value map-options>
+          <template v-slot:after>
+            <q-btn round dense flat icon="add" @click="addSectorModel = true" />
+          </template>
+        </q-select>
+        <q-dialog v-model="addSectorModel">
+          <q-card class="brlm-card" style="width:100vw">
+            <h3 class="text-h6 text-center">Add New Sector</h3>
+            <q-card-section>
+              <div class="row no-wrap items-center">
+                <div class="col text-h6 ellipsis">
+                  <q-input v-model="newSector.name" label="Name" />
+                </div>
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn v-close-popup flat color="primary" label="Add" @click="addSector" />
+              <q-btn v-close-popup flat color="primary" label="Cancel" @click="resetSector" />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </div>
     </div>
     <div class="row">
@@ -143,7 +164,7 @@
     <div class="row">
       <div class="col col-4 q-pa-md">
         <q-select filled v-model="overview.registrar_id" :options="registrars" option-value="id" option-label="name" label="Registrar" emit-value map-options>
-          <template v-slot:append>
+          <template v-slot:after>
             <q-btn round dense flat icon="add" @click="addRegistrarForm = true" />
           </template>
         </q-select>
@@ -192,7 +213,7 @@
       </div>
       <div class="col q-pa-md">
         <q-select filled v-model="overview.brlms" :options="brlms" option-label="name" label="BRLMs" multiple>
-          <template v-slot:append>
+          <template v-slot:after>
             <q-btn round dense flat icon="add" @click="addBrlmForm = true" />
           </template>
         </q-select>
@@ -245,11 +266,23 @@ const sectors = ref([])
 const invCategories = ref([])
 const registrars = ref([])
 const brlms = ref([])
+const newSector = ref({})
 const newRg = ref({})
 const newBrlm = ref({})
 const application_amount = ref(0)
+const addSectorModel = ref(false)
 const addRegistrarForm = ref(false)
 const addBrlmForm = ref(false)
+
+const addSector = async() => {
+  const newSec = await axios.post('https://droplet.netserve.in/sectors', newSector.value).then(r => r.data)
+  sectors.value.push(newSec)
+  overview.value.sector = newSec
+}
+const resetSector = () => {
+  newSector.value = {}
+  addSectorModel.value = false
+}
 const addRegistrar = async() =>{
   const newReg = await axios.post('https://droplet.netserve.in/registrars', newRg.value).then(r => r.data)
   registrars.value.push(newReg)
@@ -266,8 +299,9 @@ const updateAppAmount = () =>{
 
 const addBrlm = async() => {
   const newBr = await axios.post('https://droplet.netserve.in/brlms', newBrlm.value).then(r => r.data)
+  console.log(overview.value.brlms)
   brlms.value.push(newBr)
-  overview.value.brlms = (overview.value.brlms) ? overview.value.brlms.push(newBr) : [newBr]
+  //overview.value.brlms = (overview.value.brlms.length > 0) ? overview.value.brlms.push(newBr) : [newBr]
 }
 
 const resetBrlmForm = () => {
@@ -284,7 +318,7 @@ const saveQuota = async(id) => {
   
   else await axios.post('https://droplet.netserve.in/subscriptions', {quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
 
-  console.log({quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
+  //console.log({quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
 }
 
 const saveOverview = async() => {

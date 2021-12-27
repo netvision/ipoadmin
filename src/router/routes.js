@@ -4,7 +4,10 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Index.vue'), name: 'UserProfile' },
-      { path: '/ipo/:id', component: () => import('pages/Ipo.vue') }
+      { path: '/ipo/:id', component: () => import('pages/Ipo.vue') },
+      { path: '/registrars', component: () => import('pages/Registrar.vue') },
+      { path: '/sectors', component: () => import('pages/Sectors.vue') },
+      { path: '/brlms', component: () => import('pages/Brlms.vue') }
     ],
     meta: {
       requiresAuth: true
