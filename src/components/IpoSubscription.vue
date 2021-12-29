@@ -10,7 +10,7 @@
       </li>
   </ol>
   <table class="subs">
-    <tr v-for="item in subscriptions" :key="item.id">
+    <tr v-for="(item, i) in subscriptions" :key="i">
       <td>
         <q-input :label="item.cat.short_name" readonly standout placeholder="Placeholder">
         <template v-slot:append>
@@ -19,9 +19,12 @@
         </q-input>
       </td>
       <td><q-input v-model="item.quota" label="Quota" outlined disable bg-color="cyan-2" /></td>
-      <td><q-input v-model="item.day1" label="Day1" outlined @blur="saveSubs(item.id, 1, item.day1)" /></td>
-      <td><q-input v-model="item.day2" label="Day2" outlined @blur="saveSubs(item.id, 2, item.day2)" /></td>
-      <td><q-input v-model="item.day3" label="Day3" outlined @blur="saveSubs(item.id, 3, item.day3)" /></td>
+      <td><q-input v-model="item.day1" label="Day1" outlined @blur="saveSubs(item.day1, i, 'day1')" /></td>
+      <td><q-input v-model="item.day2" label="Day2" outlined @blur="saveSubs(item.day2, i, 'day2')" /></td>
+      <td><q-input v-model="item.day3" label="Day3" outlined @blur="saveSubs(item.day3, i, 'day3')" /></td>
+      <td><q-input v-model="item.discount" label="Cat Discount" outlined @blur="saveSubs(item.discount, i, 'discount')" /></td>
+      <td><q-input v-model="item.total_applications" label="Total Applications" outlined @blur="saveSubs(item.total_applications, i, 'total_applications')" /></td>
+
     </tr>
   </table>
   
@@ -40,15 +43,24 @@
   const day2 = ref({})
   const day3 = ref({})
   const total = ref({})
-  const saveSubs = async(id, d, v) => {
+  const saveSubs = async(v, i, d) => {
     let data = {}
-    if(d == 1) data = {day1: v}
-    if(d == 2) data = {day2: v}
-    if(d == 3) data = {day3: v}
+    let value = (v != 'null') ? v.replace(/(,|[^\d.-]+)+/g, '') : 0
+    const id = subscriptions.value[i].id
+    if(Number(value) < 0){
+      value = Math.abs(subscriptions.value[i].quota) * Math.abs(value)
+    }
+    else{
+      value = Number(value)
+    }
+    eval('subscriptions.value[i].'+d+' = '+Math.round(value))
+    eval('data.'+d+'='+Math.round(value))
+    console.log(data)
     const subs = await axios.put('https://droplet.netserve.in/subscriptions/'+id, data)
-    
     console.log(subs)
+    
   }
+  
   onMounted(async() => {
     const sub = await axios.get('https://droplet.netserve.in/subscriptions?ipo_id='+ipoId.value+'&expand=cat').then(r => r.data)
     subscriptions.value = sub.filter(r => r.quota > 0)

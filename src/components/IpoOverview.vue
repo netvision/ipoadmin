@@ -6,7 +6,17 @@
         <q-input v-model="overview.company_name" label="Company Name" />
       </div>
       <div class="col q-pa-md">
-        <q-select filled v-model="overview.sector_id" :options="sectors" option-value="id" option-label="name" label="Sector" emit-value map-options>
+        <q-select 
+          filled 
+          v-model="overview.sector_id" 
+          :options="sectors" 
+          option-value="id" 
+          option-label="name" 
+          label="Sector" 
+          emit-value 
+          map-options
+          use-input
+          @filter="filterFn">
           <template v-slot:after>
             <q-btn round dense flat icon="add" @click="addSectorModel = true" />
           </template>
@@ -114,7 +124,7 @@
         </q-input>
       </div>
       <div class="col q-pa-md">
-        <q-input v-model="overview.issue_size" label="Issue Size (in Crore)">
+        <q-input v-model="overview.issue_size" label="Issue Size (in Crore)" @blur="sanitizeNumber(overview.issue_size, 'issue_size')">
           <template v-slot:prepend>
             &#8377; 
           </template>
@@ -123,17 +133,17 @@
     </div>
     <div class="row">
       <div class="col q-pa-md">
-        <q-input v-model="overview.fresh_issue" label="Fresh Issue">
+        <q-input v-model="overview.fresh_issue" label="Fresh Issue" @blur="sanitizeNumber(overview.fresh_issue, 'fresh_issue')">
           
         </q-input>
       </div>
       <div class="col q-pa-md">
-        <q-input v-model="overview.offer_for_sale" label="Offer for Sale">
+        <q-input v-model="overview.offer_for_sale" label="Offer for Sale" @blur="sanitizeNumber(overview.offer_for_sale, 'offer_for_sale')">
           
         </q-input>
       </div>
       <div class="col q-pa-md">
-        <q-input v-model="overview.no_of_total_shares" label="Number of Total Shares">
+        <q-input v-model="overview.no_of_total_shares" label="Number of Total Shares" @blur="sanitizeNumber(overview.no_of_total_shares, 'no_of_total_shares')">
           
         </q-input>
       </div>
@@ -274,6 +284,13 @@ const addSectorModel = ref(false)
 const addRegistrarForm = ref(false)
 const addBrlmForm = ref(false)
 
+const filterFn = (val, update, abort) => {
+  update(() => {
+          const needle = val.toLowerCase()
+          sectors.value = sectors.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+        })
+}
+
 const addSector = async() => {
   const newSec = await axios.post('https://droplet.netserve.in/sectors', newSector.value).then(r => r.data)
   sectors.value.push(newSec)
@@ -282,6 +299,11 @@ const addSector = async() => {
 const resetSector = () => {
   newSector.value = {}
   addSectorModel.value = false
+}
+
+const sanitizeNumber = (v, field) => {
+  const val = v.replace(/(,|[^\d.-]+)+/g, '')
+  eval('overview.value.'+field+'='+val)
 }
 const addRegistrar = async() =>{
   const newReg = await axios.post('https://droplet.netserve.in/registrars', newRg.value).then(r => r.data)
@@ -293,7 +315,6 @@ const resetRegistrarForm = () => {
 }
 
 const updateAppAmount = () =>{
-  
   application_amount.value = (overview.value.price_band_high && overview.value.lot_size ) ? overview.value.price_band_high*overview.value.lot_size : 0
 }
 
@@ -310,6 +331,7 @@ const resetBrlmForm = () => {
 
 const saveQuota = async(id) => {
   const ipo_id = +props.IpoId
+  cat_quotas.value[id] = cat_quotas.value[id].replace(/(,|[^\d.-]+)+/g, '')
   const cur_quota = await axios.get('https://droplet.netserve.in/subscriptions?ipo_id='+ipo_id+'&cat_id='+id).then(r => r.data)
   
   if(cur_quota.length > 0){

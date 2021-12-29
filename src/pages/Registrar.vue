@@ -12,9 +12,7 @@
                 </q-item-section>
             </q-item>
         <q-item v-for="(reg, i) in registrars" :key="i">
-            <q-item-section top class="col-2 gt-sm">
-                <q-item-label class="q-mt-sm">{{reg.email}}</q-item-label>
-            </q-item-section>
+            
             <q-item-section top>
                 <q-item-label lines="1">
                     <span class="text-weight-medium">{{reg.name}}</span>
