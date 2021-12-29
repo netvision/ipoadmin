@@ -71,11 +71,6 @@
           <q-input v-model="bse.free_float" label="Free Float" @blur="saveData(bse.free_float, 'free_float')" />
       </div>
   </div>
-  <div class="row">
-      <div class="col q-pa-md">
-        <q-btn color="primary" label="Save BSE" @click="saveBse" />
-      </div>
-  </div>
 </template>
 <script setup>
 import { ref, onMounted  } from 'vue' 
@@ -98,10 +93,6 @@ const saveData = async(v, f) =>{
     const upbse = await axios.put('https://droplet.netserve.in/listings/'+bse.value.id, data)
     console.log(upbse)
     console.log(data)
-}
-const saveBse = async() => {
-    const upbse = await axios.put('https://droplet.netserve.in/listings/'+bse.value.id, bse.value)
-    console.log(upbse)
 }
 onMounted(async() =>{
     const data = await axios.get('https://droplet.netserve.in/listings?exchange=BSE&ipo_id='+id.value).then( r=> r.data)
