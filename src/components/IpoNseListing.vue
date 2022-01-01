@@ -25,7 +25,7 @@
         </q-input>
       </div>
       <div class="col q-pa-md">
-          <q-input v-model="nse.listing_price" label="Listing Price" @blur="saveData(bse.listing_price, 'listing_price')">
+          <q-input v-model="nse.listing_price" label="Listing Price" @blur="saveData(nse.listing_price, 'listing_price')">
             <template v-slot:prepend>
                 &#8377; 
             </template>

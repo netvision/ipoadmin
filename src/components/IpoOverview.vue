@@ -253,7 +253,7 @@
     </div>
     <div class="row">
       <div class="col q-pa-md">
-        <q-btn color="primary" label="Save and Continue" @click="saveOverview" />
+        <q-btn color="primary" label="Save" @click="saveOverview" />
       </div>
     </div>
     
@@ -302,7 +302,7 @@ const resetSector = () => {
 }
 
 const sanitizeNumber = (v, field) => {
-  const val = v.replace(/(,|[^\d.-]+)+/g, '')
+  const val = Math.abs(v.replace(/(,|[^\d.-]+)+/g, ''))
   eval('overview.value.'+field+'='+val)
 }
 const addRegistrar = async() =>{
