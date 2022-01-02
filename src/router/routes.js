@@ -7,7 +7,9 @@ const routes = [
       { path: '/ipo/:id', component: () => import('pages/Ipo.vue') },
       { path: '/registrars', component: () => import('pages/Registrar.vue') },
       { path: '/sectors', component: () => import('pages/Sectors.vue') },
-      { path: '/brlms', component: () => import('pages/Brlms.vue') }
+      { path: '/brlms', component: () => import('pages/Brlms.vue') },
+      { path: '/oldIpos', component: () => import('pages/OldIpos.vue') },
+      { path: '/old-ipo/:id', component: () => import('pages/OldIpoDetail.vue') },
     ],
     meta: {
       requiresAuth: true
@@ -18,7 +20,7 @@ const routes = [
     component: () => import('layouts/AuthLayout.vue'),
     name: 'Login',
     children: [
-      { path: '/auth/login', component: () => import('pages/Signin.vue'), name: 'Authenticate' },
+      { path: '/auth/login', component: () => import('pages/Signin.vue'), name: 'Authenticate' }
       
     ],
     

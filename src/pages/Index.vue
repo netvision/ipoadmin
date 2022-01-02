@@ -126,9 +126,6 @@
   import { onMounted, ref } from 'vue'
   import { useRouter } from 'vue-router'
   import { useQuasar } from 'quasar'
-  import ipoData from '../ipo.json'
-
-  const oldIpo = ipoData.data
   const ipos = ref([])
   const $q = useQuasar()
   const newIpo = ref(false)
@@ -176,6 +173,5 @@
     const ipo = await axios.get('https://droplet.netserve.in/ipos').then(r => r.data)
     console.log(ipo)
     ipos.value = ipo
-    console.log(oldIpo)
   })
 </script>

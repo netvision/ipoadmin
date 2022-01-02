@@ -13,23 +13,61 @@
           
         </q-card>
     </q-page>
+    <q-dialog v-model='changepw'>
+      <q-card style="width: 300px">
+        <q-card-section>
+          <div class="text-h6">Please Change your Password</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input square filled clearable v-model="newPassword" type="password" label="New Password" />
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="Change" v-close-popup @click="update" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 </template>
 <script setup>
 import { Auth } from '@aws-amplify/auth'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-
+const changepw = ref(false)
 const email = ref('')
 const password = ref('')
+const user = ref({})
 const router = useRouter()
+const newPassword = ref('')
 const login = async() =>{
     try {
-        const user = await Auth.signIn(email.value, password.value);
-        console.log(user)
+        user.value = await Auth.signIn(email.value, password.value);
+        if(user.value.challengeName === 'NEW_PASSWORD_REQUIRED'){
+          changepw.value = true
+        }
+        else{ 
+        console.log(user.value.challengeName)
         router.push('/')
+        }
     } catch (error) {
         console.log('error signing in', error);
     }
+}
+
+const update = async() => {
+  console.log(user.value)
+  try{
+    const upUser = await Auth.completeNewPassword(
+      user.value,
+      newPassword.value,
+      {}
+    )
+    console.log(upUser)
+    router.push('/')
+  }
+  catch (error) {
+    console.log(error)
+  }
 }
 
 onMounted(async()=>{
