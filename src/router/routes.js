@@ -10,6 +10,7 @@ const routes = [
       { path: '/brlms', component: () => import('pages/Brlms.vue') },
       { path: '/oldIpos', component: () => import('pages/OldIpos.vue') },
       { path: '/old-ipo/:id', component: () => import('pages/OldIpoDetail.vue') },
+      { path: '/financials/:id', component: () => import('pages/Financials.vue') },
     ],
     meta: {
       requiresAuth: true

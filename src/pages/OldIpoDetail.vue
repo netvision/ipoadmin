@@ -1,9 +1,12 @@
 <template>
     <q-page class="q-pa-md">
-        <h4 class="text-h4">Overview</h4>
+        <h4 class="text-h4">Overview - {{ipo.company_name}}</h4>
         <q-list>
             <q-item>
                 face value: {{ipo.face_value}}
+            </q-item>
+            <q-item>
+                lot size: {{ipo.bit_lot}}
             </q-item>
             <q-item>
                 fresh Issue: {{ipo.fresh_issue}}
@@ -31,28 +34,35 @@
         </q-list>
         <h4 class="text-h4">BSE Listing</h4>
         <q-list>
+            <q-item>Code: {{ipo.bse_script_code}}</q-item>
+            <q-item>Url: {{ipo.company_bse_url}}</q-item>
             <q-item>Date: {{listing.date}}</q-item>
             <q-item>Listing Price: {{listing.bse_listing_price}}</q-item>
             <q-item>High: {{listing.bse_listing_price_high}}</q-item>
             <q-item>Low: {{listing.bse_listing_price_low}}</q-item>
-            
+            <q-item>Closing: {{listing.bse_listing_closing}}</q-item>
+            <q-item>Pre Open Volume: {{listing.bse_preopen_price}}</q-item>
             <q-item>volume: {{listing.bse_listing_volume_price}}</q-item>
             <q-item>Delivery: {{listing.bse_listing_delivery_volume_price}}</q-item>
             <q-item>Free Float: {{listing.bse_free_float}}</q-item>
         </q-list>
         <h4 class="text-h4">NSE Listing</h4>
         <q-list>
+            <q-item>Code: {{ipo.nse_script_code}}</q-item>
+            <q-item>Url: {{ipo.company_nse_url}}</q-item>
             <q-item>Date: {{listing.date}}</q-item>
             <q-item>Listing Price: {{listing.nse_listing_price}}</q-item>
             <q-item>High: {{listing.nse_listing_price_high}}</q-item>
             <q-item>Low: {{listing.nse_listing_price_low}}</q-item>
-            
+            <q-item>Closing: {{listing.nse_listing_closing}}</q-item>
+            <q-item>Pre Open Volume: {{listing.nse_preopen_price}}</q-item>
             <q-item>volume: {{listing.nse_listing_volume_price}}</q-item>
             <q-item>Delivery: {{listing.nse_listing_delivery_volume_price}}</q-item>
             <q-item>Free Float: {{listing.nse_free_float}}</q-item>
         </q-list>
-        
-        
+        <pre>{{ipo}}</pre>
+        <pre>{{listing}}</pre>
+        <pre>{{subscriptions}}</pre>
     </q-page>
 </template>
 <script setup>
