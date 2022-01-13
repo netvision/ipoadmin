@@ -1,0 +1,227 @@
+<template>
+  <q-table
+      title="Company Financials"
+      :rows="rows"
+      :columns="columns"
+      row-key="particular"
+      :pagination = "{
+        rowsPerPage: 0
+      }"
+      selection="single"
+      v-model="selectedRow"
+    >
+    <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+            class="text-italic text-purple text-left"
+          >
+            {{ col.label }}
+            
+          </q-th>
+        </q-tr>
+      </template>
+    <template v-slot:body="props">
+        <q-tr :props="props" @contextmenu="onContextMenu($event, props)">
+          <q-td v-for="col in columns" :key="col.name" :props="props">
+            {{ props.row[col.field]}}
+            <q-popup-edit v-model="props.row[col.field]" v-slot="scope">
+              <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
+            </q-popup-edit>
+          </q-td>
+        </q-tr>
+    </template>
+  </q-table>
+    <q-btn label="Add Column" @click="addColModel = true" />
+    <q-btn label="Edit Columns" @click="editColModel = true" />
+    <q-btn label="Add Row" @click="addRowModel= true" />
+    <q-btn label="Save Financials" @click="saveFinancials" />
+    <q-dialog v-model="addColModel">
+        <q-card class="brlm-card" style="width:100vw">
+            <h3 class="text-h6 text-center">Add New Column</h3>
+            <q-card-section>
+              <div class="row no-wrap items-center">
+                <div class="col text-h6 ellipsis">
+                  <q-input v-model="colLabel" label="Column Title" />
+                </div>
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn v-close-popup flat color="primary" label="Add" @click="addColumn" />
+            </q-card-actions>
+          </q-card>
+    </q-dialog>
+    <q-dialog v-model="editColModel">
+        <q-card class="brlm-card" style="width:100vw">
+            <h3 class="text-h6 text-center">Edit Column</h3>
+            <q-card-section>
+              <div class="row no-wrap items-center" v-for="col in columns" :key="col.label">
+                <div class="col text-h6 ellipsis">
+                  <q-input v-model="col.label" autofocus label="Column">
+                    <template v-slot:after>
+                      <q-btn round dense icon="remove" @click="removeCol(col)" />
+                    </template>
+                  </q-input>
+                </div>
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn v-close-popup flat color="primary" label="Save" @click="editColumns" />
+            </q-card-actions>
+          </q-card>
+    </q-dialog>
+    <q-dialog v-model="addRowModel">
+        <q-card class="brlm-card" style="width:100vw">
+            <h3 class="text-h6 text-center">Add New Row</h3>
+            <q-card-section>
+              <div class="row no-wrap items-center">
+                <div class="col text-h6 ellipsis">
+                  <q-input v-model="rowParticular" label="Particluar" />
+                </div>
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn v-close-popup flat color="primary" label="Add" @click="addRow" />
+            </q-card-actions>
+          </q-card>
+    </q-dialog>
+    <q-dialog v-model="confirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          
+          <span class="q-ml-sm">Delete this row?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Delete" color="primary" @click="deleteRow" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useQuasar } from 'quasar'
+import { api, axios } from '../boot/axios'
+import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
+import ContextMenu from '@imengyu/vue3-context-menu'
+
+const data = defineProps({
+    ipo_id: Number,
+    content: String
+  })
+const $q = useQuasar()
+const columns = ref([])
+const rows = ref([])
+
+const colLabel = ref('')
+const rowParticular = ref('')
+
+const addColModel = ref(false)
+const editColModel = ref(false)
+const addRowModel = ref(false)
+const confirm = ref(false)
+
+const selectedRow = ref({})
+
+const addColumn = () => {
+    let newColumn = {
+        name: 'column'+columns.value.length,
+        label: colLabel.value, 
+        field: 'column'+columns.value.length,
+        align: 'right'
+    }
+    columns.value.push(newColumn)
+    rows.value.map(row => row[newColumn.field] = 0)
+    console.log(rows.value)
+}
+
+const addRow = () => {
+    let newRow = {}
+    columns.value.forEach((col) =>{
+        if(col.field == 'particular'){
+            newRow.particular = rowParticular.value
+        }
+        else newRow[col.field] = 0
+    })
+    rows.value.push(newRow)
+}
+
+const editColumns = () => {
+  console.log(columns.value)
+}
+
+const removeCol = (col) => {
+  const index = columns.value.findIndex(co => co.field === col.field)
+  if(index > 0){
+    rows.value.map(row =>{
+      delete row[col.field]
+    })
+    columns.value.splice(index, 1)
+  }
+  console.log(rows.value)
+}
+
+
+
+const onContextMenu = (e, props) => {
+  e.preventDefault()
+   selectedRow.value = props.row
+   confirm.value = true
+  }
+
+const deleteRow = () => {
+  rows.value.splice(rows.value.findIndex(row => row === selectedRow.value), 1)
+  selectedRow.value = {}
+  confirm.value = false
+}
+
+const saveFinancials = async() => {
+  const financials = {
+    col: columns.value,
+    row: rows.value
+  }
+
+  const res = await axios.put('https://droplet.netserve.in/ipos/'+data.ipo_id, {financials: JSON.stringify(financials)})
+
+    if(res.status == 200) {
+        $q.notify({
+            message: 'Updated Successfully',
+            icon: 'announcement'
+            })
+    }
+  
+}
+
+onMounted(()=>{
+  if(data.content){
+    let financials = JSON.parse(data.content)
+    rows.value = financials.row
+    columns.value = financials.col
+  }
+  else{
+    columns.value = [
+        {name: 'particular', label: 'Particular', field: 'particular', align: 'left'}
+    ]
+
+    rows.value = [
+        {particular: "Revenue from operations"}
+    ]
+
+  }
+
+  console.log(columns.value.length)
+    
+})
+</script>
+
+<style>
+
+</style>

@@ -47,5 +47,6 @@
   onMounted(async() => {
     ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipo_id).then(r => r.data)
     console.log(ipo.value)
+    step.value = 1
   })
 </script>

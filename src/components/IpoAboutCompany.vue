@@ -1,10 +1,35 @@
 <template>
 <div class="q-pa-md relative-position">
-  <q-img :src="company_header" style="width:100%; height:225px" fit="fill">
-  </q-img>
-  <q-img :src="company_logo" style="width:150px; height:100px; position:absolute; bottom:10px; right:50px; object-fit:cover" fit="none">
-  </q-img>
-  
+  <q-img :src="company_header" style="width:100%; height:225px" fit="fill" @click="headerModel = true"></q-img>
+  <q-img :src="company_logo" alt="click to change" style="width:150px; height:100px; position:absolute; bottom:10px; right:50px;" fit="contain" @click="logoModel = true"></q-img>
+  <q-dialog v-model="logoModel">
+    <div class="col q-pa-md">
+          <q-uploader
+            label="Update Company Logo"
+            field-name="logo"
+            no-thumbnails
+            auto-upload
+            :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}]"
+            url="https://droplet.netserve.in/ipo/logo"
+            @uploaded = 'logoUpdate'
+            style="max-width: 30%; width:30%"
+          />
+        </div>
+  </q-dialog>
+  <q-dialog v-model="headerModel">
+    <div class="col q-pa-md">
+          <q-uploader
+            label="Update Company Header"
+            field-name="header"
+            no-thumbnails
+            auto-upload
+            :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}]"
+            url="https://droplet.netserve.in/ipo/header"
+            @uploaded = 'headerUpdate'
+            style="max-width: 30%; width:30%"
+          />
+        </div>
+  </q-dialog>
 </div>
   <q-tabs
     v-model="tab"
@@ -28,175 +53,79 @@
 
   <q-tab-panels v-model="tab" animated>
     <q-tab-panel name="info">
-      <div class="row q-gutter-md">
-        <div class="col q-pa-md">
-          <q-uploader
-            label="Update Company Logo"
-            field-name="logo"
-            no-thumbnails
-            auto-upload
-            :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}]"
-            url="https://droplet.netserve.in/ipo/logo"
-            @uploaded = 'logoUpdate'
-            style="max-width: 100%; width:100%"
-          />
-        </div>
-        <div class="col q-pa-md">
-          <q-uploader
-            label="Update Company Header"
-            field-name="header"
-            no-thumbnails
-            auto-upload
-            :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}]"
-            url="https://droplet.netserve.in/ipo/header"
-            @uploaded = 'headerUpdate'
-            style="max-width: 100%; width:100%"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col q-pa-md">
-          <q-input v-model="ipo.company_url" label="Company URL" type="url" />
-        </div>
-      </div>
-      <div class="row q-gutter-md">
-        <div class="col q-pa-md">
-          <div class="text-h6">Company Info</div>
-          <Editor :html-content="(ipo.about_company_html) ? ipo.about_company_html : ''" @update="saveInfo" />
-        </div>
-      </div>
+      <div class="text-h6">Company Info</div>
+      <CompanyInfo :ipo_id="ipo.ipo_id" :content="ipo.about_html" />
     </q-tab-panel>
 
     <q-tab-panel name="promoters">
       <div class="text-h6">Promoters</div>
-      <Editor :html-content="ipo.about_promoters_html" @update="savePromotors" />
+      <Promoters />
     </q-tab-panel>
 
     <q-tab-panel name="objects">
       <div class="text-h6">Objects of the Issue</div>
-      <Editor :html-content="ipo.objects_of_the_Issue_html" @update="saveObject" />
+      <IpoObjects :ipo_id="ipo.ipo_id" :content="ipo.issue_objects_html" />
     </q-tab-panel>
     <q-tab-panel name="financials">
-      <div class="text-h6">Company Financials</div>
-      <Editor :html-content="ipo.financials_html" @update="saveFinancials" />
+      <IpoFinancials :content="ipo.financials" :ipo_id="ipo.ipo_id" />
     </q-tab-panel>
     <q-tab-panel name="peers">
       <div class="text-h6">Peers</div>
-      <Editor :html-content="ipo.peer_html" @update="savePeers" />
+      <q-editor :html-content="ipo.peer_html" />
     </q-tab-panel>
     <q-tab-panel name="swot">
-      <div class="text-h4">Strengths, Weaknesses, Opportinities and Threats</div>
-      <div class="row q-gutter-md">
-        <div class="col q-pa-md">
-          <h3 class="text-h5">Strengths</h3>
-          <q-slider v-model="ipo.swot_strengths_scoring" :min="0" :max="10" :step="1" label :label-value="'Strength Score: ' + ipo.swot_strengths_scoring " label-always color="purple" />
-          <q-editor v-model="ipo.swot_strengths_html" min-height="5rem" />
-        </div>
-        <div class="col q-pa-md">
-          <h3 class="text-h5">Weaknesses</h3>
-          <q-slider v-model="ipo.swot_weaknesses_scoring" :min="0" :max="10" :step="1" label :label-value="'Weakness Score: ' + ipo.swot_weaknesses_scoring " label-always color="purple" />
-          <q-editor v-model="ipo.swot_weaknesses_html" min-height="5rem" />
-        </div>
-      </div>
-      <div class="row q-gutter-md">
-        <div class="col q-pa-md">
-          <h3 class="text-h5">Opportunities</h3>
-          <q-slider v-model="ipo.swot_opportunities_scoring" :min="0" :max="10" :step="1" label :label-value="'Opportunity Score: ' + ipo.swot_opportunities_scoring " label-always color="purple" />
-          <q-editor v-model="ipo.swot_opportunities_html" min-height="5rem" />
-        </div>
-        <div class="col q-pa-md">
-          <h3 class="text-h5">Threats</h3>
-          <q-slider v-model="ipo.swot_threats_scoring" :min="0" :max="10" :step="1" label :label-value="'Threats Score: ' + ipo.swot_threats_scoring " label-always color="purple" />
-          <q-editor v-model="ipo.swot_threats_html" min-height="5rem" />
-        </div>
-      </div>
-      <q-btn color="primary" label="Save Swot" @click="saveSwot" />
+      <Swot :ipo_id="ipo.ipo_id" />
     </q-tab-panel>
     <q-tab-panel name="review">
       <div class="text-h6">Review</div>
-      <Editor :html-content="ipo.review_and_ratings_html" @update="saveReview" />
+      <IpoReview :ipo_id="ipo.ipo_id" :content="ipo.review_html" />
     </q-tab-panel>
     <q-tab-panel name="conclusion">
       <div class="text-h6">Conclusion</div>
-      <Editor :html-content="ipo.conclusion_html" @update="saveConclusion" />
+      <IpoConclusion :ipo_id="ipo.ipo_id" :content="ipo.conclusion_html" />
     </q-tab-panel>
   </q-tab-panels>
 </template>
-<script>
-import { defineComponent } from 'vue'
 
-export default defineComponent({
-    data(){
-      return {
-        swotStrengthScore: 0,
-        swotWeaknessScore: 0,
-        info:{}
-       }
-    },
-
-    methods: {
-        
-        saveReview(value){
-          console.log(value)
-        },
-
-        savePeers(value){
-          console.log(value)
-        },
-
-        saveFinancials(value){
-          console.log(value)
-        },
-
-        saveObject(value){
-          console.log(value)
-        },
-
-        savePromotors(value){
-          console.log(value)
-        },
-
-        saveInfo(value){
-          const id = +props.ipo_id
-          axios.put('https://droplet.netserve.in/ipos/'+id, ipo.value).then(r => {
-            console.log(r.data)
-          })
-        }
-    }
-})
-</script>
 
 <script setup>
-  import { ref  } from 'vue' 
+  import { ref, onMounted } from 'vue' 
   import { api, axios } from '../boot/axios'
-  import Editor from './Editor.vue'
-  const tab = ref('info')
+  import CompanyInfo from './CompanyInfo.vue'
+  import IpoObjects from './IpoObjects.vue'
+  import IpoFinancials from './IpoFinancials.vue'
+  import IpoReview from './IpoReview.vue'
+  import IpoConclusion from './IpoConclusion.vue'
+  import Promoters from './Promoters.vue'
+  import Swot from './Swot.vue'
+  const tab = ref()
   const props = defineProps({
     IpoId: String
   })
+  const logoModel = ref(false)
+  const headerModel = ref(false)
   const ipo = ref({})
   const company_logo = ref('')
-  const company_header = ref('')
+  const company_header = ref('/defaultheader.jpg')
   const logoUpdate = async(files) => {
           const id = +props.IpoId
           company_logo.value = JSON.parse(files.xhr.response)
           await axios.put('https://droplet.netserve.in/ipos/'+id, {company_logo: company_logo.value})
+          logoModel.value = false
         }
   const headerUpdate = async(files) => {
           const id = +props.IpoId
           company_header.value = JSON.parse(files.xhr.response)
           await axios.put('https://droplet.netserve.in/ipos/'+id, {header_img: company_header.value})
+          headerModel.value = false
         }
-  const saveSwot = () => {
-    console.log(ipo.value.swot_threats_scoring)
-  }
-  const init = async () => {
+ 
+  onMounted(async () => {
     const id = +props.IpoId
     const ip = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
     ipo.value = ip
-    company_logo.value = ip.company_logo
-    company_header.value = ip.header_img
-  }
-
-  init()
+    company_logo.value = (ip.company_logo) ? ip.company_logo : '/defaultlogo.jpg'
+    company_header.value = (ip.header_img) ? ip.header_img : '/defaultheader.jpg'
+    tab.value = 'info'
+  })
 </script>

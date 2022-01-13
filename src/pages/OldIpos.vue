@@ -51,6 +51,18 @@ ipos.forEach(async(ipo) => {
             records.value.push(data)
         }
 })
-*/
 
+//string manipulated
+const placeholder = document.createElement('div')
+let content = "<p>Hello <img src='abc.png' alt='AMP Example' height='200'width='300'>. Learn more. <img src='another.png' alt='AMP Example' height='200'width='300' ></p>";
+placeholder.innerHTML = content
+placeholder.querySelectorAll('img').forEach(
+    (el) => {
+        const url = new URL(el.src)
+        console.log(url)
+        el.src = "https://github.com"+url.pathname
+    }
+)
+console.log(placeholder.innerHTML)
+*/
 </script>

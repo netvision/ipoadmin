@@ -2,10 +2,13 @@
   <div class="q-pa-md">
     <h2 class="text-h5">Overview</h2>
     <div class="row">
-      <div class="col col-8 q-pa-md">
+      <div class="col q-pa-md">
         <q-input v-model="overview.company_name" label="Company Name" />
       </div>
       <div class="col q-pa-md">
+        <q-input v-model="overview.company_url" label="Company Website" />
+      </div>
+      <div class="col col-3 q-pa-md">
         <q-select 
           filled 
           v-model="overview.sector_id" 
