@@ -1,12 +1,12 @@
 <template>
   <q-table
-      title="Company Financials"
+      title="Peer Comparision"
       :rows="rows"
-      :columns="columns"
       flat
       dense
       bordered
-      row-key="particular"
+      :columns="columns"
+      row-key="company"
       :pagination = "{
         rowsPerPage: 0
       }"
@@ -38,14 +38,14 @@
     </template>
   </q-table>
   <div class="q-pa-md">
-    <q-btn-group>
-      <q-btn label="Add Column" @click="addColModel = true" />
-      <q-btn label="Edit Columns" @click="editColModel = true" />
-      <q-btn label="Add Row" @click="addRowModel= true" />
-    </q-btn-group>
+      <q-btn-group>
+        <q-btn label="Add Column" @click="addColModel = true" />
+        <q-btn label="Edit Columns" @click="editColModel = true" />
+        <q-btn label="Add Row" @click="addRowModel= true" />
+      </q-btn-group>
   </div>
   <div class="q-pa-md">
-    <q-btn color="primary" label="Save Financials" @click="saveFinancials" />
+    <q-btn color="primary" label="Save" @click="savePeers" />
   </div>
     <q-dialog v-model="addColModel">
         <q-card class="brlm-card" style="width:100vw">
@@ -69,7 +69,7 @@
             <q-card-section>
               <div class="row no-wrap items-center" v-for="col in columns" :key="col.label">
                 <div class="col text-h6 ellipsis">
-                  <q-input v-model="col.label" autofocus label="Column">
+                  <q-input v-model="col.label" label="Column">
                     <template v-slot:after>
                       <q-btn round dense icon="remove" @click="removeCol(col)" />
                     </template>
@@ -89,7 +89,7 @@
             <q-card-section>
               <div class="row no-wrap items-center">
                 <div class="col text-h6 ellipsis">
-                  <q-input v-model="rowParticular" label="Particluar" />
+                  <q-input v-model="rowParticular" label="Name of the Company" />
                 </div>
               </div>
             </q-card-section>
@@ -155,8 +155,8 @@ const addColumn = () => {
 const addRow = () => {
     let newRow = {}
     columns.value.forEach((col) =>{
-        if(col.field == 'particular'){
-            newRow.particular = rowParticular.value
+        if(col.field == 'company'){
+            newRow.company = rowParticular.value
         }
         else newRow[col.field] = 0
     })
@@ -192,13 +192,13 @@ const deleteRow = () => {
   confirm.value = false
 }
 
-const saveFinancials = async() => {
-  const financials = {
+const savePeers = async() => {
+  const peers = {
     col: columns.value,
     row: rows.value
   }
 
-  const res = await axios.put('https://droplet.netserve.in/ipos/'+data.ipo_id, {financials: JSON.stringify(financials)})
+  const res = await axios.put('https://droplet.netserve.in/ipos/'+data.ipo_id, {peers: JSON.stringify(peers)})
 
     if(res.status == 200) {
         $q.notify({
@@ -211,18 +211,16 @@ const saveFinancials = async() => {
 
 onMounted(()=>{
   if(data.content){
-    let financials = JSON.parse(data.content)
-    rows.value = financials.row
-    columns.value = financials.col
+    let peers = JSON.parse(data.content)
+    rows.value = peers.row
+    columns.value = peers.col
   }
   else{
     columns.value = [
-        {name: 'particular', label: 'Particular', field: 'particular', align: 'left'}
+        {name: 'company', label: 'Name of the Company', field: 'company', align: 'left'}
     ]
 
-    rows.value = [
-        {particular: "Revenue from operations"}
-    ]
+    
 
   }
 

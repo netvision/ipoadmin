@@ -70,8 +70,7 @@
       <IpoFinancials :content="ipo.financials" :ipo_id="ipo.ipo_id" />
     </q-tab-panel>
     <q-tab-panel name="peers">
-      <div class="text-h6">Peers</div>
-      <q-editor :html-content="ipo.peer_html" />
+      <IpoPeers :content="ipo.peers" :ipo_id="ipo.ipo_id" />
     </q-tab-panel>
     <q-tab-panel name="swot">
       <Swot :ipo_id="ipo.ipo_id" />
@@ -94,6 +93,7 @@
   import CompanyInfo from './CompanyInfo.vue'
   import IpoObjects from './IpoObjects.vue'
   import IpoFinancials from './IpoFinancials.vue'
+  import IpoPeers from './IpoPeers.vue'
   import IpoReview from './IpoReview.vue'
   import IpoConclusion from './IpoConclusion.vue'
   import Promoters from './Promoters.vue'
@@ -124,8 +124,8 @@
     const id = +props.IpoId
     const ip = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
     ipo.value = ip
-    company_logo.value = (ip.company_logo) ? ip.company_logo : '/defaultlogo.jpg'
-    company_header.value = (ip.header_img) ? ip.header_img : '/defaultheader.jpg'
+    company_logo.value = (ip.company_logo) ? ip.company_logo : '/placeholder-logo.png'
+    company_header.value = (ip.header_img) ? ip.header_img : '/header-placeholder.png'
     tab.value = 'info'
   })
 </script>
