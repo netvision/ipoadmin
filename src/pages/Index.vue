@@ -137,10 +137,10 @@
   const columns = [
       { name: 'id', label: 'IPO ID', field: 'ipo_id', sortable: true },
       { name: 'name', label: 'Company Name', field: 'company_name', sortable: true, align: 'left' },
-      { name: 'price_band_low', label: 'Price Band Low', field: 'price_band_low'},
+      { name: 'price_band_low', label: 'Price Band Low', field: 'price_band_low', sortable: true},
       { name: 'price_band_high', label: 'Price Band High', field: 'price_band_high'},
-      { name: 'open', label: 'Open Date', field: 'open_date' },
-      { name: 'close', label: 'close Date', field: 'close_date' },
+      { name: 'open', label: 'Open Date', field: 'open_date', sortable: true },
+      { name: 'close', label: 'close Date', field: 'close_date', sortable: true },
     ]
   const formatDate = (v) =>{
     if(!v) return 'null'

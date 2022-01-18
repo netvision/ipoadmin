@@ -1,5 +1,6 @@
 <template>
     <q-page class="q-pa-md">
+        
         <q-list>
             <q-item clickable v-for="ipo in ipos" :key="ipo.ipo_id" :to="'/old-ipo/'+ipo.ipo_id">
                 <q-item-label>{{ipo.company_name}}</q-item-label>
@@ -9,9 +10,28 @@
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
-import ipoData from '../ipo.json'
+import ipoData from '../ipo1.json'
 import { api, axios } from '../boot/axios'
-const ipos = ipoData.data
+const ipos = ref(ipoData)
+const saveObjects = async() => {
+    ipos.value.forEach(async(ipo) => {
+        if(ipo.objects_of_the_Issue_html && ipo.new_id){
+            let data = {issue_objects_html : ipo.objects_of_the_Issue_html}
+            let res = await axios.put('https://droplet.netserve.in/ipos/'+ipo.new_id, data)
+        }
+    })
+}
+console.log('done')
+/*
+onMounted(async() => {
+    let newIpos =  await axios.get('https://droplet.netserve.in/ipos').then(r => r.data)
+    ipos.value.map(ipo => {
+        let rec = newIpos.filter(ip => ip.company_name === ipo.company_name)
+        if(rec.length > 0) return ipo.new_id = rec[0].ipo_id
+    })
+    console.log(ipos.value)
+})
+*/
  /*
 const records = ref([])
 const format_date = (v) =>{
@@ -65,4 +85,5 @@ placeholder.querySelectorAll('img').forEach(
 )
 console.log(placeholder.innerHTML)
 */
+
 </script>

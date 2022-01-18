@@ -1,6 +1,8 @@
 <template>
     <q-page class="q-pa-md">
-        <h4 class="text-h4">Overview - {{ipo.company_name}}</h4>
+        <h4 class="text-h4">Overview - {{ipo.company_name}} - {{ipo.new_id}}</h4>
+        
+        <div>{{ipo.objects_of_the_Issue_html}}</div>
         <q-list>
             <q-item>
                 face value: {{ipo.face_value}}
@@ -32,50 +34,36 @@
         <q-list>
             <q-item v-for="sub in subscriptions" :key="sub.id">{{sub.short_name}}:  {{sub.subscription_shares}}</q-item>
         </q-list>
-        <h4 class="text-h4">BSE Listing</h4>
-        <q-list>
-            <q-item>Code: {{ipo.bse_script_code}}</q-item>
-            <q-item>Url: {{ipo.company_bse_url}}</q-item>
-            <q-item>Date: {{listing.date}}</q-item>
-            <q-item>Listing Price: {{listing.bse_listing_price}}</q-item>
-            <q-item>High: {{listing.bse_listing_price_high}}</q-item>
-            <q-item>Low: {{listing.bse_listing_price_low}}</q-item>
-            <q-item>Closing: {{listing.bse_listing_closing}}</q-item>
-            <q-item>Pre Open Volume: {{listing.bse_preopen_price}}</q-item>
-            <q-item>volume: {{listing.bse_listing_volume_price}}</q-item>
-            <q-item>Delivery: {{listing.bse_listing_delivery_volume_price}}</q-item>
-            <q-item>Free Float: {{listing.bse_free_float}}</q-item>
-        </q-list>
-        <h4 class="text-h4">NSE Listing</h4>
-        <q-list>
-            <q-item>Code: {{ipo.nse_script_code}}</q-item>
-            <q-item>Url: {{ipo.company_nse_url}}</q-item>
-            <q-item>Date: {{listing.date}}</q-item>
-            <q-item>Listing Price: {{listing.nse_listing_price}}</q-item>
-            <q-item>High: {{listing.nse_listing_price_high}}</q-item>
-            <q-item>Low: {{listing.nse_listing_price_low}}</q-item>
-            <q-item>Closing: {{listing.nse_listing_closing}}</q-item>
-            <q-item>Pre Open Volume: {{listing.nse_preopen_price}}</q-item>
-            <q-item>volume: {{listing.nse_listing_volume_price}}</q-item>
-            <q-item>Delivery: {{listing.nse_listing_delivery_volume_price}}</q-item>
-            <q-item>Free Float: {{listing.nse_free_float}}</q-item>
-        </q-list>
-        <pre>{{ipo}}</pre>
-        <pre>{{listing}}</pre>
-        <pre>{{subscriptions}}</pre>
+        
     </q-page>
 </template>
 <script setup>
     import { ref, onMounted } from 'vue'
     import { useRoute } from 'vue-router'
     import { api, axios } from '../boot/axios'
-    import ipoData from '../ipo.json'
+    import ipoData from '../ipo1.json'
     const route = useRoute()
     const ipo_id = route.params.id
-    const ipo = ipoData.data.filter(ip => ip.ipo_id == ipo_id)[0]
+    const ipo = ipoData.filter(ip => ip.ipo_id == ipo_id)[0]
     const listing = ref({})
     const subscriptions = ref([])
     const cat_data = ref([])
+    const bse_data = ref({})
+    const nse_data = ref({})
+
+    const saveBse = async() => {
+        if(ipo.new_id){
+            let res = await axios.post('https://droplet.netserve.in/listings', bse_data.value )
+            console.log(res)
+        }
+    }
+
+    const saveNse = async() => {
+        if(ipo.new_id){
+            let res = await axios.post('https://droplet.netserve.in/listings', nse_data.value )
+            console.log(res)
+        }
+    }
     
     const format_date = (v) =>{
         if(!v || v == null) return null
@@ -86,6 +74,40 @@
          listing.value = await axios.get('https://uat.ipoinbox.com:5000/api/v1/ipo/get_listing_data/'+ipo.ipo_id).then(r => r.data.data)
          subscriptions.value = await axios.get('https://uat.ipoinbox.com:5000/api/v1/ipo/get_subscription_data/'+ipo.ipo_id).then(r => r.data.data)
          cat_data.value = await axios.get('https://uat.ipoinbox.com:5000/api/v1/ipo/get_category_alloted_data/'+ipo.ipo_id).then(r => r.data.data)
+         if(ipo.bse_script_code){
+             bse_data.value = {
+                 ipo_id: ipo.new_id,
+                 exchange: 'BSE',
+                 listing_date: format_date(listing.value.date),
+                 scrip_code: ipo.bse_script_code,
+                 url: ipo.company_bse_url,
+                 listing_price: listing.value.bse_listing_price,
+                 high: listing.value.bse_listing_price_high,
+                 low: listing.value.bse_listing_price_low,
+                 close: listing.value.bse_listing_closing,
+                 preopen_volume: listing.value.bse_preopen_price,
+                 volume: listing.value.bse_listing_volume_price,
+                 delivery: listing.value.bse_listing_delivery_volume_price,
+                 free_float: listing.value.bse_free_float
+             }
+         }
+         if(ipo.nse_script_code){
+             nse_data.value = {
+                 ipo_id: ipo.new_id,
+                 exchange: 'NSE',
+                 listing_date: format_date(listing.value.date),
+                 scrip_code: ipo.nse_script_code,
+                 url: ipo.company_nse_url,
+                 listing_price: listing.value.nse_listing_price,
+                 high: listing.value.nse_listing_price_high,
+                 low: listing.value.nse_listing_price_low,
+                 close: listing.value.nse_listing_closing,
+                 preopen_volume: listing.value.nse_preopen_price,
+                 volume: listing.value.nse_listing_volume_price,
+                 delivery: listing.value.nse_listing_delivery_volume_price,
+                 free_float: listing.value.nse_free_float
+             }
+         }
     })
     
 </script>

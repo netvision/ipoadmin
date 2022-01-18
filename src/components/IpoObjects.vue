@@ -28,7 +28,7 @@ const modules = [
     {
         module: BlotFormatter,
         name: 'formatter'
-    },
+    }
     ]
 
 const saveObjects = async() => {
