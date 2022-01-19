@@ -5,7 +5,7 @@
         <div>{{ipo.objects_of_the_Issue_html}}</div>
         <q-list>
             <q-item>
-                face value: {{ipo.face_value}}
+                face value: {{ipo.face_value_per_share}}
             </q-item>
             <q-item>
                 lot size: {{ipo.bit_lot}}

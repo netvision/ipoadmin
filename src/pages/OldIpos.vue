@@ -2,10 +2,42 @@
     <q-page class="q-pa-md">
         
         <q-list>
-            <q-item clickable v-for="ipo in ipos" :key="ipo.ipo_id" :to="'/old-ipo/'+ipo.ipo_id">
+            <q-item clickable v-for="ipo in ipos" :key="ipo.ipo_id" @click="openModel(ipo)">
                 <q-item-label>{{ipo.company_name}}</q-item-label>
             </q-item>
         </q-list>
+        <q-dialog v-model="updateModel" full-width>
+            <div class="q-pa-md" style="background-color:white">
+                <h3>{{ip.company_name}}</h3>
+                <q-list>
+                    <q-item>
+                        face value: {{ip.face_value_per_share}}<br />
+                        lot size: {{ip.bit_lot}}<br />
+                        fresh Issue: {{ip.fresh_issue}}<br />
+                        Offer for Sale: {{ip.offer_for_sale}}
+                    </q-item>
+                    
+                    <q-item>
+                        Quota: 
+                    </q-item>
+                    <q-item v-for="cat in cat_data" :key="cat.id">{{cat.short_name}} : {{cat.applications}}</q-item>
+                    
+                    <q-item>
+                        Listed At: {{ip.listing_exchange}}
+                    </q-item>
+                    <q-item>
+                        Registrar: {{ip.registrar}} <br /> {{ip.registrar_link}} <br /> {{ip.registrar_url}} <br /> {{ip.registrar_application_link}}
+                    </q-item>
+                    <q-item>
+                        BRLMs: {{ip.brlm}}
+                    </q-item>
+                </q-list>
+                <h4 class="text-h4">Subscriptions</h4>
+                <q-list>
+                    <q-item v-for="sub in subscriptions" :key="sub.id">{{sub.short_name}}:  {{sub.subscription_shares}}</q-item>
+                </q-list>
+            </div>
+        </q-dialog>
     </q-page>
 </template>
 <script setup>
@@ -13,6 +45,16 @@ import { ref, onMounted } from 'vue'
 import ipoData from '../ipo1.json'
 import { api, axios } from '../boot/axios'
 const ipos = ref(ipoData)
+const subscriptions = ref([])
+const cat_data = ref([])
+const ip = ref({})
+const updateModel = ref(false)
+const openModel = async(curIpo) => {
+    ip.value = curIpo
+    subscriptions.value = await axios.get('https://uat.ipoinbox.com:5000/api/v1/ipo/get_subscription_data/'+curIpo.ipo_id).then(r => r.data.data)
+    cat_data.value = await axios.get('https://uat.ipoinbox.com:5000/api/v1/ipo/get_category_alloted_data/'+curIpo.ipo_id).then(r => r.data.data)
+    updateModel.value = true
+}
 const saveObjects = async() => {
     ipos.value.forEach(async(ipo) => {
         if(ipo.objects_of_the_Issue_html && ipo.new_id){
@@ -21,7 +63,7 @@ const saveObjects = async() => {
         }
     })
 }
-console.log('done')
+console.log(ipos.value)
 /*
 onMounted(async() => {
     let newIpos =  await axios.get('https://droplet.netserve.in/ipos').then(r => r.data)
