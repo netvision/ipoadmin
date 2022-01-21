@@ -59,7 +59,7 @@
 
     <q-tab-panel name="promoters">
       <div class="text-h6">Promoters</div>
-      <Promoters />
+      <Promoters :ipo_id="ipo.ipo_id" />
     </q-tab-panel>
 
     <q-tab-panel name="objects">
