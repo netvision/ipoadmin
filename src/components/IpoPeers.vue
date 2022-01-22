@@ -69,7 +69,7 @@
             <q-card-section>
               <div class="row no-wrap items-center" v-for="col in columns" :key="col.label">
                 <div class="col text-h6 ellipsis">
-                  <q-input v-model="col.label" label="Column">
+                  <q-input v-model="col.label" label="Column" dense autofocus>
                     <template v-slot:after>
                       <q-btn round dense icon="remove" @click="removeCol(col)" />
                     </template>

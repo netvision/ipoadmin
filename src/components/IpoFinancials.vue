@@ -1,8 +1,8 @@
 <template>
   <q-table
-      title="Company Financials"
-      :rows="rows"
-      :columns="columns"
+      title="Profit And Loss"
+      :rows="pl.rows"
+      :columns="pl.columns"
       flat
       dense
       bordered
@@ -13,6 +13,13 @@
       selection="single"
       v-model="selectedRow"
     >
+    <template v-slot:top-right>
+      <q-btn-group flat>
+      <q-btn label="Add Column" @click="() => {addColModel = true; tbl = 'pl'}" />
+      <q-btn label="Edit Columns" @click="() => {editColModel = true; tbl = 'pl'}" />
+      <q-btn label="Add Row" @click="() => {addRowModel= true; tbl = 'bs'}" />
+    </q-btn-group>
+    </template>
     <template v-slot:header="props">
         <q-tr :props="props">
           <q-th
@@ -27,8 +34,8 @@
         </q-tr>
       </template>
     <template v-slot:body="props">
-        <q-tr :props="props" @contextmenu="onContextMenu($event, props)">
-          <q-td v-for="col in columns" :key="col.name" :props="props">
+        <q-tr :props="props" @contextmenu="onContextMenu($event, props, 'pl')">
+          <q-td v-for="col in pl.columns" :key="col.name" :props="props">
             {{ props.row[col.field]}}
             <q-popup-edit v-model="props.row[col.field]" v-slot="scope">
               <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
@@ -37,13 +44,53 @@
         </q-tr>
     </template>
   </q-table>
-  <div class="q-pa-md">
-    <q-btn-group>
-      <q-btn label="Add Column" @click="addColModel = true" />
-      <q-btn label="Edit Columns" @click="editColModel = true" />
-      <q-btn label="Add Row" @click="addRowModel= true" />
-    </q-btn-group>
-  </div>
+  <q-separator spaced />
+  <q-table
+      title="Balance Sheet"
+      :rows="bs.rows"
+      :columns="bs.columns"
+      flat
+      dense
+      bordered
+      row-key="particular"
+      :pagination = "{
+        rowsPerPage: 0
+      }"
+      selection="single"
+      v-model="selectedRow"
+    >
+    <template v-slot:top-right>
+      <q-btn-group flat>
+        <q-btn label="Add Column" @click="() => {addColModel = true; tbl = 'bs'}" />
+        <q-btn label="Edit Columns" @click="() => {editColModel = true; tbl = 'bs'}" />
+        <q-btn label="Add Row" @click="() => {addRowModel= true; tbl = 'bs'}" />
+      </q-btn-group>
+    </template>
+    <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+            class="text-italic text-purple text-left"
+          >
+            {{ col.label }}
+            
+          </q-th>
+        </q-tr>
+      </template>
+    <template v-slot:body="props">
+        <q-tr :props="props" @contextmenu="onContextMenu($event, props, 'bs')">
+          <q-td v-for="col in bs.columns" :key="col.name" :props="props">
+            {{ props.row[col.field]}}
+            <q-popup-edit v-model="props.row[col.field]" v-slot="scope">
+              <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
+            </q-popup-edit>
+          </q-td>
+        </q-tr>
+    </template>
+  </q-table>
+  
   <div class="q-pa-md">
     <q-btn color="primary" label="Save Financials" @click="saveFinancials" />
   </div>
@@ -52,7 +99,7 @@
             <h3 class="text-h6 text-center">Add New Column</h3>
             <q-card-section>
               <div class="row no-wrap items-center">
-                <div class="col text-h6 ellipsis">
+                <div class="col text-h6 ellipsis">{{tbl}}
                   <q-input v-model="colLabel" label="Column Title" />
                 </div>
               </div>
@@ -66,12 +113,24 @@
     <q-dialog v-model="editColModel">
         <q-card class="brlm-card" style="width:100vw">
             <h3 class="text-h6 text-center">Edit Column</h3>
-            <q-card-section>
-              <div class="row no-wrap items-center" v-for="col in columns" :key="col.label">
+            <q-card-section v-if="tbl == 'pl'">
+              <div class="row no-wrap items-center" v-for="col in pl.columns" :key="col.label">
                 <div class="col text-h6 ellipsis">
                   <q-input v-model="col.label" autofocus label="Column">
                     <template v-slot:after>
-                      <q-btn round dense icon="remove" @click="removeCol(col)" />
+                      <q-btn round dense icon="remove" @click="removeCol(col, tbl)" />
+                    </template>
+                  </q-input>
+                </div>
+              </div>
+            </q-card-section>
+
+            <q-card-section v-if="tbl == 'bs'">
+              <div class="row no-wrap items-center" v-for="col in bs.columns" :key="col.label">
+                <div class="col text-h6 ellipsis">
+                  <q-input v-model="col.label" autofocus label="Column">
+                    <template v-slot:after>
+                      <q-btn round dense icon="remove" @click="removeCol(col, tbl)" />
                     </template>
                   </q-input>
                 </div>
@@ -127,8 +186,9 @@ const data = defineProps({
     content: String
   })
 const $q = useQuasar()
-const columns = ref([])
-const rows = ref([])
+const tbl = ref('')
+const pl = ref({})
+const bs = ref({})
 
 const colLabel = ref('')
 const rowParticular = ref('')
@@ -142,60 +202,99 @@ const selectedRow = ref({})
 
 const addColumn = () => {
     let newColumn = {
-        name: 'column'+columns.value.length,
+        name: 'column'+pl.value.columns.length,
         label: colLabel.value, 
-        field: 'column'+columns.value.length,
+        field: 'column'+pl.value.columns.length,
         align: 'right'
     }
-    columns.value.push(newColumn)
-    rows.value.map(row => row[newColumn.field] = 0)
-    console.log(rows.value)
+    if(tbl.value == 'pl'){
+      pl.value.columns.push(newColumn)
+      pl.value.rows.map(row => row[newColumn.field] = 0)
+      console.log(pl.value.rows)
+    }
+    else if(tbl.value == 'bs'){
+      bs.value.columns.push(newColumn)
+      bs.value.rows.map(row => row[newColumn.field] = 0)
+      console.log(bs.value.rows)
+    }
 }
 
 const addRow = () => {
     let newRow = {}
-    columns.value.forEach((col) =>{
-        if(col.field == 'particular'){
-            newRow.particular = rowParticular.value
-        }
-        else newRow[col.field] = 0
-    })
-    rows.value.push(newRow)
+    if(tbl.value == 'pl'){
+      pl.value.columns.forEach((col) =>{
+          if(col.field == 'particular'){
+              newRow.particular = rowParticular.value
+          }
+          else newRow[col.field] = 0
+      })
+      pl.value.rows.push(newRow)
+    }
+    else if(tbl.value == 'bs'){
+      bs.value.columns.forEach((col) =>{
+          if(col.field == 'particular'){
+              newRow.particular = rowParticular.value
+          }
+          else newRow[col.field] = 0
+      })
+      bs.value.rows.push(newRow)
+    }
 }
 
 const editColumns = () => {
-  console.log(columns.value)
+  console.log(pl.value.columns)
 }
 
-const removeCol = (col) => {
-  const index = columns.value.findIndex(co => co.field === col.field)
-  if(index > 0){
-    rows.value.map(row =>{
-      delete row[col.field]
-    })
-    columns.value.splice(index, 1)
+const removeCol = (col, tbl) => {
+  if(tbl == 'pl'){
+    const index = pl.value.columns.findIndex(co => co.field === col.field)
+    if(index > 0){
+      pl.value.rows.map(row =>{
+        delete row[col.field]
+      })
+      pl.value.columns.splice(index, 1)
+    }
+    console.log(pl.value.rows)
   }
-  console.log(rows.value)
+  else if(tbl == 'bs'){
+    const index = bs.value.columns.findIndex(co => co.field === col.field)
+    if(index > 0){
+      bs.value.rows.map(row =>{
+        delete row[col.field]
+      })
+      bs.value.columns.splice(index, 1)
+    }
+    console.log(bs.value.rows)
+  }
 }
 
 
 
-const onContextMenu = (e, props) => {
+const onContextMenu = (e, props, tb) => {
   e.preventDefault()
+  tbl.value = tb
    selectedRow.value = props.row
    confirm.value = true
   }
 
 const deleteRow = () => {
-  rows.value.splice(rows.value.findIndex(row => row === selectedRow.value), 1)
-  selectedRow.value = {}
-  confirm.value = false
+  if(tbl.value == 'pl'){
+    pl.value.rows.splice(pl.value.rows.findIndex(row => row === selectedRow.value), 1)
+      selectedRow.value = {}
+      confirm.value = false
+    }
+    else if(tbl.value == 'bs'){
+      bs.value.rows.splice(bs.value.rows.findIndex(row => row === selectedRow.value), 1)
+      selectedRow.value = {}
+      confirm.value = false
+    }
 }
 
 const saveFinancials = async() => {
-  const financials = {
-    col: columns.value,
-    row: rows.value
+  
+  let financials = {
+    pl: pl.value,
+    bs: bs.value
   }
 
   const res = await axios.put('https://droplet.netserve.in/ipos/'+data.ipo_id, {financials: JSON.stringify(financials)})
@@ -206,28 +305,39 @@ const saveFinancials = async() => {
             icon: 'announcement'
             })
     }
-  
+
+ console.log(financials)
 }
 
 onMounted(()=>{
-  if(data.content){
-    let financials = JSON.parse(data.content)
-    rows.value = financials.row
-    columns.value = financials.col
-  }
-  else{
-    columns.value = [
-        {name: 'particular', label: 'Particular', field: 'particular', align: 'left'}
-    ]
+   pl.value = {
+       columns: [
+            {name: 'particular', label: 'Particular', field: 'particular', align: 'left'}
+          ],
+        rows: [
+            {particular: "Revenue from operations"},
+            {particular: "Restated Profit/Loss for the Year"},
+            {particular: "Basic Restated Earning Per Equity Share"},
+            {particular: "Diluted Restated Earning Per Equity Share"},
+          ]
+        }
+    bs.value = {
+      columns: [
+            {name: 'particular', label: 'Particular', field: 'particular', align: 'left'}
+          ],
+        rows: [
+            {particular: "Cash & Cash Equivalent"},
+            {particular: "Total Assets"},
+            {particular: "Non-current Borrowing"},
+            {particular: "Return no Net Worth (%)"},
+          ]
+    }
 
-    rows.value = [
-        {particular: "Revenue from operations"}
-    ]
-
-  }
-
-  console.log(columns.value.length)
-    
+    if(data.content){
+      let fin = JSON.parse(data.content)
+        pl.value = (fin.pl) ? fin.pl : pl.value
+        bs.value = (fin.bs) ? fin.bs : bs.value
+    }
 })
 </script>
 

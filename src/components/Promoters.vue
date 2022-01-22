@@ -5,7 +5,7 @@
         </div>
         <q-separator spaced />
         <div class="flex flex-start q-gutter-xs">
-        <q-card v-for="promoter in promoters" :key="promoter.id" class="col " flat bordered>
+        <q-card v-for="promoter in promoters" :key="promoter.id" class="col-4" style="max-width:32%" flat bordered>
             <q-card-section horizontal>
                 <q-card-section class="col-5 flex items-start">
                 <q-img
@@ -59,20 +59,20 @@
                     <div class="text-h6 q-mt-sm q-mb-xs">Pre Offer Holding</div>
                     <div class="row no-wrap items-center">
                         <div class="col-6 text-h6 ellipsis">
-                            <q-input v-model="newPromoter.pre_offer_shares" label="No of Shares" />
+                            <q-input v-model="newPromoter.pre_offer_shares" label="No of Shares" @blur="sanitizeNumber(newPromoter.pre_offer_shares, 'pre_offer_shares')" />
                         </div>
                         <div class="col-6 text-h6 ellipsis">
-                            <q-input v-model="newPromoter.pre_offer_percentage" label="Percentage" />
+                            <q-input v-model="newPromoter.pre_offer_percentage" label="Percentage" @blur="sanitizeNumber(newPromoter.pre_offer_percentage, 'pre_offer_percentage')" />
                         </div>
                     </div>
                     <q-separator />
                     <h6 class="text-h6 q-mt-sm q-mb-xs">Post Offer Holding</h6>
                     <div class="row no-wrap items-center">
                         <div class="col-6 text-h6 ellipsis">
-                            <q-input v-model="newPromoter.post_offer_shares" label="No of Shares" />
+                            <q-input v-model="newPromoter.post_offer_shares" label="No of Shares" @blur="sanitizeNumber(newPromoter.post_offer_shares, 'post_offer_shares')" />
                         </div>
                         <div class="col-6 text-h6 ellipsis">
-                            <q-input v-model="newPromoter.post_offer_percentage" label="Percentage" />
+                            <q-input v-model="newPromoter.post_offer_percentage" label="Percentage" @blur="sanitizeNumber(newPromoter.post_offer_percentage, 'post_offer_percentage')" />
                         </div>
                     </div>
                     <q-separator />
@@ -121,6 +121,12 @@ const newPromoter = ref({
     type: 'Individual',
     description: "please paste html here"
 })
+
+const sanitizeNumber = (v, field) => {
+  const val = Math.abs(v.replace(/(,|[^\d.-]+)+/g, ''))
+  eval('newPromoter.value.'+field+'='+val)
+}
+
 const resetNewPromoter = (evt) => {
     newPromoter.value = {
             photo : promoterPhoto,
@@ -149,7 +155,7 @@ const savePromoter = async() => {
         newPromoter.value.photo = (newPromoter.value.photo == "http://localhost:8080/img/promote-placeholder.png") ? null : newPromoter.value.photo 
         newPromoter.value.ipo_id = +props.ipo_id
         let res = await axios.post('https://droplet.netserve.in/promoters', newPromoter.value)
-        console.log(res)
+        if(res.status == 201) promoters.value.push(res.data)
     }
     promoterModel.value = false
 }
