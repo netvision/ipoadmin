@@ -221,7 +221,7 @@ onMounted(()=>{
         {name: 'Column1', label: 'Face Value (Per Share)', field: 'column1'},
         {name: 'Column2', label: 'Total Income (in Cr.)', field: 'column2'},
         {name: 'Column3', label: 'EPS for Year', field: 'column3'},
-        {name: 'Column4', label: 'NAV Per Quity Share', field: 'column4'},
+        {name: 'Column4', label: 'NAV Per Equity Share', field: 'column4'},
         {name: 'Column5', label: 'P/E', field: 'column5'},
         {name: 'Column6', label: 'Return on NetWorth (%)', field: 'column6'}
     ]

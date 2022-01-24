@@ -201,18 +201,24 @@ const confirm = ref(false)
 const selectedRow = ref({})
 
 const addColumn = () => {
-    let newColumn = {
+    if(tbl.value == 'pl'){
+      let newColumn = {
         name: 'column'+pl.value.columns.length,
         label: colLabel.value, 
         field: 'column'+pl.value.columns.length,
         align: 'right'
     }
-    if(tbl.value == 'pl'){
       pl.value.columns.push(newColumn)
       pl.value.rows.map(row => row[newColumn.field] = 0)
       console.log(pl.value.rows)
     }
     else if(tbl.value == 'bs'){
+      let newColumn = {
+        name: 'column'+bs.value.columns.length,
+        label: colLabel.value, 
+        field: 'column'+bs.value.columns.length,
+        align: 'right'
+    }
       bs.value.columns.push(newColumn)
       bs.value.rows.map(row => row[newColumn.field] = 0)
       console.log(bs.value.rows)
@@ -329,7 +335,7 @@ onMounted(()=>{
             {particular: "Cash & Cash Equivalent"},
             {particular: "Total Assets"},
             {particular: "Non-current Borrowing"},
-            {particular: "Return no Net Worth (%)"},
+            {particular: "Return on Net Worth (%)"},
           ]
     }
 
