@@ -25,6 +25,13 @@
         </q-input>
       </div>
       <div class="col q-pa-md">
+          <q-input v-model="issuePrice" label="Issue Price" readonly>
+            <template v-slot:prepend>
+                &#8377; 
+            </template>
+          </q-input>
+      </div>
+      <div class="col q-pa-md">
           <q-input v-model="nse.listing_price" label="Listing Price" @blur="saveData(nse.listing_price, 'listing_price')">
             <template v-slot:prepend>
                 &#8377; 
@@ -75,10 +82,12 @@
 <script setup>
 import { ref, onMounted  } from 'vue' 
 const props = defineProps({
-    IpoId: String
+    IpoId: String,
+    IssuePrice: Number
   })
 const nse = ref({})
 const id = ref(props.IpoId)
+const issuePrice = ref(props.IssuePrice)
 import { axios } from '../boot/axios'
 
 const saveData = async(v, f) =>{
@@ -99,5 +108,6 @@ onMounted(async() =>{
     const data = await axios.get('https://droplet.netserve.in/listings?exchange=NSE&ipo_id='+id.value).then( r=> r.data)
     if(data.length > 0) nse.value = data[0]
     else nse.value = await axios.post('https://droplet.netserve.in/listings', {ipo_id: id.value, exchange: 'NSE'}).then(r => r.data)
+    console.log(issuePrice)
 })
 </script>

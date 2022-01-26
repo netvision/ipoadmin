@@ -29,7 +29,7 @@
 
             <q-separator />
             <q-card-actions class="flex row justify-end">
-                <q-btn flat color="primary" @click="editPromoter(promoter)" label="Edit" />
+                <q-btn flat color="primary" @click="delPromoter(promoter)" label="Delete" /><q-btn flat color="primary" @click="editPromoter(promoter)" label="Edit" />
             </q-card-actions>
         </q-card>
         </div>
@@ -104,6 +104,18 @@
                 </div>
             </q-dialog>
         </q-dialog>
+        <q-dialog v-model="confirm" persistent>
+        <q-card>
+            <q-card-section class="row items-center">
+            <span class="q-ml-sm">Are you sure?</span>
+            </q-card-section>
+
+            <q-card-actions align="right">
+            <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+            <q-btn flat label="Delete" color="primary" @click="confirmDel"></q-btn>
+            </q-card-actions>
+        </q-card>
+        </q-dialog>
     </div>
 </template>
 <script setup>
@@ -116,6 +128,8 @@ const props = defineProps({
 const promoterModel = ref(false)
 const photoUpdateModel = ref(false)
 const promoters = ref([])
+const delPromoterId = ref(null)
+const confirm = ref(false)
 const newPromoter = ref({
     photo : promoterPhoto,
     type: 'Individual',
@@ -138,6 +152,20 @@ const editPromoter = (promoter) => {
     newPromoter.value = promoter
     if(!promoter.photo) newPromoter.value.photo = promoterPhoto
     promoterModel.value = true
+}
+
+const delPromoter = (promoter) => {
+    delPromoterId.value = promoter.id
+    confirm.value = true
+}
+
+const confirmDel = async() => {
+    let res = await axios.delete('https://droplet.netserve.in/promoters/'+delPromoterId.value)
+    if(res.status == 204){
+        promoters.value.splice(promoters.value.findIndex(p => p.id === delPromoterId.value), 1)
+        delPromoterId.value = null
+        confirm.value = false
+    }
 }
 
 const photoUpdate = async(files) => {

@@ -23,6 +23,11 @@
           </q-item>
           
         </div>
+        <q-input label="Issue Price" v-model="ipo.issue_price">
+          <template v-slot:prepend>
+                &#8377; 
+            </template>
+        </q-input>
         <q-dialog v-model="pdfUpload">
           <q-uploader
             label="Basis of Allotment PDF"
@@ -76,7 +81,7 @@
       }
     emit('step', 'ok')
   }
-
+  
   const pdfUploaded = async(files) =>{
     const id = +props.IpoId
     pdf_url.value = JSON.parse(files.xhr.response)

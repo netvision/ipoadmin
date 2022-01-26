@@ -37,6 +37,12 @@
         </q-tr>
     </template>
   </q-table>
+  <div class="row">
+    <div class="col q-pa-md">
+      <q-input type="textarea" label="Notes (paste Html Here)" v-model="htmlNotes" />
+    </div>
+    <div class="col q-pa-md" v-html="htmlNotes"></div>
+  </div>
   <div class="q-pa-md">
       <q-btn-group>
         <q-btn label="Add Column" @click="addColModel = true" />
@@ -48,7 +54,7 @@
     <q-btn color="primary" label="Save" @click="savePeers" />
   </div>
     <q-dialog v-model="addColModel">
-        <q-card class="brlm-card" style="width:100vw">
+        <q-card style="width:100vw">
             <h3 class="text-h6 text-center">Add New Column</h3>
             <q-card-section>
               <div class="row no-wrap items-center">
@@ -129,6 +135,7 @@ const data = defineProps({
 const $q = useQuasar()
 const columns = ref([])
 const rows = ref([])
+const htmlNotes = ref('')
 
 const colLabel = ref('')
 const rowParticular = ref('')
@@ -193,11 +200,12 @@ const deleteRow = () => {
 }
 
 const savePeers = async() => {
-  const peers = {
+  let peers = {
     col: columns.value,
-    row: rows.value
+    row: rows.value,
+    htmlNotes: htmlNotes.value
   }
-
+  console.log(peers)
   const res = await axios.put('https://droplet.netserve.in/ipos/'+data.ipo_id, {peers: JSON.stringify(peers)})
 
     if(res.status == 200) {
@@ -210,13 +218,7 @@ const savePeers = async() => {
 }
 
 onMounted(()=>{
-  if(data.content){
-    let peers = JSON.parse(data.content)
-    rows.value = peers.row
-    columns.value = peers.col
-  }
-  else{
-    columns.value = [
+  columns.value = [
         {name: 'company', label: 'Name of the Company', field: 'company', align: 'left'},
         {name: 'Column1', label: 'Face Value (Per Share)', field: 'column1'},
         {name: 'Column2', label: 'Total Income (in Cr.)', field: 'column2'},
@@ -226,8 +228,11 @@ onMounted(()=>{
         {name: 'Column6', label: 'Return on NetWorth (%)', field: 'column6'}
     ]
 
-    
-
+  if(data.content){
+    let peers = JSON.parse(data.content)
+    rows.value = peers.row
+    columns.value = peers.col
+    htmlNotes.value = (peers.htmlNotes) ? peers.htmlNotes : ''
   }
 
   console.log(columns.value.length)

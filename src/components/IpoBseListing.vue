@@ -25,6 +25,13 @@
         </q-input>
       </div>
       <div class="col q-pa-md">
+          <q-input v-model="issuePrice" label="Issue Price" readonly>
+            <template v-slot:prepend>
+                &#8377; 
+            </template>
+          </q-input>
+      </div>
+      <div class="col q-pa-md">
           <q-input v-model="bse.listing_price" label="Listing Price" @blur="saveData(bse.listing_price, 'listing_price')">
             <template v-slot:prepend>
                 &#8377; 
@@ -75,10 +82,12 @@
 <script setup>
 import { ref, onMounted  } from 'vue' 
 const props = defineProps({
-    IpoId: String
+    IpoId: String,
+    IssuePrice: Number
   })
 const bse = ref({})
 const id = ref(props.IpoId)
+const issuePrice = ref(props.IssuePrice)
 import { axios } from '../boot/axios'
 const saveData = async(v, f) =>{
     let data = {}
@@ -87,8 +96,8 @@ const saveData = async(v, f) =>{
     else if (f == 'url') data = {url : v}
     else {
         const val = v.toString().replace(/(,|[^\d.-]+)+/g, '')
-        eval('bse.value.'+f+'='+ val)
-        eval('data.' + f + '=' + val)
+        bse.value[f] = val
+        data[f] = val
         }
     const upbse = await axios.put('https://droplet.netserve.in/listings/'+bse.value.id, data)
     console.log(upbse)

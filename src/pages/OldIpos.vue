@@ -2,8 +2,8 @@
     <q-page class="q-pa-md">
         
         <q-list>
-            <q-item clickable v-for="ipo in ipos" :key="ipo.ipo_id" @click="openModel(ipo)">
-                <q-item-label>{{ipo.company_name}}</q-item-label>
+            <q-item v-for="(ipo, i) in ipos" :key="i" >
+                <q-item-label>{{ipo.company_name}}- <q-btn flat :label="ipo.price" @click="updateIssuePrice(ipo)" /></q-item-label>
             </q-item>
         </q-list>
         <q-dialog v-model="updateModel" full-width>
@@ -64,6 +64,14 @@ const saveObjects = async() => {
     })
 }
 console.log(ipos.value)
+
+const updateIssuePrice = async(ipo) => {
+    let res = await axios.put('https://droplet.netserve.in/ipos/'+ipo.new_id, {issue_price: ipo.price})
+    if(res.status == 200) {
+        ipos.value.splice(ipos.value.findIndex(ip => ip === ipo), 1)
+    }
+    
+}
 /*
 onMounted(async() => {
     let newIpos =  await axios.get('https://droplet.netserve.in/ipos').then(r => r.data)

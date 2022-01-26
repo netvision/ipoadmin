@@ -90,6 +90,13 @@
         </q-tr>
     </template>
   </q-table>
+  <q-separator spaced />
+  <div class="row">
+    <div class="col q-pa-md">
+      <q-input type="textarea" label="Notes (paste Html Here)" v-model="htmlNotes" />
+    </div>
+    <div class="col q-pa-md" v-html="htmlNotes"></div>
+  </div>
   
   <div class="q-pa-md">
     <q-btn color="primary" label="Save Financials" @click="saveFinancials" />
@@ -189,6 +196,7 @@ const $q = useQuasar()
 const tbl = ref('')
 const pl = ref({})
 const bs = ref({})
+const htmlNotes = ref('')
 
 const colLabel = ref('')
 const rowParticular = ref('')
@@ -300,7 +308,8 @@ const saveFinancials = async() => {
   
   let financials = {
     pl: pl.value,
-    bs: bs.value
+    bs: bs.value,
+    htmlNotes: htmlNotes.value
   }
 
   const res = await axios.put('https://droplet.netserve.in/ipos/'+data.ipo_id, {financials: JSON.stringify(financials)})
@@ -343,6 +352,7 @@ onMounted(()=>{
       let fin = JSON.parse(data.content)
         pl.value = (fin.pl) ? fin.pl : pl.value
         bs.value = (fin.bs) ? fin.bs : bs.value
+        htmlNotes.value = (fin.htmlNotes) ? fin.htmlNotes : ''
     }
 })
 </script>
