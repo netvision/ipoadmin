@@ -20,6 +20,7 @@
           </template>
         </q-input>
         <q-btn flat color="primary" icon="add" label="New IPO" style="margin-left:5px" @click="newIpo = true" />
+        <q-btn color="primary" icon-right="archive" label="csv" no-caps @click="exportTable" />
       </template>
       <template v-slot:body-cell-open="props">
         <q-td :props="props">
@@ -125,7 +126,7 @@
   import { axios } from '../boot/axios'
   import { onMounted, ref } from 'vue'
   import { useRouter } from 'vue-router'
-  import { useQuasar } from 'quasar'
+  import { exportFile, useQuasar } from 'quasar'
   const ipos = ref([])
   const $q = useQuasar()
   const newIpo = ref(false)
@@ -168,6 +169,53 @@
     ipoValues.value = {}
     newIpo.value = false
   }
+
+  const wrapCsvValue = (val, formatFn) => {
+      let formatted = formatFn !== void 0
+        ? formatFn(val)
+        : val
+
+      formatted = formatted === void 0 || formatted === null
+        ? ''
+        : String(formatted)
+
+      formatted = formatted.split('"').join('""')
+      /**
+       * Excel accepts \n and \r in strings, but some other CSV parsers do not
+       * Uncomment the next two lines to escape new lines
+       */
+      // .split('\n').join('\\n')
+      // .split('\r').join('\\r')
+
+      return `"${formatted}"`
+  }
+
+
+  const exportTable = () => {
+    const content = [columns.map(col => wrapCsvValue(col.label))].concat(
+          ipos.value.map(row => columns.map(col => wrapCsvValue(
+            typeof col.field === 'function'
+              ? col.field(row)
+              : row[ col.field === void 0 ? col.name : col.field ],
+            col.format
+          )).join(','))
+        ).join('\r\n')
+
+        const status = exportFile(
+          'table-export.csv',
+          content,
+          'text/csv'
+        )
+
+        if (status !== true) {
+          $q.notify({
+            message: 'Browser denied file download...',
+            color: 'negative',
+            icon: 'warning'
+          })
+        }
+  }
+
   onMounted(async()=>{
     //const ipo = await axios.get('https://uat.ipoinbox.com:5000/api/v1/ipo').then(r => r.data)
     const ipo = await axios.get('https://droplet.netserve.in/ipos').then(r => r.data)

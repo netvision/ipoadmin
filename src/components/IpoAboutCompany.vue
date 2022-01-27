@@ -46,8 +46,7 @@
     <q-tab name="financials" label="Company Financials" />
     <q-tab name="peers" label="Peers" />
     <q-tab name="swot" label="SWOT" />
-    <q-tab name="review" label="Review" />
-    <q-tab name="conclusion" label="Conclusion" />
+    <q-tab name="review" label="Review &amp; Consclusion" />
   </q-tabs>
   <q-separator />
 

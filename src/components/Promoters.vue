@@ -5,7 +5,7 @@
         </div>
         <q-separator spaced />
         <div class="flex flex-start q-gutter-xs">
-        <q-card v-for="promoter in promoters" :key="promoter.id" class="col-4" style="max-width:32%" flat bordered>
+        <q-card v-for="promoter in promoters" :key="promoter.id" style="max-width:32%" flat bordered>
             <q-card-section horizontal>
                 <q-card-section class="col-5 flex items-start">
                 <q-img
@@ -78,7 +78,7 @@
                     <q-separator />
                     <div class="row no-wrap items-center">
                         <div class="col text-h6 ellipsis">
-                            <q-input v-model="newPromoter.description" label="Description" type="textarea" />
+                            <q-editor :toolbar="toolbar" v-model="newPromoter.description" label="Description" />
                         </div>
                     </div>
                     </q-card-section>
@@ -135,7 +135,12 @@ const newPromoter = ref({
     type: 'Individual',
     description: "please paste html here"
 })
-
+const toolbar = [
+        ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
+        ['left', 'center', 'right', 'justify'],
+        ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
+        ['viewsource']
+      ]
 const sanitizeNumber = (v, field) => {
   const val = Math.abs(v.replace(/(,|[^\d.-]+)+/g, ''))
   eval('newPromoter.value.'+field+'='+val)
@@ -145,7 +150,7 @@ const resetNewPromoter = (evt) => {
     newPromoter.value = {
             photo : promoterPhoto,
             type: 'Individual',
-            description: "please paste html here"
+            description: "Profile details here..."
         }
 }
 const editPromoter = (promoter) => {

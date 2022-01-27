@@ -35,15 +35,8 @@ const props = defineProps({
   })
 const swot = ref({})
 const toolbar = [
-        [
-          {
-            label: "Align",
-            fixedLabel: true,
-            list: 'only-icons',
-            options: ['left', 'center', 'right', 'justify']
-          },
-        ],
         ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
+        ['left', 'center', 'right', 'justify'],
         ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
         ['viewsource']
       ]
