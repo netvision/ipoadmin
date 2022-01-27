@@ -93,9 +93,8 @@
   <q-separator spaced />
   <div class="row">
     <div class="col q-pa-md">
-      <q-input type="textarea" label="Notes (paste Html Here)" v-model="htmlNotes" />
+      <q-editor :toolbar="toolbar" v-model="htmlNotes" placeholder="Notes" />
     </div>
-    <div class="col q-pa-md" v-html="htmlNotes"></div>
   </div>
   
   <div class="q-pa-md">
@@ -197,6 +196,12 @@ const tbl = ref('')
 const pl = ref({})
 const bs = ref({})
 const htmlNotes = ref('')
+const toolbar = [
+        ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
+        ['left', 'center', 'right', 'justify'],
+        ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
+        ['viewsource']
+      ]
 
 const colLabel = ref('')
 const rowParticular = ref('')

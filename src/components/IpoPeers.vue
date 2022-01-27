@@ -37,18 +37,19 @@
         </q-tr>
     </template>
   </q-table>
-  <div class="row">
-    <div class="col q-pa-md">
-      <q-input type="textarea" label="Notes (paste Html Here)" v-model="htmlNotes" />
-    </div>
-    <div class="col q-pa-md" v-html="htmlNotes"></div>
-  </div>
+  
   <div class="q-pa-md">
       <q-btn-group>
         <q-btn label="Add Column" @click="addColModel = true" />
         <q-btn label="Edit Columns" @click="editColModel = true" />
         <q-btn label="Add Row" @click="addRowModel= true" />
       </q-btn-group>
+  </div>
+  <div class="row">
+    <div class="col q-pa-md">
+      <q-editor :toolbar="toolbar" v-model="htmlNotes" placeholder="Notes" />
+    </div>
+    
   </div>
   <div class="q-pa-md">
     <q-btn color="primary" label="Save" @click="savePeers" />
@@ -136,6 +137,12 @@ const $q = useQuasar()
 const columns = ref([])
 const rows = ref([])
 const htmlNotes = ref('')
+const toolbar = [
+        ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
+        ['left', 'center', 'right', 'justify'],
+        ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
+        ['viewsource']
+      ]
 
 const colLabel = ref('')
 const rowParticular = ref('')
