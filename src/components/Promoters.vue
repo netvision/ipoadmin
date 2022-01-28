@@ -1,7 +1,7 @@
 <template>
     <div class="q-pa-md">
         <div class="flex justify-end">
-        <q-btn flat label="Add Promoter" @click="promoterModel = true" />
+            <q-btn flat label="Add Promoter" @click="promoterModel = true" />
         </div>
         <q-separator spaced />
         <div class="flex flex-start q-gutter-xs">
@@ -75,13 +75,15 @@
                             <q-input v-model="newPromoter.post_offer_percentage" label="Percentage" @blur="sanitizeNumber(newPromoter.post_offer_percentage, 'post_offer_percentage')" />
                         </div>
                     </div>
+                    </q-card-section>
+                </q-card-section>
+                <q-card-section>
                     <q-separator />
                     <div class="row no-wrap items-center">
                         <div class="col text-h6 ellipsis">
                             <q-editor :toolbar="toolbar" v-model="newPromoter.description" label="Description" />
                         </div>
                     </div>
-                    </q-card-section>
                 </q-card-section>
 
                 <q-separator />
@@ -116,15 +118,30 @@
             </q-card-actions>
         </q-card>
         </q-dialog>
+    <div class="q-pa-md">
+        <q-card flat>
+            <q-card-section class="row items-center">
+                <div class="text-h6">Notes</div>
+            <q-editor :toolbar="toolbar" v-model="html_notes" placeholder="Notes" style="width:100%" />
+            </q-card-section>
+
+            <q-card-actions align="right">
+            <q-btn label="Save Notes" color="primary" @click="saveNotes"></q-btn>
+            </q-card-actions>
+        </q-card>
+    </div>
     </div>
 </template>
 <script setup>
 import { ref, onMounted  } from 'vue'
 import { api, axios } from '../boot/axios'
+import { useQuasar } from 'quasar'
 import promoterPhoto from '../assets/promote-placeholder.png'
 const props = defineProps({
-    ipo_id: Number
+    ipo_id: Number,
+    notes: String
   })
+const $q = useQuasar()
 const promoterModel = ref(false)
 const photoUpdateModel = ref(false)
 const promoters = ref([])
@@ -141,6 +158,8 @@ const toolbar = [
         ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
         ['viewsource']
       ]
+
+const html_notes = ref('')
 const sanitizeNumber = (v, field) => {
   const val = Math.abs(v.replace(/(,|[^\d.-]+)+/g, ''))
   eval('newPromoter.value.'+field+'='+val)
@@ -193,14 +212,25 @@ const savePromoter = async() => {
     promoterModel.value = false
 }
 
+const saveNotes = async() => {
+        let res = await axios.put('https://droplet.netserve.in/ipos/'+props.ipo_id, {promotors_html: html_notes.value})
+        if(res.status == 200){
+            $q.notify({
+              message: 'Updated Successfully',
+              icon: 'announcement'
+            })
+        }
+}
+
 onMounted(async() => {
-        let ipo_id = +props.ipo_id
+    let ipo_id = +props.ipo_id
       promoters.value = await axios.get('https://droplet.netserve.in/promoters?ipo_id='+ipo_id).then(r => r.data)
       console.log(promoters.value)
+      html_notes.value = props.notes
   })
 </script>
 <style lang="sass" scoped>
     .my-card
-        width: 100%
-        max-width: 600px
+        width: 90%
+        max-width: 1100px
 </style>
