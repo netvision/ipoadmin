@@ -17,7 +17,7 @@
       <q-btn-group flat>
       <q-btn label="Add Column" @click="() => {addColModel = true; tbl = 'pl'}" />
       <q-btn label="Edit Columns" @click="() => {editColModel = true; tbl = 'pl'}" />
-      <q-btn label="Add Row" @click="() => {addRowModel= true; tbl = 'bs'}" />
+      <q-btn label="Add Row" @click="() => {addRowModel= true; tbl = 'pl'}" />
     </q-btn-group>
     </template>
     <template v-slot:header="props">
@@ -222,7 +222,7 @@ const addColumn = () => {
         align: 'right'
     }
       pl.value.columns.push(newColumn)
-      pl.value.rows.map(row => row[newColumn.field] = 0)
+      pl.value.rows.map(row => row[newColumn.field] = null)
       console.log(pl.value.rows)
     }
     else if(tbl.value == 'bs'){
@@ -233,7 +233,7 @@ const addColumn = () => {
         align: 'right'
     }
       bs.value.columns.push(newColumn)
-      bs.value.rows.map(row => row[newColumn.field] = 0)
+      bs.value.rows.map(row => row[newColumn.field] = null)
       console.log(bs.value.rows)
     }
 }
@@ -245,7 +245,7 @@ const addRow = () => {
           if(col.field == 'particular'){
               newRow.particular = rowParticular.value
           }
-          else newRow[col.field] = 0
+          else newRow[col.field] = null
       })
       pl.value.rows.push(newRow)
     }
@@ -254,7 +254,7 @@ const addRow = () => {
           if(col.field == 'particular'){
               newRow.particular = rowParticular.value
           }
-          else newRow[col.field] = 0
+          else newRow[col.field] = null
       })
       bs.value.rows.push(newRow)
     }
