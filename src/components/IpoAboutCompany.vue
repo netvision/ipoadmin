@@ -53,7 +53,7 @@
   <q-tab-panels v-model="tab" animated>
     <q-tab-panel name="info">
       <div class="text-h6">Company Info</div>
-      <CompanyInfo :ipo_id="ipo.ipo_id" :content="ipo.about_html" />
+      <CompanyInfo :ipo_id="ipo.ipo_id" :content="ipo.about_html" :blog_id="ipo.blog_id" />
     </q-tab-panel>
 
     <q-tab-panel name="promoters">
