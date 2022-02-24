@@ -2,7 +2,6 @@
   <q-editor v-model="html_content" :toolbar="toolbar" />
   <q-btn label="save" @click="saveReview" />
 </template>
-
 <script setup>
 import { ref } from 'vue' 
 import { useQuasar } from 'quasar'

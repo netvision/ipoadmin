@@ -228,7 +228,7 @@ onMounted(()=>{
   columns.value = [
         {name: 'company', label: 'Name of the Company', field: 'company', align: 'left'},
         {name: 'Column1', label: 'Face Value (Per Share)', field: 'column1'},
-        {name: 'Column2', label: 'Total Income (in Cr.)', field: 'column2'},
+        {name: 'Column2', label: 'Total Revenue (in Cr.)', field: 'column2'},
         {name: 'Column3', label: 'EPS for Year (Basic)', field: 'column3'},
         {name: 'Column3', label: 'EPS for Year (Diluted)', field: 'column4'},
         {name: 'Column4', label: 'NAV Per Equity Share', field: 'column5'},
