@@ -46,7 +46,7 @@
     <q-tab name="financials" label="Company Financials" />
     <q-tab name="peers" label="Peers" />
     <q-tab name="swot" label="SWOT" />
-    <q-tab name="review" label="Review &amp; Consclusion" />
+    <q-tab name="review" label="Review &amp; Conclusion" />
   </q-tabs>
   <q-separator />
 
@@ -75,7 +75,7 @@
       <Swot :ipo_id="ipo.ipo_id" />
     </q-tab-panel>
     <q-tab-panel name="review">
-      <div class="text-h6">Review</div>
+      <div class="text-h6">Review &amp; Conclusion</div>
       <IpoReview :ipo_id="ipo.ipo_id" :content="ipo.review_html" />
     </q-tab-panel>
     <q-tab-panel name="conclusion">
