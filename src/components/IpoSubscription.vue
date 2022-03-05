@@ -53,8 +53,8 @@
     else{
       value = Number(value)
     }
-    eval('subscriptions.value[i].'+d+' = '+Math.round(value))
-    eval('data.'+d+'='+Math.round(value))
+    eval('subscriptions.value[i].'+d+' = '+value)
+    eval('data.'+d+'='+value)
     console.log(data)
     const subs = await axios.put('https://droplet.netserve.in/subscriptions/'+id, data)
     console.log(subs)
