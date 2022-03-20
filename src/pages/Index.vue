@@ -48,6 +48,9 @@
         <q-card-section>
           <div class="text-h6">New IPO</div>
           <div class="row">
+          <div class="col col-4 q-pa-md">
+              <q-select filled v-model="ipoValues.ipo_type" :options="['IPO', 'SME', 'FPO']" label="Type" />
+            </div>
             <div class="col q-pa-md">
               <q-input v-model="ipoValues.company_name" label="Company Name" />
             </div>

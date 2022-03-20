@@ -8,18 +8,24 @@
       <div class="col q-pa-md">
         <q-input v-model="overview.company_url" label="Company Website" />
       </div>
+      <div class="col col-2 q-pa-md">
+        <q-select filled v-model="overview.ipo_type" :options="['IPO', 'SME', 'FPO']" label="Type" />
+      </div>
       <div class="col col-3 q-pa-md">
         <q-select 
-          filled 
-          v-model="overview.sector_id" 
-          :options="sectors" 
+          filled
+          multiple 
+          v-model="overview.sector_ids" 
+          :options="sectorsOpt" 
           option-value="id" 
           option-label="name" 
           label="Sector" 
           emit-value 
           map-options
           use-input
-          @filter="filterFn">
+          @filter="filterFn"
+          @filter-abort="filterAb"
+          >
           <template v-slot:after>
             <q-btn round dense flat icon="add" @click="addSectorModel = true" />
           </template>
@@ -286,12 +292,17 @@ const application_amount = ref(0)
 const addSectorModel = ref(false)
 const addRegistrarForm = ref(false)
 const addBrlmForm = ref(false)
+const sectorsOpt = ref([])
 
 const filterFn = (val, update, abort) => {
   update(() => {
           const needle = val.toLowerCase()
-          sectors.value = sectors.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+          sectorsOpt.value = sectors.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
         })
+}
+
+const filterAb = async() => {
+  sectorsPt.value = sectors.value
 }
 
 const addSector = async() => {
@@ -349,6 +360,7 @@ const saveQuota = async(id) => {
 const saveOverview = async() => {
   const id = +props.IpoId
   overview.value.brlms_json = JSON.stringify(overview.value.brlms)
+  overview.value.subsector_ids = JSON.stringify(overview.value.sector_ids)
   const upIpo = await axios.put('https://droplet.netserve.in/ipos/'+id, overview.value)
   if(upIpo.status == '200'){
     $q.notify({
@@ -357,7 +369,7 @@ const saveOverview = async() => {
         })
         emit('step', 'ok')
   }
-  console.log(upIpo)
+  console.log(overview.value)
 }
 
 onBeforeMount(async()=>{
@@ -370,11 +382,13 @@ onBeforeMount(async()=>{
   console.log(ipo)
   overview.value = ipo
   overview.value.brlms = JSON.parse(ipo.brlms_json)
+  overview.value.sector_ids = JSON.parse(ipo.subsector_ids)
   const quotas = await axios.get('https://droplet.netserve.in/subscriptions?ipo_id='+id).then(r => r.data)
   invCategories.value.forEach(cat => {
     cat_quotas.value[cat.id] = (quotas.filter(qt => qt.cat_id == cat.id)[0]) ? quotas.filter(qt => qt.cat_id == cat.id)[0].quota : 0
   })
   console.log(cat_quotas.value)
+  sectorsOpt.value = sectors.value
   updateAppAmount()
   
 })
