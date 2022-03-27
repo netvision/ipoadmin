@@ -11,13 +11,16 @@
       <q-step :name="3" title="Schedule" :done="done3">
         <IpoSchedule :IpoId="ipo_id" @step="() => {step = 4; done3 = true;}" />
       </q-step>
-      <q-step :name="4" title="Subscriptions" :done="done4">
+       <q-step :name="4" title="Anchors" :done="done4">
+        <IpoAnchors :IpoId="ipo_id" @step="() => {done4 = true;}" />
+      </q-step>
+      <q-step :name="5" title="Subscriptions" :done="done5">
         <IpoSubscription :IpoId="ipo_id" />
       </q-step>
-      <q-step :name="5" title="Allotments" :done="done5">
+      <q-step :name="6" title="Allotments" :done="done6">
         <IpoAllotments :IpoId="ipo_id" @step="() => {step = 6; done5 = true;}" />
       </q-step>
-      <q-step :name="6" title="Listing Data" :done="done6">
+      <q-step :name="7" title="Listing Data" :done="done7">
         <IpoListing :IpoId="ipo_id" :exchange="ipo.listed_at" :IssuePrice = "ipo.issue_price"/>
       </q-step>
     </q-stepper>
@@ -30,10 +33,12 @@
   import { axios } from '../boot/axios'
   import IpoOverview from '../components/IpoOverview.vue'
   import IpoAboutCompany from '../components/IpoAboutCompany.vue'
+  import Gmp from '../components/Gmp.vue'
   import IpoSubscription from '../components/IpoSubscription.vue'
   import IpoSchedule from '../components/IpoSchedule.vue'
   import IpoAllotments from '../components/IpoAllotments.vue'
   import IpoListing from '../components/IpoListing.vue'
+  import IpoAnchors from '../components/IpoAnchors.vue'
   const route = useRoute()
   const ipo_id = route.params.id
   const ipo = ref({})
@@ -44,6 +49,7 @@
   const done4 = ref(false)
   const done5 = ref(false)
   const done6 = ref(false)
+  const done7 = ref(false)
   onMounted(async() => {
     ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipo_id).then(r => r.data)
     console.log(ipo.value)
