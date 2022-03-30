@@ -8,6 +8,7 @@ const routes = [
       { path: '/registrars', component: () => import('pages/Registrar.vue') },
       { path: '/sectors', component: () => import('pages/Sectors.vue') },
       { path: '/brlms', component: () => import('pages/Brlms.vue') },
+      { path: '/anchors', component: () => import('pages/Anchors.vue') },
       { path: '/gmp', component: () => import('pages/Gmp.vue') },
       { path: '/oldIpos', component: () => import('pages/OldIpos.vue') },
       { path: '/old-ipo/:id', component: () => import('pages/OldIpoDetail.vue') },

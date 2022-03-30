@@ -10,6 +10,7 @@
           <q-btn flat label="Sectors" to="/sectors" />
           <q-btn flat label="Registrars" to="/registrars" />
           <q-btn flat label="BLRMs" to="/brlms" />
+          <q-btn flat label="Anchors" to="/anchors" />
           <q-btn flat label="GMP" to="/gmp" />
         </q-btn-group>
         <q-btn-dropdown flat icon="account_circle">
