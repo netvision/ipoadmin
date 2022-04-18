@@ -3,7 +3,7 @@
         
         <q-list>
             <q-item v-for="(ipo, i) in ipos" :key="i" >
-                <q-item-label>{{ipo.company_name}}- <q-btn flat :label="ipo.price" @click="updateIssuePrice(ipo)" /></q-item-label>
+                <q-item-label>{{ipo.company_name}}- <q-btn label="Subs" @click="updateSubs(ipo)" /></q-item-label>
             </q-item>
         </q-list>
         <q-dialog v-model="updateModel" full-width>
@@ -42,9 +42,9 @@
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
-import ipoData from '../ipo1.json'
 import { api, axios } from '../boot/axios'
-const ipos = ref(ipoData)
+import { date } from 'quasar'
+const ipos = ref([])
 const subscriptions = ref([])
 const cat_data = ref([])
 const ip = ref({})
@@ -65,23 +65,50 @@ const saveObjects = async() => {
 }
 console.log(ipos.value)
 
-const updateIssuePrice = async(ipo) => {
-    let res = await axios.put('https://droplet.netserve.in/ipos/'+ipo.new_id, {issue_price: ipo.price})
-    if(res.status == 200) {
-        ipos.value.splice(ipos.value.findIndex(ip => ip === ipo), 1)
+const updateSubs = async(ipo) => {
+    let sub = await axios.get('https://droplet.netserve.in/subscriptions?ipo_id='+ipo.ipo_id+'&expand=cat').then(r => r.data)
+    let subscriptions = sub.filter(r => r.quota > 0 && r.cat_id != 6 && r.cat_id != 7)
+    let start = new Date(ipo.open_date)
+    let close = new Date(ipo.close_date)
+    let data = []
+    for (let i = 0; i <= date.getDateDiff(close, start, 'days'); i++){
+        let day = date.addToDate(start, {days: i})
+        day = date.formatDate(day, 'YYYY-MM-DD')
+        if(date.getDayOfWeek(day) < 6) {
+          for (let subs of subscriptions){
+            if(i == 0){
+              let log = { ipo_id: ipo.ipo_id, day: day, cat_id: subs.cat_id, subscription: subs.day1}
+              data.push(log)
+            }
+            else if (i == 1){
+              let log = { ipo_id: ipo.ipo_id, day: day, cat_id: subs.cat_id, subscription: subs.day2}
+              data.push(log)
+            }
+            else if (i == date.getDateDiff(close, start, 'days')){
+              let log = { ipo_id: ipo.ipo_id, day: day, cat_id: subs.cat_id, subscription: subs.day3, applications: subs.total_applications}
+              data.push(log)
+            }
+            else {
+              let log = { ipo_id: ipo.ipo_id, day: day, cat_id: subs.cat_id, subscription: null}
+              data.push(log)
+            }
+          }
+        }
     }
-    
+    if(data.length > 0) {
+        for(let d of data){
+            let res = await axios.post('https://droplet.netserve.in/ipo-subscription-logs', d)
+            console.log(res.status)
+        }
+    }
+    ipos.value.splice(ipos.value.findIndex(ip => ip === ipo), 1)
 }
-/*
+
 onMounted(async() => {
-    let newIpos =  await axios.get('https://droplet.netserve.in/ipos').then(r => r.data)
-    ipos.value.map(ipo => {
-        let rec = newIpos.filter(ip => ip.company_name === ipo.company_name)
-        if(rec.length > 0) return ipo.new_id = rec[0].ipo_id
-    })
-    console.log(ipos.value)
+    ipos.value =  await axios.get('https://droplet.netserve.in/ipos').then(r => r.data)
+    
 })
-*/
+
  /*
 const records = ref([])
 const format_date = (v) =>{

@@ -111,7 +111,12 @@ const del = async(id) => {
 
 onMounted(async() => {
     anchors.value = await axios.get('https://droplet.netserve.in/anchors').then(r => r.data)
-    console.log(anchors.value)
+    /*
+    let test = await axios.get('https://www.bseindia.com/markets/PublicIssues/BSEBidDetails_ofs.aspx?flag=NR&Scripcode=500312')
+    let parser = new DOMParser()
+    let html = parser.parseFromString(test.data, 'text/html')
+    console.log(html.getElementById('divID').querySelector('table tr').innerText)
+    */
 })
 </script>
 

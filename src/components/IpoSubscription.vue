@@ -2,68 +2,107 @@
 <div class="q-pa-md">
   <h4 class="text-h4">Subscriptions</h4>
   <ol>
-      <li>
-        Values are autosaved! so there is no save button.
-      </li>
+      
       <li>
         Only those catagories are shown, whose quotas have been set in first 'overview' page.
       </li>
   </ol>
+  <div v-for="(daylog, j) in daylogs" :key="j">
+  <h4 class="text-h5">{{date.formatDate(daylog.day, 'ddd, Do MMM YYYY')}}</h4>
   <table class="subs">
-    <tr v-for="(item, i) in subscriptions" :key="i">
+    <tr v-for="(item, i) in daylog.logs" :key="i">
       <td>
-        <q-input :label="item.cat.short_name" readonly standout placeholder="Placeholder">
+        <q-input :label="item.cat_name" readonly standout placeholder="Placeholder">
         <template v-slot:append>
           <q-btn round dense flat icon="chevron_right" />
         </template>
         </q-input>
       </td>
       <td><q-input v-model="item.quota" label="Quota" outlined disable bg-color="cyan-2" /></td>
-      <td><q-input v-model="item.day1" label="Day1" outlined @blur="saveSubs(item.day1, i, 'day1')" /></td>
-      <td><q-input v-model="item.day2" label="Day2" outlined @blur="saveSubs(item.day2, i, 'day2')" /></td>
-      <td><q-input v-model="item.day3" label="Day3" outlined @blur="saveSubs(item.day3, i, 'day3')" /></td>
-      <td><q-input v-model="item.discount" label="Cat Discount" outlined @blur="saveSubs(item.discount, i, 'discount')" /></td>
-      <td><q-input v-model="item.total_applications" label="Total Applications" outlined @blur="saveSubs(item.total_applications, i, 'total_applications')" /></td>
-
+      <td><q-input v-model="item.subscription" label="Subscription" outlined @blur="sanitizeSubs(item.subscription, i, j)" /></td>
+      <td><q-input v-model="item.applications" label="Total Applications" @blur="sanitizeApp(item.applications, i, j)" outlined /></td>
+      <td><q-btn color="primary" label="Save" @click="save(item)" /></td>
     </tr>
   </table>
+  </div>
+  
   
 </div>
+
 </template>
 
 <script setup>
   import { ref, onMounted } from 'vue' 
-  import { api, axios } from '../boot/axios'
-  const subscriptions = ref([])
+  import { axios } from '../boot/axios'
+  import { date } from 'quasar'
   const props = defineProps({
     IpoId: String
   })
   const ipoId = ref(props.IpoId)
-  const day1 = ref({})
-  const day2 = ref({})
-  const day3 = ref({})
-  const total = ref({})
-  const saveSubs = async(v, i, d) => {
-    let data = {}
+  const ipo = ref({})
+  const daylogs = ref([])
+  const save = async(item) => {
+    let data = {
+      ipo_id: ipoId.value,
+      cat_id: item.cat_id,
+      day: date.formatDate(item.day, 'YYYY-MM-DD'),
+      subscription: item.subscription,
+      applications: item.applications
+    }
+    if(item.id){
+      let res = await axios.put('https://droplet.netserve.in/ipo-subscription-logs/'+item.id, data)
+      console.log(res.status)
+    }
+    else{ 
+      let res = await axios.post('https://droplet.netserve.in/ipo-subscription-logs', data)
+      console.log(res.status)
+    }
+  }
+  const sanitizeSubs = (v, i, j) => {
     let value = (v != 'null') ? v.replace(/(,|[^\d.-]+)+/g, '') : 0
-    const id = subscriptions.value[i].id
     if(Number(value) < 0){
-      value = Math.abs(subscriptions.value[i].quota) * Math.abs(value)
+      value = Math.abs(daylogs.value[j].logs[i].quota) * Math.abs(value)
     }
     else{
       value = Number(value)
     }
-    eval('subscriptions.value[i].'+d+' = '+value)
-    eval('data.'+d+'='+value)
-    console.log(data)
-    const subs = await axios.put('https://droplet.netserve.in/subscriptions/'+id, data)
-    console.log(subs)
-    
+    daylogs.value[j].logs[i].subscription = value
   }
-  
+  const sanitizeApp = (v, i, j) => {
+    daylogs.value[j].logs[i].applications = (v != 'null') ? v.replace(/(,|[^\d.-]+)+/g, '') : 0
+  }
   onMounted(async() => {
-    const sub = await axios.get('https://droplet.netserve.in/subscriptions?ipo_id='+ipoId.value+'&expand=cat').then(r => r.data)
-    subscriptions.value = sub.filter(r => r.quota > 0)
+   let logs = await axios.get('https://droplet.netserve.in/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
+    let quotas = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
+    ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?fields=open_date,close_date').then(r => r.data)
+    let start = new Date(ipo.value.open_date)
+    let close = new Date(ipo.value.close_date)
+    if(quotas.length > 0){
+      for (let i = 0; i <= date.getDateDiff(close, start, 'days'); i++){
+          let day = date.addToDate(start, {days: i})
+          let dlogs = []
+          if(date.getDayOfWeek(day) < 6) {
+              for(let quota of quotas){
+                let log = {day: day, cat_id: quota.cat_id, cat_name: quota.cat.short_name, quota: quota.quota, discount: quota.discount}
+                if(logs.length > 0){
+                  let daylog = logs.filter(dl => dl.day === date.formatDate(day, 'YYYY-MM-DD') && dl.cat_id === quota.cat_id)
+                  if(daylog.length > 0){
+                    log.id = daylog[0].id
+                    log.subscription = daylog[0].subscription
+                    log.applications = daylog[0].applications
+                  }
+                  else{ 
+                    log.subscription = null
+                    log.applications = null
+                  }
+                }
+                dlogs.push(log)
+              }
+              
+              daylogs.value.push({day: day, logs: dlogs})
+            }
+        }
+    }
   })
 
 </script>
