@@ -83,6 +83,7 @@
           let dlogs = []
           if(date.getDayOfWeek(day) < 6) {
               for(let quota of quotas){
+                if(quota.quota > 0 && quota.cat_id < 6){
                 let log = {day: day, cat_id: quota.cat_id, cat_name: quota.cat.short_name, quota: quota.quota, discount: quota.discount}
                 if(logs.length > 0){
                   let daylog = logs.filter(dl => dl.day === date.formatDate(day, 'YYYY-MM-DD') && dl.cat_id === quota.cat_id)
@@ -98,6 +99,7 @@
                 }
                 dlogs.push(log)
               }
+          }
               
               daylogs.value.push({day: day, logs: dlogs})
             }
