@@ -1,6 +1,6 @@
 <template>
 <q-page class="q-pa-md">
-    <h2 class="text-h4">Grey Market Premiums</h2>
+    <h2 class="text-h4">Grey Market Premium</h2>
     <div class="row q-gutter-md">
         <div class="col-5 bg-orange-1 q-pa-md">
             <h3 class="text-h5">Latest IPOs/SME IPOs/FPOs</h3>
@@ -22,9 +22,9 @@
         </div>
         <div class="col bg-orange-1">        
         <q-list bordered class="rounded-borders">
-            <q-item>
+            <q-item v-if="ipo">
                 <q-item-section top>
-                    <q-item-label header class="text-h4"><span v-if="ipo">GMPs of {{ipo.company_name}}</span></q-item-label>
+                    <q-item-label header class="text-h4"><span>GMPs of {{ipo.company_name}}</span></q-item-label>
                 </q-item-section>
                 <q-item-section top side>
                     <div class="text-grey-8 q-gutter-xs">
@@ -34,18 +34,24 @@
             </q-item>
             <q-item v-for="(g, i) in gmps" :key="i">
                 <q-item-section>
-                    <span class="text-weight-medium">{{date.formatDate(g.date_time, 'DD-MM-YYYY | HH:mm')}}</span>
+                    <span style="border-bottome:1px solid #333" class="text-weight-medium">{{date.formatDate(g.date_time, 'DD-MM-YYYY | HH:mm')}}</span>
                 </q-item-section>
-                <q-item-section side>
+                <q-item-section>
                    <span class="text-weight-medium">{{g.gmpType.short_name}}</span>
                 </q-item-section>
-                
-                <q-item-section side>
-                <span class="text-weight-medium">&#8377;{{g.gmp_value}}</span>
+                <q-item-section>
+                <span class="text-weight-bold text-ligh-blue-8" v-if="g.gmp_value_low">&#8377;{{g.gmp_value_low}}-</span><span class="text-weight-bold text-ligh-blue-8">&#8377;{{g.gmp_value}}</span>
                 </q-item-section>
-                <q-item-section top side>
+                <q-item-section side>
+                   <span class="text-weight-medium">{{g.type}}</span>
+                </q-item-section>
+                <q-item-section side>
+                   <span class="text-weight-medium">{{g.volume}}</span>
+                </q-item-section>
+                <q-item-section side top>
                     <span class="text-weight-medium"> <q-btn size="12px" flat dense round icon="edit" @click="edit(i)" /> <q-btn size="12px" flat dense round icon="delete" @click="del(i)" /></span>
                 </q-item-section>
+                
             </q-item>
         </q-list>
            <q-dialog v-model="editModel" @hide="reset">
@@ -94,14 +100,51 @@
                         use-input
                         option-value="id" 
                         option-label="short_name"
+                        label="GMP"
                     />
                 </q-item-section>
-                
-                <q-item-section side>
-                    <q-input v-model="gmp.gmp_value" />
+                <q-item-section>
+                    <q-select
+                        square
+                        filled
+                        v-model="gmp.type"
+                        :options="['Buyer', 'Seller']"
+                        label="Type"
+                    />
                 </q-item-section>
-                <q-btn flat @click="addRecord" :label="(gmp.id) ? 'Edit' : 'Add'" />
-            </q-item>
+                </q-item>
+                <q-item>
+                    <q-item-section>
+                     <q-input v-model="gmp.gmp_value_low" label="Price Range Low" type="number">
+                        <template v-slot:prepend>
+                            &#8377; 
+                        </template>
+                     </q-input>
+                    </q-item-section>
+                    <q-item-section>
+                     <q-input v-model="gmp.gmp_value_high" label="Price Range high" type="number">
+                        <template v-slot:prepend>
+                            &#8377; 
+                        </template>
+                     </q-input>
+                    </q-item-section>
+                </q-item>
+                <q-item>
+                    <q-item-section>
+                     <q-select
+                        square
+                        bg-color="teal-1"
+                        filled
+                        v-model="gmp.volume"
+                        :options="['Dry', 'Low', 'Moderate', 'High', 'Extreme']"
+                        label="Volume"                        
+                    />
+                    </q-item-section>
+                    <q-item-section side>
+                     <q-btn @click="addRecord" :label="(gmp.id) ? 'Edit' : 'Add'" />
+                    </q-item-section>
+                </q-item>
+                
             </q-card>
            </q-dialog>
 
@@ -156,18 +199,18 @@
         gmp.value.ipo_id = ipo.value.ipo_id
         gmp.value.date_time = gmpDate.value
         gmp.value.gmp_type_id = gmp.value.gmpType.id
+        
         if(gmp.value.id){
             let res = await axios.put('https://droplet.netserve.in/gmps/'+gmp.value.id, gmp.value)
-            console.log(res)
         }
-        else{ 
+        else{
+            gmp.value.gmp_value = gmp.value.gmp_value_high
             let res = await axios.post('https://droplet.netserve.in/gmps', gmp.value)
             if(res.status == 201){
                 gmp.value.id = res.data.id
                 gmps.value.push(gmp.value)
             }
         }
-        
         editModel.value = false
     }
 
@@ -183,6 +226,7 @@
             ipo.value = ip
         }
            gmps.value = await axios.get('https://droplet.netserve.in/gmps?expand=gmpType&ipo_id='+ipo.value.ipo_id).then(r => r.data)
+           gmps.value.map(g => {if(g.gmp_value > 0 && g.gmp_value_high === null) g.gmp_value_high = g.gmp_value})
         }
 
     const createSelectValue = async(val, done) => {

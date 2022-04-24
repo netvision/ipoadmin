@@ -401,7 +401,7 @@ onBeforeMount(async()=>{
   const id = +props.IpoId
   sectors.value = await axios.get('https://droplet.netserve.in/sectors').then(r => r.data)
   registrars.value = await axios.get('https://droplet.netserve.in/registrars').then(r => r.data)
-  invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories').then(r => r.data)
+  invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories?sort=cat_order').then(r => r.data)
   brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
   const ipo = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
   console.log(ipo)
