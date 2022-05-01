@@ -21,7 +21,7 @@
       <td><q-input v-model="item.quota" label="Quota" outlined disable bg-color="cyan-2" /></td>
       <td><q-input v-model="item.subscription" label="Subscription" outlined @blur="sanitizeSubs(item.subscription, i, j)" /></td>
       <td><q-input v-model="item.applications" label="Total Applications" @blur="sanitizeApp(item.applications, i, j)" outlined /></td>
-      <td><q-btn color="primary" label="Save" @click="save(item)" /></td>
+      <td><q-btn v-if="item.id" :disable = "item.disable" color="primary" label="Edit" @click="save(item)" /><q-btn v-else :disable = "item.disable" color="primary" label="Save" @click="save(item)" /></td>
     </tr>
   </table>
   </div>
@@ -42,6 +42,7 @@
   const ipo = ref({})
   const daylogs = ref([])
   const save = async(item) => {
+    item.disable = true
     let data = {
       ipo_id: ipoId.value,
       cat_id: item.cat_id,
@@ -51,11 +52,12 @@
     }
     if(item.id){
       let res = await axios.put('https://droplet.netserve.in/ipo-subscription-logs/'+item.id, data)
-      console.log(res.status)
+      item.disable = false
     }
     else{ 
       let res = await axios.post('https://droplet.netserve.in/ipo-subscription-logs', data)
-      console.log(res.status)
+      if(res.status === 201) item.id = res.data.id
+      item.disable = false
     }
   }
   const sanitizeSubs = (v, i, j) => {

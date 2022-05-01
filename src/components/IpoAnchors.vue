@@ -104,8 +104,7 @@ const addRecord = async() => {
     }
     editModel.value = false
     getTotal()
-    
-}
+ }
 
 const showModel = () => {
     anchor.value = {}
@@ -134,7 +133,7 @@ onMounted(async() => {
     ipoAnchors.value = await axios.get('https://droplet.netserve.in/ipo-anchors?expand=anchor&ipo_id='+ipoId.value).then(r => r.data)
     anchors.value = await axios.get('https://droplet.netserve.in/anchor').then(r => r.data)
     //ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?fields=company_name,open_date').then(r => r.data)
-    console.log(ipoAnchors.value)
+    //console.log(ipoAnchors.value)
     options.value = anchors.value
     getTotal()
 })
