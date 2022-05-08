@@ -83,7 +83,7 @@
       for (let i = 0; i <= date.getDateDiff(close, start, 'days'); i++){
           let day = date.addToDate(start, {days: i})
           let dlogs = []
-          if(date.getDayOfWeek(day) < 6) {
+          
               for(let quota of quotas){
                 if(quota.quota > 0 && quota.cat_id < 6){
                 let log = {day: day, cat_id: quota.cat_id, cat_name: quota.cat.short_name, quota: quota.quota, discount: quota.discount}
@@ -104,7 +104,7 @@
           }
               
               daylogs.value.push({day: day, logs: dlogs})
-            }
+            
         }
     }
   })
