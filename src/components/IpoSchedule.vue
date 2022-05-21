@@ -78,6 +78,21 @@
         </template>
         </q-input>
     </div>
+    <div class="col q-pa-md">
+        <q-input v-model="schedule.t_anchor_unlocking_long" mask="date" label="Unlocking Date of Anchors (3Month)">
+        <template v-slot:append>
+          <q-icon name="event" class="cursor-pointer">
+            <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
+              <q-date v-model="schedule.t_anchor_unlocking_long">
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Close" color="primary" flat />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+        </q-input>
+    </div>
   </div>
   <div class="row">
     <div class="col q-pa-md">
