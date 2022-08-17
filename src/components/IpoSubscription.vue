@@ -83,24 +83,24 @@
       for (let i = 0; i <= date.getDateDiff(close, start, 'days'); i++){
           let day = date.addToDate(start, {days: i})
           let dlogs = []
-          
-              for(let quota of quotas){
-                if(quota.quota > 0 && quota.cat_id < 6){
-                let log = {day: day, cat_id: quota.cat_id, cat_name: quota.cat.short_name, quota: quota.quota, discount: quota.discount}
-                if(logs.length > 0){
-                  let daylog = logs.filter(dl => dl.day === date.formatDate(day, 'YYYY-MM-DD') && dl.cat_id === quota.cat_id)
-                  if(daylog.length > 0){
-                    log.id = daylog[0].id
-                    log.subscription = daylog[0].subscription
-                    log.applications = daylog[0].applications
-                  }
-                  else{ 
-                    log.subscription = null
-                    log.applications = null
-                  }
+          quotas.sort((a, b) => a.cat.cat_order - b.cat.cat_order)
+          for(let quota of quotas){
+            if(quota.quota > 0 && quota.cat_id !== 6){
+              let log = {day: day, cat_id: quota.cat_id, cat_name: quota.cat.short_name, quota: quota.quota, discount: quota.discount}
+              if(logs.length > 0){
+                let daylog = logs.filter(dl => dl.day === date.formatDate(day, 'YYYY-MM-DD') && dl.cat_id === quota.cat_id)
+                if(daylog.length > 0){
+                  log.id = daylog[0].id
+                  log.subscription = daylog[0].subscription
+                  log.applications = daylog[0].applications
                 }
-                dlogs.push(log)
+                else{ 
+                  log.subscription = null
+                  log.applications = null
+                }
               }
+              dlogs.push(log)
+            }
           }
               
               daylogs.value.push({day: day, logs: dlogs})
