@@ -1,5 +1,5 @@
 <template>
-    <q-card class="my-card">
+    <q-card style="min-width:50%">
         <q-card-section v-if="details && details.length > 0">
             <q-list separator>
                 <q-item v-for="item in details" :key = "item.id" clickable @click="editRecord(item)">
@@ -9,7 +9,7 @@
                     </q-item-section>
 
                     <q-item-section side top>
-                    <q-item-label caption>{{item.shares_offered}} ({{item.percent_of_holding}})</q-item-label>
+                    <q-item-label caption>{{item.shares_offered}} ({{item.percent_of_holding}}%)</q-item-label>
                     <q-item-label>{{item.amount_in_cr}} Cr.</q-item-label>
                     </q-item-section>
                 </q-item>
@@ -22,7 +22,7 @@
         <q-card-section v-if="newRecord && Object.entries(newRecord).length > 0">
             <div class="row bg-blue-grey-11 q-pa-md">
                 <div class="col-6"><q-input v-model="newRecord.name" label="Name" /></div>
-                <div class="col-6"><q-input v-model="newRecord.type" label="Type" /></div>
+                <div class="col-6"><q-select v-model="newRecord.type" :options="['Promoter', 'Investor', 'Shareholder']" label="Type" /></div>
             </div>
             <div class="row bg-blue-grey-11 q-pa-md">
                 <div class="col"><q-input v-model="newRecord.shares_offered" label="No. of shares offered" /></div>
