@@ -33,7 +33,7 @@
   import { axios } from '../boot/axios'
   import IpoOverview from '../components/IpoOverview.vue'
   import IpoAboutCompany from '../components/IpoAboutCompany.vue'
-  import Gmp from '../components/Gmp.vue'
+  //import Gmp from '../components/Gmp.vue'
   import IpoSubscription from '../components/IpoSubscription.vue'
   import IpoSchedule from '../components/IpoSchedule.vue'
   import IpoAllotments from '../components/IpoAllotments.vue'
@@ -52,7 +52,7 @@
   const done7 = ref(false)
   onMounted(async() => {
     ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipo_id).then(r => r.data)
-    console.log(ipo.value)
+    //console.log(ipo.value)
     step.value = 1
   })
 </script>

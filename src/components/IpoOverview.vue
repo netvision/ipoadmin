@@ -147,8 +147,13 @@
         </q-input>
       </div>
       <div class="col q-pa-md">
-        <q-input v-model="overview.offer_for_sale" label="Offer for Sale" @blur="sanitizeNumber(overview.offer_for_sale, 'offer_for_sale')">
-          
+        <q-input bottom-slots v-model="overview.offer_for_sale" label="Offer for Sale" @blur="sanitizeNumber(overview.offer_for_sale, 'offer_for_sale')">
+          <template v-if="overview.offer_for_sale" v-slot:hint>
+            <q-btn flat size="sm" @click="ofsModal = true" label="Details" color="primary" no-caps />
+            <q-dialog v-model="ofsModal">
+              <IpoOfsDetails :ipoId = "overview.ipo_id" />
+            </q-dialog>
+          </template>
         </q-input>
       </div>
       <div class="col q-pa-md">
@@ -285,6 +290,8 @@
 import { ref, onBeforeMount} from 'vue'
 import { api, axios } from '../boot/axios'
 import { useQuasar } from 'quasar'
+import IpoOfsDetail from './IpoOfsDetails.vue'
+import IpoOfsDetails from './IpoOfsDetails.vue';
 const props = defineProps({
   IpoId: String
 })
@@ -306,6 +313,7 @@ const addSectorModel = ref(false)
 const addRegistrarForm = ref(false)
 const addBrlmForm = ref(false)
 const sectorsOpt = ref([])
+const ofsModal = ref(false)
 
 const filterFn = (val, update, abort) => {
   update(() => {
@@ -315,7 +323,7 @@ const filterFn = (val, update, abort) => {
 }
 
 const filterAb = async() => {
-  sectorsPt.value = sectors.value
+  sectorsOpt.value = sectors.value
 }
 
 const addSector = async() => {
@@ -404,7 +412,7 @@ onBeforeMount(async()=>{
   invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories?sort=cat_order').then(r => r.data)
   brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
   const ipo = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
-  console.log(ipo)
+  //console.log(ipo)
   overview.value = ipo
   overview.value.brlms = JSON.parse(ipo.brlms_json)
   overview.value.sector_ids = JSON.parse(ipo.subsector_ids)
@@ -413,7 +421,7 @@ onBeforeMount(async()=>{
     cat_quotas.value[cat.id] = (quotas.filter(qt => qt.cat_id == cat.id)[0]) ? quotas.filter(qt => qt.cat_id == cat.id)[0].quota : 0
     cat_disc.value[cat.id] = (quotas.filter(qt => qt.cat_id == cat.id)[0]) ? quotas.filter(qt => qt.cat_id == cat.id)[0].discount : 0
   })
-  console.log(cat_quotas.value)
+  //console.log(cat_quotas.value)
   sectorsOpt.value = sectors.value
   updateAppAmount()
   
