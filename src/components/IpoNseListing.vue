@@ -27,14 +27,14 @@
       <div class="col q-pa-md">
           <q-input v-model="issuePrice" label="Issue Price" readonly>
             <template v-slot:prepend>
-                &#8377; 
+                &#8377;
             </template>
           </q-input>
       </div>
       <div class="col q-pa-md">
           <q-input v-model="nse.listing_price" label="Listing Price" @blur="saveData(nse.listing_price, 'listing_price')">
             <template v-slot:prepend>
-                &#8377; 
+                &#8377;
             </template>
           </q-input>
       </div>
@@ -43,21 +43,21 @@
       <div class="col q-pa-md">
           <q-input v-model="nse.high" label="Day High" @blur="saveData(nse.high, 'high')">
             <template v-slot:prepend>
-                &#8377; 
+                &#8377;
             </template>
           </q-input>
       </div>
       <div class="col q-pa-md">
           <q-input v-model="nse.low" label="Day Low" @blur="saveData(nse.low, 'low')">
             <template v-slot:prepend>
-                &#8377; 
+                &#8377;
             </template>
           </q-input>
       </div>
       <div class="col q-pa-md">
           <q-input v-model="nse.close" label="Day Close" @blur="saveData(nse.close, 'close')">
             <template v-slot:prepend>
-                &#8377; 
+                &#8377;
             </template>
           </q-input>
       </div>
@@ -80,7 +80,8 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted  } from 'vue' 
+import { ref, onMounted  } from 'vue'
+import { axios } from '../boot/axios'
 const props = defineProps({
     IpoId: String,
     IssuePrice: Number
@@ -88,8 +89,6 @@ const props = defineProps({
 const nse = ref({})
 const id = ref(props.IpoId)
 const issuePrice = ref(props.IssuePrice)
-import { axios } from '../boot/axios'
-
 const saveData = async(v, f) =>{
     let data = {}
     if(f == 'listing_date') data = {listing_date : v}

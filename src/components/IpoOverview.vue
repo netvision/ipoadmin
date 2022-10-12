@@ -12,15 +12,15 @@
         <q-select filled v-model="overview.ipo_type" :options="['IPO', 'SME', 'FPO']" label="Type" />
       </div>
       <div class="col col-3 q-pa-md">
-        <q-select 
+        <q-select
           filled
-          multiple 
-          v-model="overview.sector_ids" 
-          :options="sectorsOpt" 
-          option-value="id" 
-          option-label="name" 
-          label="Sector" 
-          emit-value 
+          multiple
+          v-model="overview.sector_ids"
+          :options="sectorsOpt"
+          option-value="id"
+          option-label="name"
+          label="Sector"
+          emit-value
           map-options
           use-input
           @filter="filterFn"
@@ -100,21 +100,21 @@
       <div class="col q-pa-md">
         <q-input v-model="overview.face_value" label="Face Value">
           <template v-slot:prepend>
-            &#8377; 
+            &#8377;
           </template>
         </q-input>
-      </div> 
+      </div>
       <div class="col q-pa-md">
         <q-input v-model="overview.price_band_low" label="Price Band (Low)">
           <template v-slot:prepend>
-            &#8377; 
+            &#8377;
           </template>
         </q-input>
       </div>
       <div class="col q-pa-md">
         <q-input v-model="overview.price_band_high" label="Price Band (High)" @blur = 'updateAppAmount'>
           <template v-slot:prepend>
-            &#8377; 
+            &#8377;
           </template>
         </q-input>
       </div>
@@ -122,20 +122,20 @@
     <div class="row">
       <div class="col q-pa-md">
         <q-input v-model="overview.lot_size" label="Lot Size" @blur = 'updateAppAmount'>
-          
+
         </q-input>
       </div>
       <div class="col q-pa-md">
         <q-input readonly v-model="application_amount" label="Application Amount">
           <template v-slot:prepend>
-            &#8377; 
+            &#8377;
           </template>
         </q-input>
       </div>
       <div class="col q-pa-md">
         <q-input v-model="overview.issue_size" label="Issue Size (in Crore)" @blur="sanitizeNumber(overview.issue_size, 'issue_size')">
           <template v-slot:prepend>
-            &#8377; 
+            &#8377;
           </template>
         </q-input>
       </div>
@@ -143,7 +143,7 @@
     <div class="row">
       <div class="col q-pa-md">
         <q-input v-model="overview.fresh_issue" label="Fresh Issue" @blur="sanitizeNumber(overview.fresh_issue, 'fresh_issue')">
-          
+
         </q-input>
       </div>
       <div class="col q-pa-md">
@@ -151,14 +151,14 @@
           <template v-if="overview.offer_for_sale" v-slot:hint>
             <q-btn flat size="sm" @click="ofsModal = true" label="Details" color="primary" no-caps />
             <q-dialog v-model="ofsModal">
-              <IpoOfsDetails :ipoId = "overview.ipo_id" />
+              <IpoOfsDetails :ipoId = "overview.ipo_id" :price="overview.price_band_high" />
             </q-dialog>
           </template>
         </q-input>
       </div>
       <div class="col q-pa-md">
         <q-input v-model="overview.no_of_total_shares" label="Number of Total Shares" @blur="sanitizeNumber(overview.no_of_total_shares, 'no_of_total_shares')">
-          
+
         </q-input>
       </div>
     </div>
@@ -187,13 +187,13 @@
       </div>
     </div>
     <div class="row">
-      
+
       <div class="col col-4 q-pa-md">
         <q-select filled v-model="overview.listed_at" :options="['BSE', 'NSE', 'BSE & NSE']" label="Listed at" />
       </div>
       <div class="col q-pa-md">
         <q-input v-model="overview.rhp_url" type="url" hint="URL" label="RHP Link">
-          
+
         </q-input>
       </div>
     </div>
@@ -278,11 +278,22 @@
       </div>
     </div>
     <div class="row">
+
+    <div class="col col-4 q-pa-md">
+      <q-select filled v-model="overview.status" :options="['Draft', 'Published', 'Cancelled']" label="Current Status" />
+    </div>
+    <div class="col q-pa-md">
+      <q-input v-model="overview.status_note" type="text" label="Current Status Note">
+
+      </q-input>
+    </div>
+</div>
+    <div class="row">
       <div class="col q-pa-md">
         <q-btn color="primary" label="Save" @click="saveOverview" />
       </div>
     </div>
-    
+
   </div>
 </template>
 
@@ -368,11 +379,11 @@ const saveQuota = async(id) => {
   const ipo_id = +props.IpoId
   cat_quotas.value[id] = cat_quotas.value[id].replace(/(,|[^\d.-]+)+/g, '')
   const cur_quota = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+ipo_id+'&cat_id='+id).then(r => r.data)
-  
+
   if(cur_quota.length > 0){
     await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+cur_quota[0].id, {quota: cat_quotas.value[id]})
   }
-  
+
   else await axios.post('https://droplet.netserve.in/ipo-cat-quotas', {quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
 
   //console.log({quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
@@ -382,11 +393,11 @@ const saveDisc = async(id) => {
   const ipo_id = +props.IpoId
   cat_disc.value[id] = cat_disc.value[id].replace(/(,|[^\d.-]+)+/g, '')
   const cur_quota = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+ipo_id+'&cat_id='+id).then(r => r.data)
-  
+
   if(cur_quota.length > 0){
     await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+cur_quota[0].id, {discount: cat_disc.value[id]})
   }
-  
+
   else await axios.post('https://droplet.netserve.in/ipo-cat-quotas', {discount: cat_disc.value[id], cat_id: id, ipo_id: ipo_id})
 }
 
@@ -412,7 +423,7 @@ onBeforeMount(async()=>{
   invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories?sort=cat_order').then(r => r.data)
   brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
   const ipo = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
-  //console.log(ipo)
+  console.log(ipo)
   overview.value = ipo
   overview.value.brlms = JSON.parse(ipo.brlms_json)
   overview.value.sector_ids = JSON.parse(ipo.subsector_ids)
@@ -424,6 +435,6 @@ onBeforeMount(async()=>{
   //console.log(cat_quotas.value)
   sectorsOpt.value = sectors.value
   updateAppAmount()
-  
+
 })
 </script>

@@ -22,11 +22,15 @@
         <q-card-section v-if="newRecord && Object.entries(newRecord).length > 0">
             <div class="row bg-blue-grey-11 q-pa-md">
                 <div class="col-6"><q-input v-model="newRecord.name" label="Name" /></div>
-                <div class="col-6"><q-select v-model="newRecord.type" :options="['Promoter', 'Investor', 'Shareholder']" label="Type" /></div>
+                <div class="col-6"><q-select v-model="newRecord.type" :options="['Investor', 'Shareholder', 'Promoter', 'Promoter Group', 'Other']" label="Type" /></div>
             </div>
             <div class="row bg-blue-grey-11 q-pa-md">
-                <div class="col"><q-input v-model="newRecord.shares_offered" label="No. of shares offered" /></div>
-                <div class="col"><q-input v-model="newRecord.amount_in_cr" label="Amount in Cr." /></div>
+                <div class="col"><q-input v-model="newRecord.shares_offered" label="No. of shares offered" @blur="sanitizeQty()" /></div>
+                <div class="col"><q-input v-model="newRecord.cap_price" label="Issue Price" @blur="calculateAmt()" /></div>
+                <div class="col"><q-input v-model="newRecord.amount_in_cr" label="Amount in Cr." @blur="sanitizeAmt()" /></div>
+            </div>
+            <div class="row bg-blue-grey-11 q-pa-md">
+                <div class="col"><q-input v-model="newRecord.total_holdings" label="Total Holdings" @blur="sanitizeHolding()" /></div>
                 <div class="col"><q-input v-model="newRecord.percent_of_holding" label="Percentage of total holding" /></div>
             </div>
             <div align="right" class="bg-blue-grey-11 q-pa-md">
@@ -42,7 +46,8 @@
     import { ref, onMounted } from 'vue'
     import { axios } from '../boot/axios'
     const props = defineProps({
-        ipoId: Number
+        ipoId: Number,
+        price: Number,
     })
 
     const details = ref([])
@@ -55,17 +60,34 @@
             type: '',
             shares_offered: 0,
             amount_in_cr: 0,
-            precent_of_holding: 0
+            precent_of_holding: 0,
+            cap_price: props.price
         }
     }
 
+    const sanitizeAmt = () => {
+      newRecord.value.amount_in_cr = newRecord.value.amount_in_cr.replace(/(,|[^\d.-]+)+/g, '')
+    }
+
+    const sanitizeQty = () =>{
+      newRecord.value.shares_offered = newRecord.value.shares_offered.replace(/(,|[^\d.-]+)+/g, '')
+    }
+
+    const sanitizeHolding = () => {
+      newRecord.value.total_holdings = newRecord.value.total_holdings.replace(/(,|[^\d.-]+)+/g, '')
+      newRecord.value.percent_of_holding = ((newRecord.value.shares_offered / newRecord.value.total_holdings) * 100).toFixed(2)
+    }
+    const calculateAmt = () => {
+      newRecord.value.amount = newRecord.value.shares_offered * newRecord.value.cap_price
+      newRecord.value.amount_in_cr = (newRecord.value.amount / 10000000).toFixed(2)
+    }
     const editRecord = (item) => {
         newRecord.value = item
     }
 
     const saveRecord = async() => {
         let record = newRecord.value
-        record.amount = +record.amount_in_cr * 10000000
+        record.amount = (record.amount) ? record.amount : +record.amount_in_cr * 10000000
         if(record.id){
             let data = await axios.put('https://droplet.netserve.in/ip-ofs-details/'+record.id, record).then(r => r.data)
             if(data){
@@ -74,16 +96,16 @@
         }
         else {
             let data = await axios.post('https://droplet.netserve.in/ip-ofs-details', record).then(r => r.data)
-            data.amount_in_cr = Math.round(data.amount / 10000000, 3)
+            data.amount_in_cr = Math.floor((data.amount / 10000000) * 100) / 100
             details.value.push(data)
             newRecord.value = {}
         }
     }
 
     onMounted(async() => {
-        let data = await axios.get('https://droplet.netserve.in/ip-ofs-details?ipo_id='+props.ipoId).then(r => r.data)
+        let data = await axios.get('https://droplet.netserve.in/ip-ofs-details?ipo_id='+props.ipoId+'&expand=ipo').then(r => r.data)
         details.value = data.map( r => {
-            r.amount_in_cr = Math.round(r.amount / 10000000, 3)
+            r.amount_in_cr = Math.floor((r.amount / 10000000) *100) / 100
             return r
         })
         console.log(details.value)
