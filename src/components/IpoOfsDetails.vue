@@ -67,6 +67,7 @@
 
     const sanitizeAmt = () => {
       newRecord.value.amount_in_cr = newRecord.value.amount_in_cr.replace(/(,|[^\d.-]+)+/g, '')
+      newRecord.value.amount = newRecord.value.amount_in_cr * 10000000
     }
 
     const sanitizeQty = () =>{
