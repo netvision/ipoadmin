@@ -13,7 +13,7 @@
       separator = 'cell'
       >
       <template v-slot:top-right>
-        
+
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
             <q-icon name="search" />
@@ -64,14 +64,14 @@
             <div class="col q-pa-md">
               <q-input v-model="ipoValues.price_band_low" label="Price Band (Low)">
                 <template v-slot:prepend>
-                  &#8377; 
+                  &#8377;
                 </template>
               </q-input>
             </div>
             <div class="col q-pa-md">
               <q-input v-model="ipoValues.price_band_high" label="Price Band (High)">
                 <template v-slot:prepend>
-                  &#8377; 
+                  &#8377;
                 </template>
               </q-input>
             </div>
@@ -157,7 +157,7 @@
   const addIpo = async() => {
     console.log(ipoValues)
     const nIpo = await axios.post('https://droplet.netserve.in/ipos', ipoValues.value)
-    
+
     if(nIpo.status == '201'){
       $q.notify({
           message: 'IPO Added!',
@@ -221,7 +221,7 @@
 
   onMounted(async()=>{
     //const ipo = await axios.get('https://uat.ipoinbox.com:5000/api/v1/ipo').then(r => r.data)
-    const ipo = await axios.get('https://droplet.netserve.in/ipos').then(r => r.data)
+    const ipo = await axios.get('https://droplet.netserve.in/ipos?fields=ipo_id,company_name,ipo_type,price_band_low,price_band_high,open_date,close_date&sort=-open_date').then(r => r.data)
     console.log(ipo)
     ipos.value = ipo
   })

@@ -8,19 +8,19 @@
                 <q-btn flat :label="ip.company_name" @click="getGmp(ip)" />
             </q-item>
             <q-item>
-                <q-select 
-                    filled 
-                    v-model="ipo" 
-                    :options="iposOpt" 
-                    option-value="ipo_id" 
-                    option-label="company_name" 
+                <q-select
+                    filled
+                    v-model="ipo"
+                    :options="iposOpt"
+                    option-value="ipo_id"
+                    option-label="company_name"
                     label="Search IPOs Archives"
                     use-input
                     @update:model-value="getGmp()"
                     @filter="filterFn" />
             </q-item>
         </div>
-        <div class="col bg-orange-1">        
+        <div class="col bg-orange-1">
         <q-list bordered class="rounded-borders">
             <q-item v-if="ipo">
                 <q-item-section top>
@@ -51,7 +51,7 @@
                 <q-item-section side top>
                     <span class="text-weight-medium"> <q-btn size="12px" flat dense round icon="edit" @click="edit(i)" /> <q-btn size="12px" flat dense round icon="delete" @click="del(i)" /></span>
                 </q-item-section>
-                
+
             </q-item>
         </q-list>
            <q-dialog v-model="editModel" @hide="reset">
@@ -98,7 +98,7 @@
                         options-selected-class="text-primary"
                         options-dense
                         use-input
-                        option-value="id" 
+                        option-value="id"
                         option-label="short_name"
                         label="GMP"
                     />
@@ -117,14 +117,14 @@
                     <q-item-section>
                      <q-input v-model="gmp.gmp_value_low" label="Price Range Low" type="number">
                         <template v-slot:prepend>
-                            &#8377; 
+                            &#8377;
                         </template>
                      </q-input>
                     </q-item-section>
                     <q-item-section>
                      <q-input v-model="gmp.gmp_value_high" label="Price Range high" type="number">
                         <template v-slot:prepend>
-                            &#8377; 
+                            &#8377;
                         </template>
                      </q-input>
                     </q-item-section>
@@ -137,14 +137,14 @@
                         filled
                         v-model="gmp.volume"
                         :options="['Dry', 'Low', 'Moderate', 'High', 'Extreme']"
-                        label="Volume"                        
+                        label="Volume"
                     />
                     </q-item-section>
                     <q-item-section side>
                      <q-btn @click="addRecord" :label="(gmp.id) ? 'Edit' : 'Add'" />
                     </q-item-section>
                 </q-item>
-                
+
             </q-card>
            </q-dialog>
 
@@ -152,7 +152,7 @@
         </div>
     </div>
 </q-page>
-    
+
 </template>
 <script setup>
     import { axios } from '../boot/axios'
@@ -199,7 +199,7 @@
         gmp.value.ipo_id = ipo.value.ipo_id
         gmp.value.date_time = gmpDate.value
         gmp.value.gmp_type_id = gmp.value.gmpType.id
-        
+
         if(gmp.value.id){
             let res = await axios.put('https://droplet.netserve.in/gmps/'+gmp.value.id, gmp.value)
         }
@@ -245,6 +245,6 @@
         gmpTypes.value = await axios.get('https://droplet.netserve.in/gmp-types').then(r => r.data)
 
         console.log(date.formatDate(gmpDate.value, 'DD-MM-YYYY'))
-        
+
     })
 </script>
