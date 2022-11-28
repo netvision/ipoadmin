@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar class="bg-black text-white">
         <a href="/"><q-img :src="logo" style="width: 180px" /></a>
-        
+
         <q-space />
         <q-btn-group push>
           <q-btn flat icon="home" to="/" />
@@ -12,6 +12,7 @@
           <q-btn flat label="BLRMs" to="/brlms" />
           <q-btn flat label="Anchors" to="/anchors" />
           <q-btn flat label="GMP" to="/gmp" />
+          <q-btn flat label="BuyBacks" to="/buybacks" />
         </q-btn-group>
         <q-btn-dropdown flat icon="account_circle">
           <q-list>
@@ -29,7 +30,7 @@
 
           </q-list>
         </q-btn-dropdown>
-        
+
       </q-toolbar>
     </q-header>
     <q-page-container>
@@ -66,11 +67,11 @@ export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    
+
   },
 
   setup () {
-    
+
     const router = useRouter()
     const newPassword = ref('')
     const curPassword = ref('')
