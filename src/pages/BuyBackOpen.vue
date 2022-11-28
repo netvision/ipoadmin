@@ -271,7 +271,7 @@ const addBuyback = async() => {
 const showRecords = async(bb) => {
   buyback.value = bb
   let res = await axios.get('https://droplet.netserve.in/ip-buyback-open-records?sort=record_date&buyback_id='+bb.id).then(r => r.data)
-  records.value = res.filter(r => r.bse && r.nse)
+  records.value = res.filter(r => r.bse || r.nse)
   let c = 0
   console.log(records.value.reduce((c, ele) => c + +(ele.amount), 0))
   records.value.forEach((rec, i) => {
