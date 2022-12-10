@@ -75,12 +75,12 @@
                 <div class="col"><q-input outlined v-model="buyback.nse_code" label="NSE Code" /></div>
               </div>
               <div class="row q-gutter-md q-mt-md">
-                <div class="col"><q-input outlined v-model="buyback.buyback_size" label="Buyback Size" /></div>
-                <div class="col"><q-input outlined v-model="buyback.buyback_price_maximum" label="Buyback Maximum Price" /></div>
+                <div class="col"><q-input outlined v-model="buyback.buyback_size" label="Buyback Size" @blur="removeComma(buyback.buyback_size, 'buyback_size')" /></div>
+                <div class="col"><q-input outlined v-model="buyback.buyback_price_maximum" label="Buyback Maximum Price" @blur="removeComma(buyback.buyback_price_maximum, 'buyback_price_maximum')"  /></div>
               </div>
               <div class="row q-gutter-md q-mt-md">
-                <div class="col"><q-input outlined v-model="buyback.total_shares" label="Total Shares of the Company" /></div>
-                <div class="col"><q-input outlined v-model="buyback.free_float" label="Shares in Public (Freefloat)" /></div>
+                <div class="col"><q-input outlined v-model="buyback.total_shares" label="Total Shares of the Company" @blur="removeComma(buyback.total_shares, 'total_shares')" /></div>
+                <div class="col"><q-input outlined v-model="buyback.free_float" label="Shares in Public (Freefloat)" @blur="removeComma(buyback.free_float, 'free_float')" /></div>
               </div>
 
               <div class="row q-gutter-md q-mt-md">
@@ -331,6 +331,10 @@ const editRecord = (e, r, i) => {
 const closeRecordModal = () => {
   record.value = {}
   recordModal.value = false
+}
+const removeComma = (v, f) => {
+  const val = Math.abs(v.replace(/(,|[^\d.-]+)+/g, ''))
+  buyback.value[f] = val
 }
 
 const sanitizeVal = (v, f) => {
