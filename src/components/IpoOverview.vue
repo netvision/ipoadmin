@@ -50,6 +50,59 @@
       </div>
     </div>
     <div class="row">
+
+      <div class="col q-pa-md" v-if="overview.ipo_type === 'SME'">
+        <q-select
+          filled
+          v-model="overview.market_maker_id"
+          :options="marketMakersOpt"
+          option-value="id"
+          option-label="name"
+          label="Market Maker"
+          emit-value
+          map-options
+          use-input
+          @filter="mmfilter"
+          @filter-abort="mmfilterAb"
+          >
+          <template v-slot:after>
+            <q-btn round dense flat icon="add" @click="marketMakerModel = true" />
+          </template>
+        </q-select>
+        <q-dialog v-model="marketMakerModel">
+          <q-card class="brlm-card" style="width:100vw">
+            <h3 class="text-h6 text-center">Add Market Maker</h3>
+            <q-card-section>
+              <div class="row no-wrap items-center">
+                <div class="col text-h6 ellipsis">
+                  <q-input v-model="newMarketMaker.sebi_reg_no" label="Sebi Reg. No." />
+                </div>
+              </div>
+              <div class="row no-wrap items-center">
+                <div class="col text-h6 ellipsis">
+                  <q-input v-model="newMarketMaker.name" label="Name" />
+                </div>
+              </div>
+              <div class="row no-wrap items-center">
+                <div class="col text-h6 ellipsis">
+                  <q-input v-model="newMarketMaker.bse_link" label="BSE Link" />
+                </div>
+              </div>
+              <div class="row no-wrap items-center">
+                <div class="col text-h6 ellipsis">
+                  <q-input v-model="newMarketMaker.nse_link" label="NSE Link" />
+                </div>
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn v-close-popup flat color="primary" label="Add" @click="addMarketMaker" />
+              <q-btn v-close-popup flat color="primary" label="Cancel" @click="resetMarketMaker" />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+      </div>
+
       <div class="col q-pa-md">
         <q-input v-model="overview.anchor_date" mask="date" label="Anchor Date">
         <template v-slot:append>
@@ -325,6 +378,10 @@ const addRegistrarForm = ref(false)
 const addBrlmForm = ref(false)
 const sectorsOpt = ref([])
 const ofsModal = ref(false)
+const marketMakerModel = ref(false)
+const marketMakers = ref([])
+const marketMakersOpt = ref([])
+const newMarketMaker = ref({})
 
 const filterFn = (val, update, abort) => {
   update(() => {
@@ -345,6 +402,28 @@ const addSector = async() => {
 const resetSector = () => {
   newSector.value = {}
   addSectorModel.value = false
+}
+
+const mmfilter = (val, update, abort) => {
+  update(() => {
+          const needle = val.toLowerCase()
+          marketMakersOpt.value = marketMakers.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+        })
+}
+
+const mmfilterAb = () => {
+  marketMakersOpt.value = marketMakers.value
+}
+
+const addMarketMaker = async() => {
+  const res = await axios.post('https://droplet.netserve.in/market-makers', newMarketMaker.value).then(r => r.data)
+  marketMakers.value.push(res)
+  overview.value.market_maker_id = res.id
+}
+
+const resetMarketMaker = () => {
+  newMarketMaker.value = {}
+  marketMakerModel.value = false
 }
 
 const sanitizeNumber = (v, field) => {
@@ -419,6 +498,7 @@ const saveOverview = async() => {
 onBeforeMount(async()=>{
   const id = +props.IpoId
   sectors.value = await axios.get('https://droplet.netserve.in/sectors').then(r => r.data)
+  marketMakers.value = await axios.get('https://droplet.netserve.in/market-maker').then(r => r.data)
   registrars.value = await axios.get('https://droplet.netserve.in/registrars').then(r => r.data)
   invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories?sort=cat_order').then(r => r.data)
   brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
@@ -434,6 +514,7 @@ onBeforeMount(async()=>{
   })
   //console.log(cat_quotas.value)
   sectorsOpt.value = sectors.value
+  marketMakersOpt.value = marketMakers.value
   updateAppAmount()
 
 })
