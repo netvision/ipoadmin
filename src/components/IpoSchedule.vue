@@ -102,7 +102,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted  } from 'vue' 
+  import { ref, onMounted  } from 'vue'
   import { api, axios } from '../boot/axios'
   import { useQuasar } from 'quasar'
   const props = defineProps({
@@ -126,7 +126,7 @@
   onMounted(async() => {
    const ip = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value).then(r => r.data)
    schedule.value = ip
-   console.log(ip)
+   //console.log(ip)
   })
 
 </script>

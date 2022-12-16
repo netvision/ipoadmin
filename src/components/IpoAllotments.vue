@@ -21,11 +21,11 @@
               </div>
             </q-item-section>
           </q-item>
-          
+
         </div>
         <q-input label="Issue Price" v-model="ipo.issue_price">
           <template v-slot:prepend>
-                &#8377; 
+                &#8377;
             </template>
         </q-input>
         <q-dialog v-model="pdfUpload">
@@ -43,11 +43,11 @@
   <div class="row q-gutter-md">
         <div class="col q-pa-md">
           <h3 class="text-h5">Basis of Allotment</h3>
-          <q-editor v-model="ipo.basis_of_allotment_html" min-height="5rem" />
+          <q-editor v-model="ipo.basis_of_allotment_html" :model-value="ipo.basis_of_allotment_html ?? ''" min-height="5rem" />
         </div>
         <div class="col q-pa-md">
           <h3 class="text-h5">Allotment Status</h3>
-          <q-editor v-model="ipo.allotment_status_html" min-height="5rem" />
+          <q-editor v-model="ipo.allotment_status_html" :model-value="ipo.allotment_status_html ?? ''" min-height="5rem" />
         </div>
       </div>
       <div class="row">
@@ -58,8 +58,8 @@
 </template>
 
 <script setup>
-  import { ref, onMounted  } from 'vue' 
-  import { api, axios } from '../boot/axios'
+  import { ref, onMounted  } from 'vue'
+  import { axios } from '../boot/axios'
   import { useQuasar } from 'quasar'
   const props = defineProps({
       IpoId: String
@@ -81,7 +81,7 @@
       }
     emit('step', 'ok')
   }
-  
+
   const pdfUploaded = async(files) =>{
     const id = +props.IpoId
     pdf_url.value = JSON.parse(files.xhr.response)
@@ -89,12 +89,11 @@
     ipo.value = res.data
     pdfUpload.value = false
   }
-  const init = async() => {
+
+  onMounted(async() =>{
     const id = +props.IpoId
     const ip = await axios.get('https://droplet.netserve.in/ipos/'+id+'?expand=registrar').then(r => r.data)
     ipo.value = ip
-  }
+  })
 
-  init()
-  
 </script>

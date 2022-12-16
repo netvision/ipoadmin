@@ -23,7 +23,7 @@
                 </q-item-section>
             </q-item>
         </q-list>
-           <q-dialog v-model="editModel">
+           <q-dialog v-model="anchorModel">
            <q-card class="my-card" style="width:150vw">
             <q-item>
                 <q-item-section>
@@ -34,24 +34,25 @@
                         filled
                         v-model="anchor.a_id"
                         :options="options"
-                        @filter="selectFilterFunction"
+                        @filter="filter"
+                        @filter-abort="filterAb"
                         @new-value="createSelectValue"
                         options-selected-class="text-primary"
                         options-dense
                         use-input
-                        option-value="id" 
+                        option-value="id"
                         option-label="name"
                     />
                 </q-item-section>
                 <q-item-section side top>
-                    <q-input type="text" v-model="anchor.no_of_equity_shares" />
+                    <q-input type="text" v-model="anchor.no_of_equity_shares" @blur="removeComa" />
                 </q-item-section>
                 <q-btn flat @click="addRecord" :label="(anchor.id) ? 'Edit' : 'Add'" />
             </q-item>
             </q-card>
            </q-dialog>
 </q-page>
-    
+
 </template>
 <script setup>
 import { ref, onMounted} from 'vue'
@@ -65,18 +66,21 @@ const ipoId = ref(props.IpoId)
 //const ipo = ref({})
 const anchors = ref([])
 const ipoAnchors = ref([])
-const newAnchor = ref({})
 const anchor = ref({})
 const options = ref([])
 const anchorsProp = ref(0)
 
-const editModel = ref(false)
+const anchorModel = ref(false)
 
-const selectFilterFunction = (val, update, abort) => {
+const filter = (val, update, abort) => {
     update(() => {
           const needle = val.toLowerCase()
           options.value = options.value.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
         })
+}
+
+const filterAb = () => {
+  options.value = anchors.value
 }
 
 const createSelectValue = async(val, done) => {
@@ -92,7 +96,7 @@ const addRecord = async() => {
     if(anchor.value.id){
         let res = await axios.put('https://droplet.netserve.in/ipo-anchors/'+anchor.value.id, anchor.value)
     }
-    else { 
+    else {
         let res = await axios.post('https://droplet.netserve.in/ipo-anchors', {ipo_id: ipoId.value, anchor_id: anchor.value.a_id.id, no_of_equity_shares: anchor.value.no_of_equity_shares})
         if(res.status == 201){
             res.data.anchor = anchor.value.a_id
@@ -102,20 +106,20 @@ const addRecord = async() => {
         anchor.value = {}
         options.value = anchors.value
     }
-    editModel.value = false
+    anchorModel.value = false
     getTotal()
  }
 
 const showModel = () => {
     anchor.value = {}
-    editModel.value = true
+    anchorModel.value = true
 }
 
 const edit = (i) => {
     console.log(ipoAnchors.value[i])
     anchor.value = ipoAnchors.value[i]
     anchor.value.a_id = ipoAnchors.value[i].anchor
-    editModel.value = true
+    anchorModel.value = true
     getTotal()
 }
 
@@ -128,6 +132,10 @@ const del = async(i) => {
 }
 const getTotal = () => {
     anchorsProp.value = ipoAnchors.value.reduce((acc, cur) => acc + +cur.no_of_equity_shares, 0)
+}
+
+const removeComa = () => {
+  anchor.value.no_of_equity_shares = (typeof anchor.value.no_of_equity_shares !== 'undefined') ? Math.abs(anchor.value.no_of_equity_shares.replace(/(,|[^\d.-]+)+/g, '')) :  null
 }
 onMounted(async() => {
     ipoAnchors.value = await axios.get('https://droplet.netserve.in/ipo-anchors?expand=anchor&ipo_id='+ipoId.value).then(r => r.data)

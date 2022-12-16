@@ -215,30 +215,7 @@
         </q-input>
       </div>
     </div>
-    <div class="row">
-      <div class="col q-pa-md">
-       <q-input color="lime-11" bg-color="cyan-2" filled label="Quota" readonly>
-         <template v-slot:append>
-          <q-btn round flat icon="chevron_right" />
-        </template>
-       </q-input>
-      </div>
-      <div class="col q-pa-md" v-for="cat in invCategories" :key="cat.id">
-        <q-input v-model="cat_quotas[cat.id]" :label="cat.short_name" @blur="saveQuota(cat.id)" />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col q-pa-md">
-       <q-input color="lime-11" bg-color="cyan-2" filled label="Discount" readonly>
-         <template v-slot:append>
-          <q-btn round flat icon="chevron_right" />
-        </template>
-       </q-input>
-      </div>
-      <div class="col q-pa-md" v-for="c in invCategories" :key="c.id">
-        <q-input v-model="cat_disc[c.id]" :label="c.short_name" @blur="saveDisc(c.id)" />
-      </div>
-    </div>
+
     <div class="row">
 
       <div class="col col-4 q-pa-md">
@@ -362,11 +339,8 @@ const props = defineProps({
 const emit = defineEmits(['step'])
 const $q = useQuasar()
 const overview = ref({})
-const cat_quotas = ref([])
-const cat_disc = ref([])
 const ipodata = ref({})
 const sectors = ref([])
-const invCategories = ref([])
 const registrars = ref([])
 const brlms = ref([])
 const newSector = ref({})
@@ -500,18 +474,13 @@ onBeforeMount(async()=>{
   sectors.value = await axios.get('https://droplet.netserve.in/sectors').then(r => r.data)
   marketMakers.value = await axios.get('https://droplet.netserve.in/market-maker').then(r => r.data)
   registrars.value = await axios.get('https://droplet.netserve.in/registrars').then(r => r.data)
-  invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories?sort=cat_order').then(r => r.data)
   brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
   const ipo = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
-  console.log(ipo)
+  //console.log(ipo)
   overview.value = ipo
   overview.value.brlms = JSON.parse(ipo.brlms_json)
   overview.value.sector_ids = JSON.parse(ipo.subsector_ids)
-  const quotas = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+id).then(r => r.data)
-  invCategories.value.forEach(cat => {
-    cat_quotas.value[cat.id] = (quotas.filter(qt => qt.cat_id == cat.id)[0]) ? quotas.filter(qt => qt.cat_id == cat.id)[0].quota : 0
-    cat_disc.value[cat.id] = (quotas.filter(qt => qt.cat_id == cat.id)[0]) ? quotas.filter(qt => qt.cat_id == cat.id)[0].discount : 0
-  })
+
   //console.log(cat_quotas.value)
   sectorsOpt.value = sectors.value
   marketMakersOpt.value = marketMakers.value
