@@ -41,6 +41,7 @@ const ipoId = ref(props.IpoId)
 
 const saveQuota = async (c) => {
   c.spinner = true
+  c.quota = Math.abs(c.quota.replace(/(,|[^\d.-]+)+/g, ''))
     try {
       if(c.quota_id){
         let res = await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+c.quota_id, {quota: c.quota}).then(r => r.data)
@@ -62,7 +63,10 @@ const saveQuota = async (c) => {
 }
 
 const saveDisc = async(c) => {
-  c.spinner = true
+
+  if(c.discount != null){
+    c.spinner = true
+  c.discount = Math.abs(c.discount.replace(/(,|[^\d.-]+)+/g, ''))
     try {
       if(c.quota_id){
         let res = await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+c.quota_id, {discount: c.discount}).then(r => r.data)
@@ -81,6 +85,7 @@ const saveDisc = async(c) => {
       c.icon = 'error'
       console.log(e)
     }
+  }
 }
 
 onMounted(async() => {
