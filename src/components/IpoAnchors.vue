@@ -1,5 +1,39 @@
 <template>
 <q-page class="q-pa-md">
+  <div class="row q-gutter-md" style="max-width:600px">
+        <div class="col q-pa-md" v-if="!ipo.anchors_pdf">
+          <q-btn flat color="primary" label="Upload pdf file of Anchors" @click="pdfUpload = true" />
+        </div>
+        <div class="col q-pa-md" v-else>
+          <q-item>
+            <q-item-section top>
+              <q-item-label>
+                <span class="text-weight-medium">Anchors (Pdf)</span>
+              </q-item-label>
+              <q-item-label caption lines="1">
+                {{ipo.anchors_pdf.slice(33)}}
+              </q-item-label>
+            </q-item-section>
+            <q-item-section top side>
+              <div class="text-grey-8 q-gutter-xs">
+                <q-btn class="gt-xs" size="12px" flat dense round icon="open_in_new" type="a" :href="ipo.anchors_pdf" target="__blank" />
+                <q-btn class="gt-xs" size="12px" flat dense round icon="change_circle" @click="pdfUpload = true" />
+              </div>
+            </q-item-section>
+          </q-item>
+        </div>
+    </div>
+    <q-dialog v-model="pdfUpload">
+          <q-uploader
+            label="Anchors PDF"
+            field-name="pdf_file"
+            no-thumbnails
+            auto-upload
+            :form-fields = "[{name:'ipo_id', value: ipoId}, {name:'field', value: 'anchors'} ]"
+            url="https://droplet.netserve.in/ipo/pdfupload"
+            @uploaded = 'pdfUploaded'
+          />
+        </q-dialog>
     <q-list bordered class="rounded-borders" style="max-width: 600px">
             <q-item>
                 <q-item-section top>
@@ -62,14 +96,14 @@ const props = defineProps({
     IpoId: String
   })
 const ipoId = ref(props.IpoId)
-
+const ipo = ref({})
 //const ipo = ref({})
 const anchors = ref([])
 const ipoAnchors = ref([])
 const anchor = ref({})
 const options = ref([])
 const anchorsProp = ref(0)
-
+const pdfUpload = ref(false)
 const anchorModel = ref(false)
 
 const filter = (val, update, abort) => {
@@ -84,7 +118,7 @@ const filterAb = () => {
 }
 
 const createSelectValue = async(val, done) => {
-    let newAnchor = await axios.post('https://droplet.netserve.in/anchors', {name: val, details:'#'})
+    let newAnchor = await axios.post('https://droplet.netserve.in/anchors', {name: val.trim(), details:'#'})
     if(newAnchor.statusText == '201'){
         options.value.push(newAnchor.data)
         anchor.value.id = newAnchor.data
@@ -137,7 +171,16 @@ const getTotal = () => {
 const removeComa = () => {
   anchor.value.no_of_equity_shares = (typeof anchor.value.no_of_equity_shares !== 'undefined') ? Math.abs(anchor.value.no_of_equity_shares.replace(/(,|[^\d.-]+)+/g, '')) :  null
 }
+
+const pdfUploaded = async(files) =>{
+    let pdf_url = JSON.parse(files.xhr.response)
+    const res = await axios.put('https://droplet.netserve.in/ipos/'+ipoId.value, {anchors_pdf: pdf_url})
+    ipo.value = res.data
+    pdfUpload.value = false
+  }
+
 onMounted(async() => {
+    ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value).then(r => r.data)
     ipoAnchors.value = await axios.get('https://droplet.netserve.in/ipo-anchors?expand=anchor&ipo_id='+ipoId.value).then(r => r.data)
     anchors.value = await axios.get('https://droplet.netserve.in/anchor').then(r => r.data)
     //ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?fields=company_name,open_date').then(r => r.data)

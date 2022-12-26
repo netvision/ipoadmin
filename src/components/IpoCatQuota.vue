@@ -11,7 +11,9 @@
       </td>
       <td>
        <q-input v-model="cat.quota" label="Quota" @blur="saveQuota(cat)">
-
+        <template v-slot:append>
+          <span class="text-body1">({{ cat.perc }}%)</span>
+        </template>
         </q-input>
       </td>
       <td>
@@ -35,9 +37,11 @@ const quotas = ref([])
 const icon = ref()
 
 const props = defineProps({
-    IpoId: String
+    IpoId: String,
+    total: Number
   })
 const ipoId = ref(props.IpoId)
+const total = ref(props.total)
 
 const saveQuota = async (c) => {
   c.spinner = true
@@ -54,6 +58,7 @@ const saveQuota = async (c) => {
 
       c.icon = 'check'
       c.spinner = false
+      c.perc = (c.quota * 100 / total.value).toFixed(2)
     }
     catch(e){
       c.spinner = false
@@ -92,20 +97,25 @@ onMounted(async() => {
   invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories?sort=cat_order').then(r => r.data)
   let res = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+ipoId.value).then(r => r.data)
   if(res.length > 0) {
-    invCategories.value = invCategories.value.map(cat => ({
+    invCategories.value = invCategories.value.map(cat => {
+      let item = res.filter(q => q.cat_id == cat.id)
+      let perc = (item[0]?.quota > 0) ? item[0].quota * 100 / total.value : 0
+      return{
       ...cat,
-      quota_id: res.filter(q => q.cat_id == cat.id)[0]?.id ?? null,
-      quota: res.filter(q => q.cat_id == cat.id)[0]?.quota ?? null,
-      discount: res.filter(q => q.cat_id == cat.id)[0]?.discount ?? null,
+      quota_id: item[0]?.id ?? null,
+      quota: item[0]?.quota ?? null,
+      discount: item[0]?.discount ?? null,
       icon: null,
-      spinner: false
-    }))
+      spinner: false,
+      perc: perc.toFixed(2)
+      }
+    })
   }
+  console.log(total.value)
 })
 </script>
 <style>
 table.subs{
   max-width: 90vw
 }
-
 </style>

@@ -31,10 +31,10 @@
         <q-dialog v-model="pdfUpload">
           <q-uploader
             label="Basis of Allotment PDF"
-            field-name="allotment_pdf"
+            field-name="pdf_file"
             no-thumbnails
             auto-upload
-            :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}]"
+            :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}, {name:'field', value: 'allotment'} ]"
             url="https://droplet.netserve.in/ipo/pdfupload"
             @uploaded = 'pdfUploaded'
           />
