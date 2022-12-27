@@ -34,30 +34,34 @@
             @uploaded = 'pdfUploaded'
           />
         </q-dialog>
-    <q-list bordered class="rounded-borders" style="max-width: 600px">
-            <q-item>
-                <q-item-section top>
-                    <q-item-label header class="text-h4">Anchors ({{anchorsProp}})</q-item-label>
-                </q-item-section>
-                <q-item-section top side>
-                    <div class="text-grey-8 q-gutter-xs">
-                        <q-btn class="gt-xs" size="12px" flat dense icon="add" @click="showModel" />
-                    </div>
-                </q-item-section>
-            </q-item>
-            <q-item v-for="(anc, i) in ipoAnchors" :key="i">
-                <q-item-section top>
-                   <span class="text-weight-medium">{{anc.anchor.name}}</span>
-                </q-item-section>
-                <q-item-section side>
-                <span class="text-weight-medium">{{anc.no_of_equity_shares}}</span>
-                </q-item-section>
-                <q-item-section top side>
-                    <span class="text-weight-medium"> <q-btn size="12px" flat dense round icon="edit" @click="edit(i)" /> <q-btn size="12px" flat dense round icon="delete" @click="del(i)" /></span>
-                </q-item-section>
-            </q-item>
-        </q-list>
-           <q-dialog v-model="anchorModel">
+
+        <q-table
+      title="Anchors"
+      :columns="columns"
+      :rows = "ipoAnchors"
+      row-key="id"
+      dense
+      >
+      <template v-slot:top>
+        <div class="col-4 q-table__title">Key Investors</div>
+        <q-space />
+        <div class="col-7">Total Shares: {{anchorsProp}}</div>
+        <div class="col-1"><q-btn class="gt-xs" size="12px" flat dense icon="add" @click="showModel" /></div>
+      </template>
+      <template v-slot:body-cell-index="props">
+        <q-td :props="props">
+          {{ props.rowIndex + 1 }}
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props">
+          <q-btn size="12px" flat dense round icon="edit" @click="edit(props)" /> <q-btn size="12px" flat dense round icon="delete" @click="del(props)" />
+        </q-td>
+      </template>
+    </q-table>
+
+         <q-dialog v-model="anchorModel">
            <q-card class="my-card" style="width:150vw">
             <q-item>
                 <q-item-section>
@@ -106,6 +110,33 @@ const anchorsProp = ref(0)
 const pdfUpload = ref(false)
 const anchorModel = ref(false)
 
+const columns = ref([
+  {
+    name: 'index',
+    label: '#',
+    field: ''
+  },
+  {
+    name: 'name',
+    label: 'Name',
+    field: row => row.anchor.name,
+    align: 'left',
+    sortable: true
+  },
+  {
+    name: 'quantity',
+    label: 'Quantity',
+    field: 'no_of_equity_shares',
+    align: 'left',
+    sortable: true
+  },
+  {
+    name: 'actions',
+    label: 'Actions',
+    field: '',
+  }
+])
+
 const filter = (val, update, abort) => {
     update(() => {
           const needle = val.toLowerCase()
@@ -150,17 +181,16 @@ const showModel = () => {
 }
 
 const edit = (i) => {
-    console.log(ipoAnchors.value[i])
-    anchor.value = ipoAnchors.value[i]
-    anchor.value.a_id = ipoAnchors.value[i].anchor
+    anchor.value = i.row
+    anchor.value.a_id = i.row.anchor
     anchorModel.value = true
     getTotal()
 }
 
 const del = async(i) => {
-    let res = await axios.delete('https://droplet.netserve.in/ipo-anchors/'+ipoAnchors.value[i].id)
+    let res = await axios.delete('https://droplet.netserve.in/ipo-anchors/'+i.row.id)
     if(res.status == 204){
-        ipoAnchors.value.splice(i, 1)
+        ipoAnchors.value.splice(i.rowIndex, 1)
     }
     getTotal()
 }
