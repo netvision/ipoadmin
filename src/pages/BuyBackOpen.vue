@@ -27,10 +27,13 @@
             <q-list v-if="bbs">
               <q-expansion-item popup v-for="bb in bbs" :key="bb.id" :header-style="{ backgroundColor: '#f2e1c9', borderBottom: '1px solid ##9c5b05' }">
                 <template v-slot:header>
-                  <q-item-section class="text-h6">{{bb.company_name}}</q-item-section>
                   <q-item-section>
-                    <q-item-label>Buyback Size: &#8377;{{curFormat(bb.buyback_size)}}</q-item-label>
-                    <q-item-label>Maximum Price: &#8377;{{bb.buyback_price_maximum}}</q-item-label>
+                    <q-item-label class="text-h6">{{bb.company_name}}</q-item-label>
+                    <q-item-label>Buyback Size: &#8377;{{curFormat(bb.buyback_size)}} <span class="text-orange-9">Utilised: &#8377;{{curFormat(bb.cumAmount)}} ({{ bb.utilPerc }}%)</span></q-item-label>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Maximum Price: &#8377;{{bb.buyback_price_maximum}} </q-item-label>
+                    <q-item-label><span class="text-orange-9">Cur Price: &#8377;{{bb.curPrice}}</span></q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-item-label>Start Date: {{dateFormat(bb.start_date)}}</q-item-label>
@@ -218,9 +221,9 @@ const columns = [
 ]
 
 const showData = (tab) => {
-  if(tab === 'closed') bbs.value = data.value.filter(x => cur_date.value > new Date(x.close_date)).map(y => ({...y, canEdit: false, canAddRecords: false, hasRecords: true}))
-  else if (tab === 'upcoming') bbs.value = data.value.filter(x => cur_date.value < new Date(x.start_date)).map(y => ({...y, canEdit: true, canAddRecords: false, hasRecords: false}))
-  else bbs.value = data.value.filter(r => cur_date.value > new Date(r.start_date) && cur_date.value < new Date(r.close_date)).map(y => ({...y, canEdit: true, canAddRecords: true, hasRecords: true}))
+  if(tab === 'closed') bbs.value = data.value.filter(x => cur_date.value > new Date(x.close_date))
+  else if (tab === 'upcoming') bbs.value = data.value.filter(x => cur_date.value < new Date(x.start_date))
+  else bbs.value = data.value.filter(r => cur_date.value > new Date(r.start_date) && cur_date.value < new Date(r.close_date))
 
   console.log(bbs.value)
 }
@@ -242,6 +245,8 @@ const getQtyatMM = (bb) => (bb.buyback_size / bb.buyback_price_maximum).toFixed(
 const getPercOfTotal = (bb) => ((bb.buyback_size / bb.buyback_price_maximum).toFixed(0) * 100 / bb.total_shares).toFixed(2)
 
 const getPercOfFreefloat = (bb) => ((bb.buyback_size / bb.buyback_price_maximum).toFixed(0) * 100 / bb.free_float).toFixed(2)
+
+
 const newBuyback = () => {
   buyback.value = {}
   buybackModal.value = true
@@ -268,12 +273,9 @@ const addBuyback = async() => {
   window.location.reload()
 }
 
-const showRecords = async(bb) => {
+const showRecords = (bb) => {
   buyback.value = bb
-  let res = await axios.get('https://droplet.netserve.in/ip-buyback-open-records?sort=record_date&buyback_id='+bb.id).then(r => r.data)
-  records.value = res.filter(r => r.bse || r.nse)
-  let c = 0
-  console.log(records.value.reduce((c, ele) => c + +(ele.amount), 0))
+  records.value = bb.records.filter(r => r.bse || r.nse)
   records.value.forEach((rec, i) => {
     rec.total = +(rec.bse) + +(rec.nse)
     rec.avg = (rec.amount / rec.total).toFixed(2)
@@ -343,8 +345,45 @@ const sanitizeVal = (v, f) => {
 }
 
 onMounted(async () => {
-  data.value = await axios.get('https://droplet.netserve.in/ip-buyback-opens?sort=-start_date').then(r => r.data)
-  bbs.value = data.value.filter(r => cur_date.value > new Date(r.start_date) && cur_date.value < new Date(r.close_date)).map(y => ({...y, canEdit: true, canAddRecords: true, hasRecords: true}))
-  console.log(bbs.value)
+  let res = await axios.get('https://droplet.netserve.in/ip-buyback-opens?sort=-start_date&expand=records').then(r => r.data)
+
+  let promises = res.map(async (v) =>{
+    let curPrice = 'NA'
+    let cumAmount = 0
+    let utilPerc = 0
+    let canEdit = true
+    let canAddRecords = true
+    let hasRecords = true
+    if(v.nse_code){
+      let liveData = await axios.get('https://stockapi.ipoinbox.com/quote?companyName='+v.nse_code.trim())
+      curPrice = liveData.data.data[0].lastPrice
+    }
+    if(v.records.length > 0){
+      cumAmount = v.records.reduce((a, b) => a + +(b.amount), 0).toFixed(2)
+      utilPerc = (cumAmount * 100 / v.buyback_size).toFixed(2)
+    }
+    if(cur_date.value > new Date(v.close_date)){
+      canEdit = false
+      canAddRecords = false
+    }
+    if(cur_date.value < new Date(v.start_date)){
+      canAddRecords = false
+      hasRecords = false
+    }
+    return {
+      curPrice,
+      cumAmount,
+      utilPerc,
+      canEdit,
+      canAddRecords,
+      hasRecords,
+      ...v
+      }
+
+
+    })
+    data.value = await Promise.all(promises)
+
+    bbs.value = data.value.filter(r => cur_date.value > new Date(r.start_date) && cur_date.value < new Date(r.close_date))
 })
 </script>
