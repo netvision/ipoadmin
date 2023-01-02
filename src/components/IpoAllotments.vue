@@ -34,27 +34,49 @@
             field-name="pdf_file"
             no-thumbnails
             auto-upload
-            :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}, {name:'field', value: 'allotment'} ]"
+            :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}, {name:'field', value: 'allotment'}]"
             url="https://droplet.netserve.in/ipo/pdfupload"
             @uploaded = 'pdfUploaded'
           />
         </q-dialog>
   </div>
   <div class="row q-gutter-md">
-        <div class="col q-pa-md">
-          <h3 class="text-h5">Basis of Allotment</h3>
-          <q-editor v-model="ipo.basis_of_allotment_html" :model-value="ipo.basis_of_allotment_html ?? ''" min-height="5rem" />
-        </div>
-        <div class="col q-pa-md">
-          <h3 class="text-h5">Allotment Status</h3>
-          <q-editor v-model="ipo.allotment_status_html" :model-value="ipo.allotment_status_html ?? ''" min-height="5rem" />
-        </div>
-      </div>
-      <div class="row">
-      <div class="col q-pa-md">
-        <q-btn color="primary" label="Save and Continue" @click="saveAllotments" />
-      </div>
+    <div class="col q-pa-md">
+      <table class="subs">
+        <tr><th rowspan="2">Category</th><th rowspan="2">Reserved as Per Prospectus</th><th colspan="2">Recieved Bids</th><th colspan="2">Qualified Bids</th></tr>
+        <tr><th>Bids</th><th>Applications</th><th>Bids</th><th>Applications</th></tr>
+        <tr v-for="boa in boaData" :key="boa.id">
+          <td>
+            <q-input :label="boa.cat.short_name" readonly standout placeholder="Placeholder">
+              <template v-slot:append>
+                <q-btn round dense flat icon="chevron_right" />
+              </template>
+            </q-input>
+          </td>
+          <td><q-input v-model="boa.quota" label="Quota" outlined disable bg-color="cyan-2" /></td>
+          <td><q-input v-model="boa.recieved_bids" label="Recieved Bids" outlined /></td>
+          <td><q-input v-model="boa.recieved_app" label="Recieved Applications" outlined /></td>
+          <td><q-input v-model="boa.qualified_bids" label="Qualified Bids" outlined /></td>
+          <td><q-input v-model="boa.qualified_app" label="Qualified Applications" outlined /></td>
+        </tr>
+      </table>
     </div>
+  </div>
+  <div class="row q-gutter-md">
+    <div class="col q-pa-md">
+      <h3 class="text-h5">Basis of Allotment</h3>
+      <q-editor v-model="ipo.basis_of_allotment_html" :model-value="ipo.basis_of_allotment_html ?? ''" min-height="5rem" />
+    </div>
+    <div class="col q-pa-md">
+      <h3 class="text-h5">Allotment Status</h3>
+      <q-editor v-model="ipo.allotment_status_html" :model-value="ipo.allotment_status_html ?? ''" min-height="5rem" />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col q-pa-md">
+      <q-btn color="primary" label="Save and Continue" @click="saveAllotments" />
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -67,6 +89,7 @@
   const $q = useQuasar()
   const emit = defineEmits(['step'])
   const ipo = ref({})
+  const boaData = ref([])
   const pdf_url = ref('')
   const pdfUpload = ref(false)
   const saveAllotments = async() =>{
@@ -92,8 +115,24 @@
 
   onMounted(async() =>{
     const id = +props.IpoId
+    let data = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+id+'&expand=cat').then(r=>r.data)
+    boaData.value = data.sort((a, b) => a.cat.cat_order - b.cat.cat_order).filter(r=>r.quota > 0)
     const ip = await axios.get('https://droplet.netserve.in/ipos/'+id+'?expand=registrar').then(r => r.data)
     ipo.value = ip
   })
 
 </script>
+<style scoped>
+table.subs{
+  width: auto
+}
+table.subs td.first{
+  border-bottom: 1px solid #333;
+  padding :4px
+}
+table.subs th{
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding :4px
+}
+</style>

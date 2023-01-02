@@ -2,7 +2,7 @@
 <div class="q-pa-md">
   <h4 class="text-h4">Subscriptions</h4>
   <ol>
-      
+
       <li>
         Only those catagories are shown, whose quotas have been set in first 'overview' page.
       </li>
@@ -20,19 +20,19 @@
       </td>
       <td><q-input v-model="item.quota" label="Quota" outlined disable bg-color="cyan-2" /></td>
       <td><q-input v-model="item.subscription" label="Subscription" outlined @blur="sanitizeSubs(item.subscription, i, j)" /></td>
-      <td><q-input v-model="item.applications" label="Total Applications" @blur="sanitizeApp(item.applications, i, j)" outlined /></td>
+      <td><q-input v-model="item.applications" label="Applications Recieved" @blur="sanitizeApp(item.applications, i, j)" outlined /></td>
       <td><q-btn v-if="item.id" :disable = "item.disable" color="primary" label="Edit" @click="save(item)" /><q-btn v-else :disable = "item.disable" color="primary" label="Save" @click="save(item)" /></td>
     </tr>
   </table>
   </div>
-  
-  
+
+
 </div>
 
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue' 
+  import { ref, onMounted } from 'vue'
   import { axios } from '../boot/axios'
   import { date } from 'quasar'
   const props = defineProps({
@@ -54,7 +54,7 @@
       let res = await axios.put('https://droplet.netserve.in/ipo-subscription-logs/'+item.id, data)
       item.disable = false
     }
-    else{ 
+    else{
       let res = await axios.post('https://droplet.netserve.in/ipo-subscription-logs', data)
       if(res.status === 201) item.id = res.data.id
       item.disable = false
@@ -94,7 +94,7 @@
                   log.subscription = daylog[0].subscription
                   log.applications = daylog[0].applications
                 }
-                else{ 
+                else{
                   log.subscription = null
                   log.applications = null
                 }
@@ -102,9 +102,9 @@
               dlogs.push(log)
             }
           }
-              
+
               daylogs.value.push({day: day, logs: dlogs})
-            
+
         }
     }
   })

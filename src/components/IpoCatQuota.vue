@@ -44,6 +44,7 @@ const ipoId = ref(props.IpoId)
 const total = ref(props.total)
 
 const saveQuota = async (c) => {
+  console.log(c)
   c.spinner = true
   c.quota = Math.abs(c.quota.replace(/(,|[^\d.-]+)+/g, ''))
     try {

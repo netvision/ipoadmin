@@ -33,7 +33,7 @@
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>Maximum Price: &#8377;{{bb.buyback_price_maximum}} </q-item-label>
-                    <q-item-label><span class="text-orange-9">Cur Price: &#8377;{{bb.curPrice}}</span></q-item-label>
+                    <q-item-label><span class="text-orange-9">CMP: &#8377;{{bb.curPrice}}</span></q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-item-label>Start Date: {{dateFormat(bb.start_date)}}</q-item-label>
@@ -379,11 +379,9 @@ onMounted(async () => {
       hasRecords,
       ...v
       }
-
-
     })
-    data.value = await Promise.all(promises)
-
-    bbs.value = data.value.filter(r => cur_date.value > new Date(r.start_date) && cur_date.value < new Date(r.close_date))
+  data.value = await Promise.all(promises)
+    data.value.sort((a,b) => b.utilPerc - a.utilPerc)
+  bbs.value = data.value.filter(r => cur_date.value > new Date(r.start_date) && cur_date.value < new Date(r.close_date))
 })
 </script>
