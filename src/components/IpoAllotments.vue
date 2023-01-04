@@ -54,10 +54,10 @@
             </q-input>
           </td>
           <td><q-input v-model="boa.quota" label="Quota" outlined disable bg-color="cyan-2" /></td>
-          <td><q-input v-model="boa.recieved_bids" label="Recieved Bids" outlined /></td>
-          <td><q-input v-model="boa.recieved_app" label="Recieved Applications" outlined /></td>
-          <td><q-input v-model="boa.qualified_bids" label="Qualified Bids" outlined /></td>
-          <td><q-input v-model="boa.qualified_app" label="Qualified Applications" outlined /></td>
+          <td><q-input v-model="boa.recieved_bids" label="Recieved Bids" outlined @blur="update(boa, 'recieved_bids')" /></td>
+          <td><q-input v-model="boa.recieved_apps" label="Recieved Applications" outlined @blur="update(boa, 'recieved_apps')" /></td>
+          <td><q-input v-model="boa.qualified_bids" label="Qualified Bids" outlined  @blur="update(boa, 'qualified_bids')" /></td>
+          <td><q-input v-model="boa.qualified_apps" label="Qualified Applications" outlined @blur="update(boa, 'qualified_apps')" /></td>
         </tr>
       </table>
     </div>
@@ -111,6 +111,15 @@
     const res = await axios.put('https://droplet.netserve.in/ipos/'+id, {basis_of_allotment_pdf: pdf_url.value})
     ipo.value = res.data
     pdfUpload.value = false
+  }
+
+  const update = async(boa, field) => {
+    if(boa[field] !== null){
+      boa[field] = boa[field].replace(/(,|[^\d.-]+)+/g, '')
+      let res = await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+boa.id, boa)
+      if(res.status !== 200) boa[field] = 'error'
+    }
+
   }
 
   onMounted(async() =>{
