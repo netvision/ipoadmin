@@ -29,7 +29,7 @@
             class="text-italic text-purple text-left"
           >
             {{ col.label }}
-            
+
           </q-th>
         </q-tr>
       </template>
@@ -75,7 +75,7 @@
             class="text-italic text-purple text-left"
           >
             {{ col.label }}
-            
+
           </q-th>
         </q-tr>
       </template>
@@ -96,7 +96,7 @@
       <q-editor :toolbar="toolbar" v-model="htmlNotes" placeholder="Notes" />
     </div>
   </div>
-  
+
   <div class="q-pa-md">
     <q-btn color="primary" label="Save Financials" @click="saveFinancials" />
   </div>
@@ -167,7 +167,7 @@
     <q-dialog v-model="confirm" persistent>
       <q-card>
         <q-card-section class="row items-center">
-          
+
           <span class="q-ml-sm">Delete this row?</span>
         </q-card-section>
 
@@ -177,7 +177,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    
+
 </template>
 
 <script setup>
@@ -217,7 +217,7 @@ const addColumn = () => {
     if(tbl.value == 'pl'){
       let newColumn = {
         name: 'column'+pl.value.columns.length,
-        label: colLabel.value, 
+        label: colLabel.value,
         field: 'column'+pl.value.columns.length,
         align: 'right'
     }
@@ -228,7 +228,7 @@ const addColumn = () => {
     else if(tbl.value == 'bs'){
       let newColumn = {
         name: 'column'+bs.value.columns.length,
-        label: colLabel.value, 
+        label: colLabel.value,
         field: 'column'+bs.value.columns.length,
         align: 'right'
     }
@@ -310,7 +310,7 @@ const deleteRow = () => {
 }
 
 const saveFinancials = async() => {
-  
+
   let financials = {
     pl: pl.value,
     bs: bs.value,
@@ -339,6 +339,7 @@ onMounted(()=>{
             {particular: "Restated Profit/Loss for the Year"},
             {particular: "Basic Restated Earning Per Equity Share"},
             {particular: "Diluted Restated Earning Per Equity Share"},
+            {particular: "Operating Cash Flow"}
           ]
         }
     bs.value = {

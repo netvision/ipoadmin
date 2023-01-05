@@ -33,7 +33,7 @@
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>Maximum Price: &#8377;{{bb.buyback_price_maximum}} </q-item-label>
-                    <q-item-label><span class="text-orange-9">CMP: &#8377;{{bb.curPrice}}</span></q-item-label>
+                    <q-item-label><span :class="(bb.curPrice === 'NA' || bb.buyback_price_maximum > bb.curPrice) ? 'text-orange-9' : 'text-blue-9 text-bold'">CMP: &#8377;{{bb.curPrice}}</span></q-item-label>
                   </q-item-section>
                   <q-item-section side>
                     <q-item-label>Start Date: {{dateFormat(bb.start_date)}}</q-item-label>
@@ -172,14 +172,15 @@
                   </q-input>
               </div>
               <div class="row q-gutter-md q-mt-md">
-                <div class="col"><q-input outlined v-model="record.nse" label="NSE" @blur = "sanitizeVal(record.nse, 'nse')" /></div>
-                <div class="col"><q-input outlined v-model="record.bse" label="BSE" @blur = "sanitizeVal(record.bse, 'bse')" /></div>
+                <div class="col" v-if="buyback.nse_code"><q-input outlined v-model="record.nse" label="NSE" @blur = "sanitizeVal(record.nse, 'nse')" /></div>
+                <div class="col" v-if="buyback.bse_code"><q-input outlined v-model="record.bse" label="BSE" @blur = "sanitizeVal(record.bse, 'bse')" /></div>
               </div>
               <div class="row q-gutter-md q-mt-md">
-                <div class="col"><q-input outlined v-model="record.deliverable_nse" label="Deliverable at NSE" @blur = "sanitizeVal(record.deliverable_nse, 'deliverable_nse')" /></div>
-                <div class="col"><q-input outlined v-model="record.deliverable_bse" label="Deliverable at BSE" @blur = "sanitizeVal(record.deliverable_bse, 'deliverable_bse')" /></div>
+                <div class="col" v-if="buyback.nse_code"><q-input outlined v-model="record.deliverable_nse" label="Deliverable at NSE" @blur = "sanitizeVal(record.deliverable_nse, 'deliverable_nse')" /></div>
+                <div class="col" v-if="buyback.bse_code"><q-input outlined v-model="record.deliverable_bse" label="Deliverable at BSE" @blur = "sanitizeVal(record.deliverable_bse, 'deliverable_bse')" /></div>
               </div>
               <div class="row q-gutter-md q-mt-md">
+                <div class="col"><q-input outlined v-model="avg_price" label="Average Price" @blur = "calculateAmount" /></div>
                 <div class="col"><q-input outlined v-model="record.amount" label="Total Amount" @blur = "sanitizeVal(record.amount, 'amount')" /></div>
               </div>
             </q-card-section>
@@ -206,6 +207,7 @@ const recordsModal = ref(false)
 const records = ref([])
 const recordModal = ref(false)
 const record = ref({})
+const avg_price = ref(null)
 const columns = [
   { name: 'date', align: 'left', label: 'Date', field: 'record_date'},
   { name: 'bse', align: 'left', label: 'BSE', field: 'bse'},
@@ -299,6 +301,12 @@ const showRecords = (bb) => {
   recordsModal.value = true
 }
 
+const calculateAmount = () => {
+  if(avg_price.value){
+    record.value.amount = (record.value.nse + record.value.bse) * avg_price.value
+  }
+}
+
 const newRecord = (id) => {
   recordModal.value = true
   record.value.buyback_id = id
@@ -332,6 +340,7 @@ const editRecord = (e, r, i) => {
 
 const closeRecordModal = () => {
   record.value = {}
+  avg_price.value = null
   recordModal.value = false
 }
 const removeComma = (v, f) => {
@@ -356,7 +365,7 @@ onMounted(async () => {
     let hasRecords = true
     if(v.nse_code){
       let liveData = await axios.get('https://stockapi.ipoinbox.com/quote?companyName='+v.nse_code.trim())
-      curPrice = liveData.data.data[0].lastPrice
+      curPrice = liveData.data.data[0].lastPrice.replace(/(,|[^\d.-]+)+/g, '')
     }
     if(v.records.length > 0){
       cumAmount = v.records.reduce((a, b) => a + +(b.amount), 0).toFixed(2)
