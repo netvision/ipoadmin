@@ -303,7 +303,7 @@ const showRecords = (bb) => {
 
 const calculateAmount = () => {
   if(avg_price.value){
-    record.value.amount = (record.value.nse + record.value.bse) * avg_price.value
+    record.value.amount = (record.value.nse ?? 0 + record.value.bse ?? 0) * avg_price.value
   }
 }
 
@@ -313,6 +313,8 @@ const newRecord = (id) => {
 }
 
 const addRecord = async() => {
+  record.value.nse = record.value.nse ?? 0
+  record.value.bse = record.value.bse ?? 0
   if(!record.value.id){
     let res = await axios.post('https://droplet.netserve.in/ip-buyback-open-records', record.value)
   }
@@ -344,12 +346,15 @@ const closeRecordModal = () => {
   recordModal.value = false
 }
 const removeComma = (v, f) => {
-  const val = Math.abs(v.replace(/(,|[^\d.-]+)+/g, ''))
+  const val = (isNaN(v)) ? Math.abs(v.replace(/(,|[^\d.-]+)+/g, '')) : v
   buyback.value[f] = val
 }
 
 const sanitizeVal = (v, f) => {
-  const val = Math.abs(v.replace(/(,|[^\d.-]+)+/g, ''))
+  let val = 0
+  if(v){
+    val = (isNaN(v)) ? Math.abs(v.replace(/(,|[^\d.-]+)+/g, '')) : v
+  }
   record.value[f] = val
 }
 

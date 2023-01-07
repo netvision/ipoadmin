@@ -12,7 +12,7 @@
       <td>
        <q-input v-model="cat.quota" label="Quota" @blur="saveQuota(cat)">
         <template v-slot:append>
-          <span class="text-body1">({{ cat.perc }}%)</span>
+          <span class="text-caption">{{ cat.perc }}</span>
         </template>
         </q-input>
       </td>
@@ -97,10 +97,14 @@ const saveDisc = async(c) => {
 onMounted(async() => {
   invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories?sort=cat_order').then(r => r.data)
   let res = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+ipoId.value).then(r => r.data)
+  let net = res.reduce((acc, r) => {
+       return ([4,5,7].includes(r.cat_id)) ? acc - r.quota : acc
+    }, total.value)
+
   if(res.length > 0) {
     invCategories.value = invCategories.value.map(cat => {
       let item = res.filter(q => q.cat_id == cat.id)
-      let perc = (item[0]?.quota > 0) ? item[0].quota * 100 / total.value : 0
+      let perc = (![4,5,7].includes(item[0]?.cat_id) && item[0]?.quota > 0) ? item[0].quota * 100 / net: 0
       return{
       ...cat,
       quota_id: item[0]?.id ?? null,
@@ -108,7 +112,7 @@ onMounted(async() => {
       discount: item[0]?.discount ?? null,
       icon: null,
       spinner: false,
-      perc: perc.toFixed(2)
+      perc: (perc > 0) ? perc.toFixed(2)+'%' : ''
       }
     })
   }
