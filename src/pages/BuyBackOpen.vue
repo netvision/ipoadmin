@@ -302,8 +302,18 @@ const showRecords = (bb) => {
 }
 
 const calculateAmount = () => {
-  if(avg_price.value){
-    record.value.amount = (record.value.nse ?? 0 + record.value.bse ?? 0) * avg_price.value
+  if(avg_price.value && !record.value.amount){
+    let nse = record.value.nse ?? 0
+    let bse = record.value.bse ?? 0
+    record.value.amount = ((Number(nse) + Number(bse)) * avg_price.value).toFixed(2)
+  }
+}
+
+const calculateAvg = () => {
+  if(record.value.amount){
+    let nse = record.value.nse ?? 0
+    let bse = record.value.bse ?? 0
+    avg_price.value = (Number(record.value.amount) / (Number(nse) + Number(bse))).toFixed(2)
   }
 }
 
@@ -356,6 +366,8 @@ const sanitizeVal = (v, f) => {
     val = (isNaN(v)) ? Math.abs(v.replace(/(,|[^\d.-]+)+/g, '')) : v
   }
   record.value[f] = val
+  calculateAmount()
+  calculateAvg()
 }
 
 onMounted(async () => {
