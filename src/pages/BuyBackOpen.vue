@@ -407,7 +407,7 @@ onMounted(async () => {
       }
     })
   data.value = await Promise.all(promises)
-    data.value.sort((a,b) => b.utilPerc - a.utilPerc)
+  data.value.sort((a,b) => b.utilPerc - a.utilPerc)
   bbs.value = data.value.filter(r => cur_date.value > new Date(r.start_date) && cur_date.value < new Date(r.close_date))
 })
 </script>

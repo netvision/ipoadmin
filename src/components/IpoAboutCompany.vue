@@ -53,7 +53,7 @@
   <q-tab-panels v-model="tab" animated>
     <q-tab-panel name="info">
       <div class="text-h6">Company Info</div>
-      <CompanyInfo :ipo_id="ipo.ipo_id" :content="ipo.about_html" :blog_id="ipo.blog_id" />
+      <CompanyInfo :ipo_id="ipo.ipo_id" />
     </q-tab-panel>
 
     <q-tab-panel name="promoters">
@@ -87,7 +87,7 @@
 
 
 <script setup>
-  import { ref, onMounted } from 'vue' 
+  import { ref, onMounted } from 'vue'
   import { api, axios } from '../boot/axios'
   import CompanyInfo from './CompanyInfo.vue'
   import IpoObjects from './IpoObjects.vue'
@@ -118,7 +118,7 @@
           await axios.put('https://droplet.netserve.in/ipos/'+id, {header_img: company_header.value})
           headerModel.value = false
         }
- 
+
   onMounted(async () => {
     const id = +props.IpoId
     const ip = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
