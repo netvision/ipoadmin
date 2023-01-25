@@ -62,8 +62,7 @@
     </q-tab-panel>
 
     <q-tab-panel name="objects">
-      <div class="text-h6">Objects of the Issue</div>
-      <IpoObjects :ipo_id="ipo.ipo_id" :content="ipo.issue_objects_html" />
+      <IpoObjects :ipo_id="ipo.ipo_id" />
     </q-tab-panel>
     <q-tab-panel name="financials">
       <IpoFinancials :content="ipo.financials" :ipo_id="ipo.ipo_id" />
@@ -118,6 +117,7 @@
           await axios.put('https://droplet.netserve.in/ipos/'+id, {header_img: company_header.value})
           headerModel.value = false
         }
+
 
   onMounted(async () => {
     const id = +props.IpoId

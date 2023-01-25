@@ -490,7 +490,7 @@ const props = defineProps({
     ipo_id: Number,
   })
 
-const infoTab = ref()
+const infoTab = ref('basicinfo')
 const $q = useQuasar()
 const ipo_id = ref(props.ipo_id)
 
