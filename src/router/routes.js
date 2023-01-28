@@ -9,6 +9,7 @@ const routes = [
       { path: '/sectors', component: () => import('pages/Sectors.vue') },
       { path: '/brlms', component: () => import('pages/Brlms.vue') },
       { path: '/anchors', component: () => import('pages/Anchors.vue') },
+      { path: '/roc-offices', component: () => import('pages/RocOffices.vue') },
       { path: '/gmp', component: () => import('pages/Gmp.vue') },
       { path: '/buybacks', component: () => import('pages/BuyBackOpen.vue') },
       { path: '/oldIpos', component: () => import('pages/OldIpos.vue') },

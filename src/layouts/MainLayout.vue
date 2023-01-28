@@ -24,6 +24,7 @@
           <q-btn flat label="Registrars" to="/registrars" />
           <q-btn flat label="BLRMs" to="/brlms" />
           <q-btn flat label="Anchors" to="/anchors" />
+          <q-btn flat label="ROC Offices" to="/roc-offices" />
         </q-btn-dropdown>
         <q-btn-dropdown flat icon="account_circle">
           <q-list>
