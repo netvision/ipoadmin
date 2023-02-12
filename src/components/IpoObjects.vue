@@ -27,7 +27,35 @@
           <q-card-section>
             <div class="row">
               <div class="q-pa-md col">
-                <q-input v-model="newObject.heading" label="Heading" />
+                <q-select
+                  v-model="newObject.title"
+                  :options="titles"
+                  option-value="id"
+                  option-label="title"
+                  label="Heading"
+                  map-options
+                  >
+                  <template v-slot:after>
+                    <q-btn round dense flat icon="add" @click="addTitleModel = true" />
+                  </template>
+                </q-select>
+                <q-dialog v-model="addTitleModel">
+                  <q-card class="brlm-card" style="width:100vw">
+                    <h3 class="text-h6 text-center">Add New Heading</h3>
+                    <q-card-section>
+                      <div class="row no-wrap items-center">
+                        <div class="col text-h6 ellipsis">
+                          <q-input v-model="newTitle" label="Heading" />
+                        </div>
+                      </div>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                      <q-btn v-close-popup flat color="primary" label="Add" @click="addTitle" />
+                      <q-btn v-close-popup flat color="primary" label="Cancel" @click="resetTitle" />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
               </div>
               <div class="q-pa-md col">
                 <q-input v-model="newObject.amount" label="Amount" />
@@ -53,15 +81,30 @@ import { ref, onMounted, computed} from 'vue'
 import { useQuasar } from 'quasar'
 import { api, axios } from '../boot/axios'
 
-
 const props = defineProps({
     ipo_id: Number,
   })
 const $q = useQuasar()
 const objects = ref([])
+const titles = ref([])
 const newObject = ref({ipo_id: props.ipo_id})
 const objectModel = ref(false)
 const issueSize = ref()
+const addTitleModel = ref(false)
+const newTitle = ref('')
+
+const addTitle = async() => {
+  let res = await axios.post('https://droplet.netserve.in/ipo-object-titles', {title: newTitle.value})
+  if(res){
+    titles.value.push(res.data)
+    newObject.value.title_id = res.data.id
+  }
+  addTitleModel.value = false
+}
+
+const resetTitle = () => {
+
+}
 
 const toolbar = [
         ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
@@ -82,6 +125,10 @@ const modules = [
     ]*/
 
 const saveObject = async() => {
+  newObject.value.title_id = newObject.value.title.id
+  newObject.value.heading = newObject.value.title.title
+  delete newObject.value.title
+  console.log(newObject.value)
   let res = (newObject.value.id) ? await axios.put('https://droplet.netserve.in/ipo-objects/'+newObject.value.id, newObject.value) : await axios.post('https://droplet.netserve.in/ipo-objects', newObject.value)
   console.log(res)
   if(res.status == 200 || res.status == 201) {
@@ -125,7 +172,8 @@ const total = computed({
 })
 
 onMounted(async() => {
-  objects.value = await axios.get('https://droplet.netserve.in/ipo-objects?per-page=50&filter[ipoId][eq]='+props.ipo_id).then(r => r.data)
+  objects.value = await axios.get('https://droplet.netserve.in/ipo-objects?expand=title&filter[ipoId][eq]='+props.ipo_id).then(r => r.data)
+  titles.value = await axios.get('https://droplet.netserve.in/ipo-object-titles').then(r => r.data)
   let ipo = await axios.get('https://droplet.netserve.in/ipos/'+props.ipo_id+'?fields=issue_size').then(r => r.data)
   issueSize.value = 10000000 * Number(ipo.issue_size)
 })

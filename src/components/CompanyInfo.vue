@@ -1,13 +1,5 @@
 <template>
-  <q-tabs
-    v-model="infoTab"
-    dense
-    class="text-grey"
-    active-color="primary"
-    indicator-color="primary"
-    align="left"
-    narrow-indicator
-  >
+  <q-tabs v-model="infoTab" dense class="text-grey" active-color="primary" indicator-color="primary" align="left" narrow-indicator >
     <q-tab name="basicinfo" label="Basic Info" />
     <q-tab name="history" label="History" />
     <q-tab name="holdings" label="Holdings" />
@@ -209,6 +201,11 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <div class="q-pa-md">
+        <p class="text-left text-h6">Notes</p>
+        <q-editor v-model="compInfo.history_note"></q-editor>
+        <q-btn flat color="primary" label="Save Note" @click="saveInfo" />
+      </div>
     </q-tab-panel>
     <q-tab-panel name="holdings">
       <h3 class="text-h5">Holdings and Subsidiaries<span><q-btn round dense flat icon="add" @click="holdingModel = true" /></span></h3>
@@ -274,6 +271,11 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <div class="q-pa-md">
+        <p class="text-left text-h6">Notes</p>
+        <q-editor v-model="compInfo.holdings_note"></q-editor>
+        <q-btn flat color="primary" label="Save Note" @click="saveInfo" />
+      </div>
     </q-tab-panel>
     <q-tab-panel name="clients">
       <h3 class="text-h5">Clients<span><q-btn round dense flat icon="add" @click="clientModel = true" /></span></h3>
@@ -339,6 +341,11 @@
             />
           </div>
       </q-dialog>
+      <div class="q-pa-md">
+        <p class="text-left text-h6">Notes</p>
+        <q-editor v-model="compInfo.clients_note"></q-editor>
+        <q-btn flat color="primary" label="Save Note" @click="saveInfo" />
+      </div>
     </q-tab-panel>
     <q-tab-panel name="property">
       <h3 class="text-h5">Properties<span><q-btn round dense flat icon="add" @click="openPropertyModel" /></span></h3>
@@ -420,6 +427,11 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <div class="q-pa-md">
+        <p class="text-left text-h6">Notes</p>
+        <q-editor v-model="compInfo.property_note"></q-editor>
+        <q-btn flat color="primary" label="Save Note" @click="saveInfo" />
+      </div>
     </q-tab-panel>
     <q-tab-panel name="litigations">
       <h3 class="text-h5">Litigations<span><q-btn round dense flat icon="add" @click="litigationModel = true" /></span></h3>
@@ -476,6 +488,11 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <div class="q-pa-md">
+        <p class="text-left text-h6">Notes</p>
+        <q-editor v-model="compInfo.litigations_note"></q-editor>
+        <q-btn flat color="primary" label="Save Note" @click="saveInfo" />
+      </div>
     </q-tab-panel>
   </q-tab-panels>
 
