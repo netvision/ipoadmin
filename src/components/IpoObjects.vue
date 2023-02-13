@@ -7,7 +7,7 @@
             <q-item-label>{{ getPerc(item.amount) }}%</q-item-label>
           </q-item-section>
           <q-item-section top>
-            <q-item-label lines="1">{{ item.heading }} </q-item-label>
+            <q-item-label lines="1">{{ item.title?.title }} </q-item-label>
             <q-item-label lines="1" v-if="item.details" caption>{{ item.details }}</q-item-label>
           </q-item-section>
           <q-item-section top side>
@@ -125,20 +125,22 @@ const modules = [
     ]*/
 
 const saveObject = async() => {
-  newObject.value.title_id = newObject.value.title.id
-  newObject.value.heading = newObject.value.title.title
-  delete newObject.value.title
-  console.log(newObject.value)
-  let res = (newObject.value.id) ? await axios.put('https://droplet.netserve.in/ipo-objects/'+newObject.value.id, newObject.value) : await axios.post('https://droplet.netserve.in/ipo-objects', newObject.value)
-  console.log(res)
+  let item = newObject.value
+  item.title_id = item.title.id
+  if(!item.id) delete item.title
+
+  let res = (item.id) ? await axios.put('https://droplet.netserve.in/ipo-objects/'+item.id+'?expand=title', item) : await axios.post('https://droplet.netserve.in/ipo-objects?expand=title', item)
   if(res.status == 200 || res.status == 201) {
-    if (res.status == 201) objects.value.push(res.data)
+    if (res.status == 201) {
+      objects.value.push(res.data)
+    }
     $q.notify({
         message: 'Updated Successfully',
         icon: 'announcement'
         })
     newObject.value = {ipo_id: props.ipo_id}
   }
+
 }
 
 const resetObject = () => {
