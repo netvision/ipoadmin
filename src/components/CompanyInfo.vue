@@ -352,7 +352,7 @@
       <q-list v-if="properties && properties.length > 0">
         <q-item v-for="item in properties" :key="item.id">
           <q-item-section top class="col-2">
-            <q-item-label>{{ item.type }}</q-item-label>
+            <q-item-label>{{ getProptyType(item.type_id)}}</q-item-label>
           </q-item-section>
           <q-item-section top>
             <q-item-label lines="1">{{ item.title }} </q-item-label>
@@ -376,12 +376,35 @@
               </div>
               <div class="col q-pa-md">
                 <q-select
-                  filled
-                  v-model="newProperty.type"
+                  v-model="newProperty.type_id"
                   :options="propertyTypes"
-                  label="Property type"
+                  option-value="id"
+                  option-label="title"
+                  label="Type"
+                  map-options
+                  emit-value
                   >
+                  <template v-slot:after>
+                    <q-btn round dense flat icon="add" @click="propertyTypeModel = true" />
+                  </template>
                 </q-select>
+                <q-dialog v-model="propertyTypeModel">
+                  <q-card class="brlm-card" style="width:100vw">
+                    <h3 class="text-h6 text-center">Add New Property Type</h3>
+                    <q-card-section>
+                      <div class="row no-wrap items-center">
+                        <div class="col text-h6 ellipsis">
+                          <q-input v-model="newPropertyType" label="Type" />
+                        </div>
+                      </div>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                      <q-btn v-close-popup flat color="primary" label="Add" @click="addPropertyType" />
+                      <q-btn v-close-popup flat color="primary" label="Cancel" @click="resetPropertyType" />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
               </div>
               <div class="col q-pa-md">
                 <q-input v-model="newProperty.purpose" label="Purpose" />
@@ -405,7 +428,7 @@
                 <q-input v-model="newProperty.state" label="State" />
               </div>
             </div>
-            <div class="row" v-if="newProperty.type === 'Leased'">
+            <div class="row" v-if="newProperty.type_id === 2">
               <div class="q-pa-md col">
                 <q-input v-model="newProperty.name_of_lessor" label="Name of Lessor" />
               </div>
@@ -413,7 +436,7 @@
                 <q-input v-model="newProperty.rent_amount" label="Rent amount" />
               </div>
             </div>
-            <div class="row" v-if="newProperty.type === 'Leased'">
+            <div class="row" v-if="newProperty.type_id === 2">
               <div class="q-pa-md col">
                 <q-input v-model="newProperty.lease_terms" label="Lease Terms" />
               </div>
@@ -438,7 +461,7 @@
       <q-list v-if="litigations && litigations.length > 0">
         <q-item v-for="item in litigations" :key="item.id">
           <q-item-section top class="col col-3">
-            <q-item-label>{{ item.litigation_type }}</q-item-label>
+            <q-item-label>{{ getlitigationType(item.type_id) }}</q-item-label>
           </q-item-section>
           <q-item-section top>
             <q-item-label lines="1">{{ item.details }} </q-item-label>
@@ -458,13 +481,36 @@
           <q-card-section>
             <div class="row no-wrap items-center">
              <div class="col q-pa-md">
-                <q-select
-                  filled
-                  v-model="newLitigation.litigation_type"
+              <q-select
+                  v-model="newLitigation.type_id"
                   :options="litigationTypes"
-                  label="Litigation type"
+                  option-value="id"
+                  option-label="title"
+                  label="Type"
+                  map-options
+                  emit-value
                   >
+                  <template v-slot:after>
+                    <q-btn round dense flat icon="add" @click="litigationTypeModel = true" />
+                  </template>
                 </q-select>
+                <q-dialog v-model="litigationTypeModel">
+                  <q-card class="brlm-card" style="width:100vw">
+                    <h3 class="text-h6 text-center">Add New Litigation Type</h3>
+                    <q-card-section>
+                      <div class="row no-wrap items-center">
+                        <div class="col text-h6 ellipsis">
+                          <q-input v-model="newLitigationType" label="Type" />
+                        </div>
+                      </div>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                      <q-btn v-close-popup flat color="primary" label="Add" @click="addLitigationType" />
+                      <q-btn v-close-popup flat color="primary" label="Cancel" @click="resetLitigationType" />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
               </div>
             </div>
             <div class="row">
@@ -652,7 +698,24 @@ const delClient = async(item) => {
 const properties = ref([])
 const newProperty = ref({ipo_id: ipo_id.value})
 const propertyModel = ref(false)
-const propertyTypes = ref(['Own', 'Leased', 'Intellectual'])
+const propertyTypeModel = ref(false)
+const propertyTypes = ref([])
+
+const newPropertyType = ref('')
+
+const addPropertyType = async() => {
+  let res = await axios.post('https://droplet.netserve.in/property-types', {title: newPropertyType.value})
+  if(res){
+    propertyTypes.value.push(res.data)
+    newProperty.value.type_id = res.data.id
+  }
+  propertyTypeModel.value = false
+}
+
+const resetPropertyType = () => {
+  newPropertyType.value = {}
+  propertyTypeModel.value = false
+}
 
 const openPropertyModel = () =>{
   newProperty.value = {ipo_id: ipo_id.value}
@@ -660,7 +723,9 @@ const openPropertyModel = () =>{
 }
 
 const addProperty = async() => {
-  let res = (newProperty.value.id) ? await axios.put('https://droplet.netserve.in/comp-properties/'+newProperty.value.id, newProperty.value) : await axios.post('https://droplet.netserve.in/comp-properties', newProperty.value)
+  let item = newProperty.value
+  console.log(item)
+  let res = (item.id) ? await axios.put('https://droplet.netserve.in/comp-properties/'+item.id, item) : await axios.post('https://droplet.netserve.in/comp-properties', item)
   if(res.status == 200 || res.status == 201) {
     if (res.status == 201) properties.value.push(res.data)
     $q.notify({
@@ -668,6 +733,12 @@ const addProperty = async() => {
         icon: 'announcement'
         })
   }
+}
+
+const getProptyType = (id) => {
+  let type =  propertyTypes.value.filter(type => type.id === id)
+  //console.log(type)
+  return type[0].title
 }
 
 const resetProperty = () => {
@@ -688,13 +759,36 @@ const delProperty = async(item) => {
 
 //Litigation Tab
 const litigations = ref([])
+const litigationTypes = ref([])
 const newLitigation = ref({ipo_id: ipo_id.value})
+const newLitigationType = ref()
 const litigationModel = ref(false)
-const litigationTypes = ref(['Against Company', 'Against Promoters', 'Against Group Company', 'Against Directors', 'Others'])
+const litigationTypeModel = ref(false)
+
+const getlitigationType = (id) => {
+  let type =  litigationTypes.value.filter(type => type.id === id)
+  //console.log(type)
+  return type[0].title
+}
+
+const addLitigationType = async() => {
+  let res = await axios.post('https://droplet.netserve.in/litigation-types', {title: newLitigationType.value})
+  if(res){
+    litigationTypes.value.push(res.data)
+    newLitigation.value.type_id = res.data.id
+  }
+  litigationTypeModel.value = false
+}
+
+const resetLitigationType = () => {
+  newLitigationType.value = {}
+  litigationTypeModel.value = false
+}
+
+
 const addLitigation = async() => {
   console.log(newLitigation.value)
   let res = (newLitigation.value.id) ? await axios.put('https://droplet.netserve.in/comp-litigations/'+newLitigation.value.id, newLitigation.value) : await axios.post('https://droplet.netserve.in/comp-litigations', newLitigation.value)
-  console.log(res)
   if(res.status == 200 || res.status == 201) {
     if (res.status == 201) litigations.value.push(res.data)
     $q.notify({
@@ -730,7 +824,9 @@ onMounted(async() => {
   holdings.value = await axios.get('https://droplet.netserve.in/comp-holding?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
   clients.value = await axios.get('https://droplet.netserve.in/comp-client?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
   properties.value = await axios.get('https://droplet.netserve.in/comp-properties?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
+  propertyTypes.value = await axios.get('https://droplet.netserve.in/property-types').then(r => r.data)
   litigations.value = await axios.get('https://droplet.netserve.in/comp-litigations?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
+  litigationTypes.value = await axios.get('https://droplet.netserve.in/litigation-types').then(r => r.data)
   console.log(litigations.value)
 })
 

@@ -112,24 +112,13 @@ const toolbar = [
         ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
         ['viewsource']
       ]
-/*
-const modules = [
-    {
-        module: htmlEditButton,
-        name: "htmlEditButton"
-    },
-    {
-        module: BlotFormatter,
-        name: 'formatter'
-    }
-    ]*/
 
 const saveObject = async() => {
   let item = newObject.value
   item.title_id = item.title.id
   if(!item.id) delete item.title
 
-  let res = (item.id) ? await axios.put('https://droplet.netserve.in/ipo-objects/'+item.id+'?expand=title', item) : await axios.post('https://droplet.netserve.in/ipo-objects?expand=title', item)
+  let res = (item.id) ? await axios.put('https://droplet.netserve.in/ipo-objects/'+item.id, item) : await axios.post('https://droplet.netserve.in/ipo-objects?expand=title', item)
   if(res.status == 200 || res.status == 201) {
     if (res.status == 201) {
       objects.value.push(res.data)
