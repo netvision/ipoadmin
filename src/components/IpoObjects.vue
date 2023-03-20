@@ -103,7 +103,8 @@ const addTitle = async() => {
 }
 
 const resetTitle = () => {
-
+  newTitle.value = {}
+  addTitleModel.value = false
 }
 
 const toolbar = [

@@ -12,6 +12,7 @@ const routes = [
       { path: '/roc-offices', component: () => import('pages/RocOffices.vue') },
       { path: '/gmp', component: () => import('pages/Gmp.vue') },
       { path: '/buybacks', component: () => import('pages/BuyBackOpen.vue') },
+      { path: '/buybacks-tender', component: () => import('pages/BuyBackTender.vue') },
       { path: '/oldIpos', component: () => import('pages/OldIpos.vue') },
       { path: '/old-ipo/:id', component: () => import('pages/OldIpoDetail.vue') },
       { path: '/financials/:id', component: () => import('pages/Financials.vue') },

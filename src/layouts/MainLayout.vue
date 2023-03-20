@@ -17,14 +17,17 @@
           @filter-abort="abortSearch" />
           <q-space />
         <q-btn flat icon="home" to="/" />
-        <q-btn flat label="GMP" to="/gmp" />
-        <q-btn flat label="BuyBacks" to="/buybacks" />
         <q-btn-dropdown flat label="masters">
-          <q-btn flat label="Sectors" to="/sectors" />
-          <q-btn flat label="Registrars" to="/registrars" />
-          <q-btn flat label="BLRMs" to="/brlms" />
-          <q-btn flat label="Anchors" to="/anchors" />
+          <q-btn flat label="Sectors" to="/sectors" /><br />
+          <q-btn flat label="Registrars" to="/registrars" /><br />
+          <q-btn flat label="BLRMs" to="/brlms" /><br />
+          <q-btn flat label="Anchors" to="/anchors" /><br />
           <q-btn flat label="ROC Offices" to="/roc-offices" />
+        </q-btn-dropdown>
+        <q-btn flat label="GMP" to="/gmp" />
+        <q-btn-dropdown flat label="Buybacks">
+          <q-btn flat label="Open Market" to="/buybacks" /><br />
+          <q-btn flat label="Tender" to="/buybacks-tender" />
         </q-btn-dropdown>
         <q-btn-dropdown flat icon="account_circle">
           <q-list>
@@ -124,6 +127,8 @@ const update = async () => {
         })
     }
 }
+
+
 
 const logout = async() => {
   try {
