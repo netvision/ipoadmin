@@ -30,26 +30,32 @@
                     <div class="q-pa-md">
                       <p class="col">Face Value: <strong>&#8377;{{ bb.face_value ?? 'NA' }}</strong></p>
                       <p class="col">Promoters participations: <strong>{{ bb.promotors_participation ?? 'NA' }}</strong></p>
-                      <p class="col">reserve Details: <strong>{{ bb.reserve_details ?? 'NA' }}</strong></p>
+                      <p class="col" v-if="bb.promotors_participation == 'Yes'">Promoters: No of Shares Entitled: <strong>{{ bb.promotors_shares_entitlement ?? 'NA' }}</strong></p>
+                      <p class="col" v-if="bb.promotors_participation == 'Yes'">Promoters: No of Shares Willing to Tender: <strong>{{ bb.promotors_willing_to_tender ?? 'NA' }}</strong></p>
+                      <p class="col">General Reserve: <strong>{{ bb.general_reserve ?? 'NA' }}</strong></p>
+                      <p class="col">Securities Premium: <strong>{{ bb.securities_premium ?? 'NA' }}</strong></p>
+                      <p class="col">Retained Earnings: <strong>{{ bb.retained_earnings ?? 'NA' }}</strong></p>
+                      <p class="col">Equity Shares Nominal Value: <strong>{{ bb.equity_shares_nominal_value ?? 'NA' }}</strong></p>
 
-                      <p class="col">Shares in Public: <strong>{{bb.freefloat_percent ?? 'NA'}}</strong></p>
+
                       <p class="col">Total Paidup Percent: <strong>{{bb.total_paidup_percent ?? 'NA'}}</strong></p>
                       <p class="col">Entitlement Ratio (Reserve): <strong>{{bb.entitlement_ratio_reserved ?? 'NA'}}</strong></p>
                       <p class="col">Entitlement Ratio (General): <strong>{{bb.entitlement_ratio_general ?? 'NA'}}</strong></p>
-                      <p class="col">Acceptance Ratio: <strong>{{bb.acceptance_ratio ?? 'NA'}}</strong></p>
+                      <p class="col">Acceptance Ratio (Reserved): <strong>{{bb.acceptance_ratio_reserved ?? 'NA'}}</strong></p>
+                      <p class="col">Acceptance Ratio (General): <strong>{{bb.acceptance_ratio_general ?? 'NA'}}</strong></p>
                       <q-separator />
                       <p><strong>Important Dates</strong></p>
                       <q-separator />
                       <p>Announcement Date: <strong>{{ dateFormat(bb.announcement_date) }}</strong></p>
                       <p>Boardmeeting Date: <strong>{{ dateFormat(bb.boardmeeting_date) }}</strong></p>
-                      <p>Shareholders Approval Date: <strong>{{ dateFormat(bb.shareholder_approval_date) }}</strong></p>
+                      <p>Postal ballot result date: <strong>{{ dateFormat(bb.postal_ballot_result_date) }}</strong></p>
                       <p>Last Date to buy: <strong>{{ dateFormat(bb.last_date_to_buy) }}</strong></p>
                       <p>Record Date: <strong>{{ dateFormat(bb.record_date) }}</strong></p>
                       <p>Open Date: <strong>{{ dateFormat(bb.open_date) }}</strong></p>
                       <p>Close Date: <strong>{{ dateFormat(bb.close_date) }}</strong></p>
                       <p>Finalisation Date: <strong>{{ dateFormat(bb.finalisation_date) }}</strong></p>
                       <p>Bids Settlement Date: <strong>{{ dateFormat(bb.bids_settlement_date) }}</strong></p>
-                      <p>Share Extinguishment Date: <strong>{{ dateFormat(bb.share_extinguishment_date) }}</strong></p>
+
                       <q-separator />
                       <p><strong>Documents</strong></p>
                       <q-separator />
@@ -97,16 +103,16 @@
                           <div class="col"><q-input outlined v-model="newBuyback.nse_code" label="NSE Code" /></div>
                         </div>
                         <div class="row q-gutter-md q-mt-md">
-                          <div class="col-3"><q-select outlined v-model="newBuyback.price_type" :options="['fixed', 'range']" label="Price Type" /></div>
+                          <div class="col-3"><q-select outlined v-model="newBuyback.price_type" :options="['fixed', 'upto']" label="Price Type" /></div>
                           <div class="col">
-                            <q-input outlined v-model="newBuyback.price_high" :label="(newBuyback.price_type == 'range') ? 'Price High' : 'Price'" type="number">
+                            <q-input outlined v-model="newBuyback.price_high" :label="(newBuyback.price_type == 'upto') ? 'Price Upto' : 'Price'" type="number">
                               <template v-slot:prepend>
                                 &#8377;
                               </template>
                             </q-input>
                           </div>
-                          <div class="col" v-if="newBuyback.price_type && newBuyback.price_type == 'range'">
-                            <q-input outlined v-model="newBuyback.price_low" label="Price Low" type="number">
+                          <div class="col" v-if="newBuyback.price_type && newBuyback.price_type == 'upto'">
+                            <q-input outlined v-model="newBuyback.price_low" label="Price Final" type="number">
                               <template v-slot:prepend>
                                 &#8377;
                               </template>
@@ -131,13 +137,30 @@
                           </div>
                         </div>
                         <div class="row q-gutter-md q-mt-md">
-                          <div class="col"><q-input outlined v-model="newBuyback.promotors_participation" label="Promoters Participation" /></div>
+                          <div class="col"><q-select outlined v-model="newBuyback.promotors_participation" :options="['No', 'Yes']" label="Promoters Participation" /></div>
+                          <div class="col" v-if="newBuyback.promotors_participation == 'Yes'"><q-input outlined v-model="newBuyback.promotors_shares_entitlement" label="No. of Shares Entitled" /></div>
+                          <div class="col" v-if="newBuyback.promotors_participation == 'Yes'"><q-input outlined v-model="newBuyback.promotors_willing_to_tender" label="Willing to Tender" /></div>
                         </div>
                         <div class="row q-gutter-md q-mt-md">
-                          <div class="col"><q-input outlined v-model="newBuyback.reserve_details" label="Reserve Details" /></div>
+                          <div class="col"><p>Reserve Details</p></div>
+                        </div>
+                        <div class="row q-gutter-md">
+                          <div class="col">
+                              <q-input outlined v-model="newBuyback.securities_premium" label="Securities Premium" />
+                          </div>
+                          <div class="col">
+                              <q-input outlined v-model="newBuyback.retained_earnings" label="Retained Earnings" />
+                          </div>
+                        </div>
+                        <div class="row q-gutter-md">
+                          <div class="col">
+                              <q-input outlined v-model="newBuyback.equity_shares_nominal_value" label="Equity Shares Nominal Value" />
+                          </div>
+                          <div class="col">
+                              <q-input outlined v-model="newBuyback.general_reserve" label="General Reserve" />
+                          </div>
                         </div>
                         <div class="row q-gutter-md q-mt-md">
-                          <div class="col"><q-input outlined v-model="newBuyback.freefloat_percent" label="Freefloat Percent" /></div>
                           <div class="col"><q-input outlined v-model="newBuyback.total_paidup_percent" label="Total Paidup Percent" /></div>
                         </div>
 
@@ -255,7 +278,7 @@
                             </q-input>
                           </div>
                           <div class="col">
-                            <q-input outlined v-model="newBuyback.shareholder_approval_date" label="Shareholders Approval Date">
+                            <q-input outlined v-model="newBuyback.postal_ballot_result_date" label="Postal Ballot Result Date">
                             <template v-slot:append>
                               <q-icon name="event" class="cursor-pointer">
                                 <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
@@ -367,21 +390,7 @@
                             </template>
                             </q-input>
                           </div>
-                          <div class="col">
-                            <q-input outlined v-model="newBuyback.share_extinguishment_date" label="Share Extinguishment Date">
-                            <template v-slot:append>
-                              <q-icon name="event" class="cursor-pointer">
-                                <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
-                                  <q-date v-model="newBuyback.share_extinguishment_date" mask="YYYY-MM-DD">
-                                    <div class="row items-center justify-end">
-                                      <q-btn v-close-popup label="Close" color="primary" flat />
-                                    </div>
-                                  </q-date>
-                                </q-popup-proxy>
-                              </q-icon>
-                            </template>
-                            </q-input>
-                          </div>
+
                         </div>
                       </q-tab-panel>
                       <q-tab-panel name="other_info">
@@ -395,7 +404,10 @@
                         </div>
                         <div class="row q-gutter-md q-mt-md">
                           <div class="col">
-                            <q-input outlined v-model="newBuyback.acceptance_ratio" label="Acceptance Ratio" />
+                            <q-input outlined v-model="newBuyback.acceptance_ratio_reserved" label="Acceptance Ratio (Reserved)" />
+                          </div>
+                          <div class="col">
+                            <q-input outlined v-model="newBuyback.acceptance_ratio_general" label="Acceptance Ratio (General)" />
                           </div>
                         </div>
                         <div v-if="newBuyback.id">
