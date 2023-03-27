@@ -16,6 +16,7 @@ const routes = [
       { path: '/oldIpos', component: () => import('pages/OldIpos.vue') },
       { path: '/old-ipo/:id', component: () => import('pages/OldIpoDetail.vue') },
       { path: '/financials/:id', component: () => import('pages/Financials.vue') },
+      { path: '/demergers', component: () => import('pages/Demergers.vue') },
     ],
     meta: {
       requiresAuth: true

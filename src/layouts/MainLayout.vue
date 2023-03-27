@@ -29,6 +29,7 @@
           <q-btn flat label="Open Market" to="/buybacks" /><br />
           <q-btn flat label="Tender" to="/buybacks-tender" />
         </q-btn-dropdown>
+        <q-btn flat label="Demergers" to="/demergers" />
         <q-btn-dropdown flat icon="account_circle">
           <q-list>
             <q-item>
