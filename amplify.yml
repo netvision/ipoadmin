@@ -10,8 +10,8 @@ applications:
       phases:
         build:
           commands:
-            - nvm install 12.22.1
-            - nvm use $VERSION_NODE_12.22.1
+            - nvm install 12.22.12.22.1
+            - nvm use $VERSION_NODE_12.22.12.22.1
             - npm install
             - npx quasar build
       artifacts:
