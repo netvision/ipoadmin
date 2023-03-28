@@ -138,8 +138,8 @@
                         </div>
                         <div class="row q-gutter-md q-mt-md">
                           <div class="col"><q-select outlined v-model="newBuyback.promotors_participation" :options="['No', 'Yes']" label="Promoters Participation" /></div>
-                          <div class="col" v-if="newBuyback.promotors_participation == 'Yes'"><q-input outlined v-model="newBuyback.promotors_shares_entitlement" label="No. of Shares Entitled" /></div>
-                          <div class="col" v-if="newBuyback.promotors_participation == 'Yes'"><q-input outlined v-model="newBuyback.promotors_willing_to_tender" label="Willing to Tender" /></div>
+                          <div class="col" v-if="newBuyback.promotors_participation == 'Yes'"><q-input outlined v-model="newBuyback.promotors_shares_entitlement" label="No. of Shares Entitled" @blur="removeComma('promotors_shares_entitlement')"/></div>
+                          <div class="col" v-if="newBuyback.promotors_participation == 'Yes'"><q-input outlined v-model="newBuyback.promotors_willing_to_tender" label="Willing to Tender" @blur="removeComma('promotors_willing_to_tender')" /></div>
                         </div>
                         <div class="row q-gutter-md q-mt-md">
                           <div class="col"><p>Reserve Details</p></div>
@@ -599,6 +599,10 @@ const sanitizeQty = () => {
   if(!newBuyback.value.issue_size_amount && newBuyback.value.price_high) {
     newBuyback.value.issue_size_amount = newBuyback.value.issue_size_shares * +newBuyback.value.price_high
   }
+}
+
+const removeComma = (field) => {
+  newBuyback.value[field] = Math.abs(newBuyback.value[field].replace(/(,|[^\d.-]+)+/g, ''))
 }
 
 onMounted(async() => {

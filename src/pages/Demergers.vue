@@ -43,7 +43,7 @@
                         <q-item-label>New Company: </q-item-label>
                         <q-item-label class="text-h6">{{ dm.resulting_company }}</q-item-label>
                       </q-item-section>
-                      <q-item-section side class="text-left">
+                      <q-item-section side>
                         <q-item-label>Demerger Ratio: {{ getRatio(dm.demerger_ratio) }}</q-item-label>
                         <q-item-label>Ex Date Ratio: {{ (dm.ex_date_ratio) ? getRatio(dm.ex_date_ratio) : 'NA'}}</q-item-label>
                         <q-item-label>Face Value: {{ dm.face_value ?? 'NA' }}</q-item-label>
