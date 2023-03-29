@@ -510,6 +510,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { axios } from '../boot/axios'
+import { Fraction } from 'fractional/index.js'
 const buybacks = ref([])
 const newBuyback = ref({price_type: 'fixed'})
 const buybackModel = ref(false)
@@ -603,6 +604,11 @@ const sanitizeQty = () => {
 
 const removeComma = (field) => {
   newBuyback.value[field] = Math.abs(newBuyback.value[field].replace(/(,|[^\d.-]+)+/g, ''))
+}
+
+const getRatio = (per) =>{
+  let r = new Fraction(per/100)
+  return r.numerator+':'+r.denominator
 }
 
 onMounted(async() => {

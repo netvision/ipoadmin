@@ -202,7 +202,7 @@ import { axios } from '../boot/axios'
 import { Fraction } from 'fractional/index.js'
 
 const getRatio = (fr) => {
-  let r = new Fraction(fr)
+  let r = new Fraction(fr / 100)
   return r.numerator+':'+r.denominator
 }
 
