@@ -381,8 +381,8 @@ onMounted(async () => {
     let canAddRecords = true
     let hasRecords = true
     if(v.nse_code){
-      let liveData = await axios.get('https://stockapi.ipoinbox.com/quote?companyName='+v.nse_code.trim())
-      curPrice = liveData.data.data[0].lastPrice.replace(/(,|[^\d.-]+)+/g, '')
+      let liveData = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+v.nse_code.trim())
+      curPrice = liveData.data.priceInfo.lastPrice
     }
     if(v.records.length > 0){
       cumAmount = v.records.reduce((a, b) => a + +(b.amount), 0).toFixed(2)

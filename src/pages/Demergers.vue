@@ -206,6 +206,33 @@ const getRatio = (fr) => {
   return r.numerator+':'+r.denominator
 }
 
+/* following is suggested by chatGPT to get ration from  percentage **
+
+const percentToRatio = (percent) => {
+  const decimal = percent / 100;
+  let numerator = decimal;
+  let denominator = 1;
+  while (numerator % 1 !== 0) {
+    numerator *= 10;
+    denominator *= 10;
+  }
+  const gcd = getGCD(numerator, denominator);
+  numerator /= gcd;
+  denominator /= gcd;
+  return `${numerator}:${denominator}`;
+}
+
+const getGCD = (a, b) => {
+  if (b === 0) {
+    return a;
+  } else {
+    return getGCD(b, a % b);
+  }
+}
+
+console.log(percentToRatio(20.20202020))
+*/
+
 const demergers = ref([])
 const newDemerger = ref({})
 const demergerModal = ref(false)
@@ -241,12 +268,12 @@ onMounted(async() => {
     let curPriceDemerged = 'NA'
     let curPriceResulting = 'NA'
     if(v.demerged_company_nsecode){
-      let liveData = await axios.get('https://stockapi.ipoinbox.com/quote?companyName='+v.demerged_company_nsecode.trim())
-      curPriceDemerged = liveData.data.data[0].lastPrice.replace(/(,|[^\d.-]+)+/g, '')
+      let liveData = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+v.demerged_company_nsecode.trim())
+      curPriceDemerged = liveData.data.priceInfo.lastPrice
     }
     if(v.resulting_nsecode){
-      let liveData = await axios.get('https://stockapi.ipoinbox.com/quote?companyName='+v.resulting_nsecode.trim())
-      curPriceResulting = liveData.data.data[0].lastPrice.replace(/(,|[^\d.-]+)+/g, '')
+      let liveData = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+v.resulting_nsecode.trim())
+      curPriceResulting = liveData.data.priceInfo.lastPrice
     }
     return {
       curPriceDemerged,
