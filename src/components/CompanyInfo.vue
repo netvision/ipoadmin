@@ -827,7 +827,7 @@ onMounted(async() => {
   propertyTypes.value = await axios.get('https://droplet.netserve.in/property-types').then(r => r.data)
   litigations.value = await axios.get('https://droplet.netserve.in/comp-litigations?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
   litigationTypes.value = await axios.get('https://droplet.netserve.in/litigation-types').then(r => r.data)
-  console.log(litigations.value)
+  //console.log(litigations.value)
 })
 
 </script>
