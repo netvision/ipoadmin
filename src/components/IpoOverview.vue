@@ -54,11 +54,12 @@
       <div class="col q-pa-md" v-if="overview.ipo_type === 'SME'">
         <q-select
           filled
-          v-model="overview.market_maker_id"
+          multiple
+          v-model="overview.market_makers"
           :options="marketMakersOpt"
           option-value="id"
           option-label="name"
-          label="Market Maker"
+          label="Market Makers"
           emit-value
           map-options
           use-input
@@ -103,7 +104,7 @@
         </q-dialog>
       </div>
 
-      <div class="col q-pa-md">
+      <div class="col col-2 q-pa-md">
         <q-input v-model="overview.anchor_date" mask="date" label="Anchor Date">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
@@ -118,7 +119,7 @@
         </template>
         </q-input>
       </div>
-      <div class="col q-pa-md">
+      <div class="col col-2 q-pa-md">
         <q-input v-model="overview.open_date" mask="date" label="Open Date">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
@@ -133,7 +134,7 @@
         </template>
         </q-input>
       </div>
-      <div class="col q-pa-md">
+      <div class="col col-2 q-pa-md">
         <q-input v-model="overview.close_date" mask="date" label="Close Date">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
@@ -458,6 +459,7 @@ const saveOverview = async() => {
   const id = +props.IpoId
   overview.value.brlms_json = JSON.stringify(overview.value.brlms)
   overview.value.subsector_ids = JSON.stringify(overview.value.sector_ids)
+  overview.value.market_maker_id = JSON.stringify(overview.value.market_makers)
   const upIpo = await axios.put('https://droplet.netserve.in/ipos/'+id, overview.value)
   if(upIpo.status == '200'){
     $q.notify({
@@ -476,12 +478,18 @@ onBeforeMount(async()=>{
   registrars.value = await axios.get('https://droplet.netserve.in/registrars').then(r => r.data)
   brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
   const ipo = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
-  //console.log(ipo)
+
   overview.value = ipo
   overview.value.brlms = JSON.parse(ipo.brlms_json)
   overview.value.sector_ids = JSON.parse(ipo.subsector_ids)
+  overview.value.market_makers = []
+  if(typeof ipo.market_maker_id === 'string'){
+    overview.value.market_makers = JSON.parse(ipo.market_maker_id)
+  }
+  else if(typeof ipo.market_maker_id === 'number'){
+    overview.value.market_makers.push(ipo.market_maker_id)
+  }
 
-  //console.log(cat_quotas.value)
   sectorsOpt.value = sectors.value
   marketMakersOpt.value = marketMakers.value
   updateAppAmount()
