@@ -2,7 +2,6 @@
 <div class="q-pa-md">
   <h4 class="text-h4">Subscriptions</h4>
   <ol>
-
       <li>
         Only those catagories are shown, whose quotas have been set in first 'overview' page.
       </li>

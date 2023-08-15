@@ -22,7 +22,7 @@
         <q-card-section v-if="newRecord && Object.entries(newRecord).length > 0">
             <div class="row bg-blue-grey-11 q-pa-md">
                 <div class="col-6"><q-input v-model="newRecord.name" label="Name" /></div>
-                <div class="col-6"><q-select v-model="newRecord.type" :options="['Investor', 'Shareholder', 'Promoter', 'Promoter Group', 'Other']" label="Type" /></div>
+                <div class="col-6"><q-select v-model="newRecord.type" :options="['Investor', 'Shareholder', 'Promoter', 'Promoter Group', 'Unit Holder', 'Other']" label="Type" /></div>
             </div>
             <div class="row bg-blue-grey-11 q-pa-md">
                 <div class="col"><q-input v-model="newRecord.shares_offered" label="No. of shares offered" @blur="sanitizeQty()" /></div>
