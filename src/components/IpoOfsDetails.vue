@@ -76,7 +76,7 @@
 
     const sanitizeHolding = () => {
       newRecord.value.total_holdings = newRecord.value.total_holdings.replace(/(,|[^\d.-]+)+/g, '')
-      newRecord.value.percent_of_holding = ((newRecord.value.shares_offered / newRecord.value.total_holdings) * 100).toFixed(2)
+      newRecord.value.percent_of_holding = (newRecord.value.shares_offered > 0 && newRecord.value.total_holdings > 0) ? ((newRecord.value.shares_offered / newRecord.value.total_holdings) * 100).toFixed(2) : 0
     }
     const calculateAmt = () => {
       newRecord.value.amount = newRecord.value.shares_offered * newRecord.value.cap_price
@@ -89,9 +89,12 @@
     const saveRecord = async() => {
         let record = newRecord.value
         record.amount = (record.amount) ? record.amount : +record.amount_in_cr * 10000000
+        record.percent_of_holding = +record.percent_of_holding
+        console.log(record)
         if(record.id){
             let data = await axios.put('https://droplet.netserve.in/ip-ofs-details/'+record.id, record).then(r => r.data)
             if(data){
+                console.log(data)
                 newRecord.value = {}
             }
         }
@@ -109,6 +112,5 @@
             r.amount_in_cr = Math.floor((r.amount / 10000000) *100) / 100
             return r
         })
-        console.log(details.value)
     })
 </script>

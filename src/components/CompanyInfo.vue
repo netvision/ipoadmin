@@ -11,7 +11,23 @@
 
   <q-tab-panels v-model="infoTab" animated>
     <q-tab-panel name="basicinfo">
-      <div class="q-pa-md text-h5">Basic Info</div>
+      <div class="q-pa-md text-h5">Basic Info <q-btn flat v-if="data" label="Edit old HTML Data" color="primary" @click="oldModal = true" /></div>
+
+      <q-dialog v-if="data" v-model="oldModal">
+        <q-card class="my-card">
+          <q-card-section>
+            <q-editor v-model="data" :toolbar="toolbar" />
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions align="right">
+            <q-btn v-close-popup flat color="primary" label="Cancel" />
+            <q-btn flat color="primary" label="Save" @click="saveOldData" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
         <div class="bg-grey-3">
           <div class="row">
             <div class="col q-pa-md">
@@ -551,11 +567,13 @@ import { axios } from '../boot/axios'
 
 const props = defineProps({
     ipo_id: Number,
+    html_data: String,
   })
 
 const infoTab = ref('basicinfo')
 const $q = useQuasar()
 const ipo_id = ref(props.ipo_id)
+const data = ref(props.html_data)
 
 //new roc office
 const rocOffices = ref([])
@@ -577,6 +595,12 @@ const toolbar = [
         ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
         ['viewsource']
       ]
+const oldModal = ref(false)
+const saveOldData = async() => {
+  let res = await axios.patch('https://droplet.netserve.in/ipos/'+ipo_id.value, {about_html: data.value})
+  console.log(res.status)
+  oldModal.value = false
+}
 const saveInfo = async() => {
     let res = (compInfo.value.id) ?  await axios.put('https://droplet.netserve.in/comp-infos/'+compInfo.value.id, compInfo.value) : await axios.post('https://droplet.netserve.in/comp-infos', compInfo.value)
     if(res.status == 200 || res.status == 201) {
