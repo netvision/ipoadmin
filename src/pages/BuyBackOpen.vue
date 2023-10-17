@@ -226,8 +226,6 @@ const showData = (tab) => {
   if(tab === 'closed') bbs.value = data.value.filter(x => cur_date.value > new Date(x.close_date))
   else if (tab === 'upcoming') bbs.value = data.value.filter(x => cur_date.value < new Date(x.start_date))
   else bbs.value = data.value.filter(r => cur_date.value > new Date(r.start_date) && cur_date.value < new Date(r.close_date))
-
-  console.log(bbs.value)
 }
 
 const curFormat = (val) => {
@@ -381,8 +379,9 @@ onMounted(async () => {
     let canAddRecords = true
     let hasRecords = true
     if(v.nse_code){
-      let liveData = await axios.get('https://stockapi.ipoinbox.com/quote?symbol='+v.nse_code.trim())
-      curPrice = liveData.data.priceInfo.lastPrice
+      //await axios.get('https://droplet.netserve.in/ipo/nselive?code='+v.nse_code.trim()).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
+      let liveData = await axios.get('https://droplet.netserve.in/ipo/nselive?code='+v.nse_code.trim()).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
+      curPrice = JSON.parse(liveData).lastPrice
     }
     if(v.records.length > 0){
       cumAmount = v.records.reduce((a, b) => a + +(b.amount), 0).toFixed(2)
