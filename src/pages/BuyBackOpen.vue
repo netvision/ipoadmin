@@ -380,8 +380,10 @@ onMounted(async () => {
     let hasRecords = true
     if(v.nse_code){
       //await axios.get('https://droplet.netserve.in/ipo/nselive?code='+v.nse_code.trim()).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
-      let liveData = await axios.get('https://droplet.netserve.in/ipo/nselive?code='+v.nse_code.trim()).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
-      curPrice = JSON.parse(liveData).lastPrice
+      //let liveData = await axios.get('https://droplet.netserve.in/ipo/nselive?code='+v.nse_code.trim()).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
+      let curData = await axios.get('https://droplet.netserve.in/ipo/getbhav?code='+v.nse_code.trim()).then(r => r.data[0])
+      console.log(curData)
+      curPrice = curData[' CLOSE_PRICE'].trim()
     }
     if(v.records.length > 0){
       cumAmount = v.records.reduce((a, b) => a + +(b.amount), 0).toFixed(2)

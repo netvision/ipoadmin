@@ -118,15 +118,22 @@
 
         </q-card>
         </q-dialog>
+        <div class="q-pa-md">
+        <p class="text-left text-h6">Notes</p>
+        <q-editor v-model="ipo.pref_note"></q-editor>
+        <q-btn flat color="primary" label="Save Note" @click="savePrefNote" />
+      </div>
   </q-page>
 </template>
 <script setup>
 import { ref, onMounted} from 'vue'
+import { useQuasar } from 'quasar'
 import { axios } from '../boot/axios'
 
 const props = defineProps({
     IpoId: String
   })
+const $q = useQuasar()
 const ipo = ref({})
 const ipoId = ref(props.IpoId)
 const pdfUpload = ref(false)
@@ -259,6 +266,18 @@ const pdfUploaded = async(files) =>{
     const res = await axios.put('https://droplet.netserve.in/ipos/'+ipoId.value, {prefshareholders_pdf: pdf_url})
     ipo.value = res.data
     pdfUpload.value = false
+  }
+
+  const savePrefNote = async() => {
+    if (ipo.value.ipo_id){
+      let res = await axios.put('https://droplet.netserve.in/ipos/'+ipo.value.ipo_id, ipo.value)
+    if(res.status == 200 || res.status == 201) {
+        $q.notify({
+            message: 'Updated Successfully',
+            icon: 'announcement'
+            })
+    }
+    }
   }
 
 const showModel = () => {

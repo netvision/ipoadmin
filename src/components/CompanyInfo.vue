@@ -649,7 +649,7 @@ const delEvent = async(item) => {
 const holdings = ref([])
 const newHolding = ref({ipo_id: ipo_id.value})
 const holdingModel = ref(false)
-const holdingTypes = ['Holding', 'Subsidiary', 'Joint venture', 'Associate', 'Other']
+const holdingTypes = ['Holding', 'Subsidiary', 'Joint venture', 'Associate', 'Stepdown Subsidiary', 'Other']
 
 const addHolding = async() => {
   console.log(newHolding.value)
