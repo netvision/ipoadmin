@@ -74,7 +74,6 @@
 <script setup>
 import logo from '../assets/logo.png'
 import { ref } from 'vue'
-import { Auth } from '@aws-amplify/auth'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { axios } from '../boot/axios'
@@ -95,7 +94,7 @@ const searchIpos = (val, update, abort) => {
   update(async() => {
     if(val.length > 1) {
       try {
-        let res = await axios.get('https://droplet.netserve.in/ipos?fields=ipo_id,company_name&filter[company_name][like]='+val).then(r => r.data)
+        let res = await axios.get('https://api.ipoinbox.com/ipos?fields=ipo_id,company_name&filter[company_name][like]='+val).then(r => r.data)
         ipoOpts.value = res
       }
       catch(e){
@@ -110,7 +109,7 @@ const abortSearch = () => {
 }
 
 const update = async () => {
-
+    /*
     let user = await Auth.currentAuthenticatedUser()
     try{
       const res = await Auth.changePassword(user, curPassword.value, newPassword.value)
@@ -127,6 +126,7 @@ const update = async () => {
           icon: 'announcement'
         })
     }
+        */
 }
 
 

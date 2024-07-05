@@ -29,11 +29,11 @@ const modules = [
         module: BlotFormatter,
         name: 'formatter'
     },
-    
+
     ]
 
 const saveConclusion = async() => {
-    const res = await axios.put('https://droplet.netserve.in/ipos/'+props.ipo_id, {conclusion_html: html_content.value})
+    const res = await axios.put('https://api.ipoinbox.com/ipos/'+props.ipo_id, {conclusion_html: html_content.value})
 
     if(res.status == 200) {
         $q.notify({

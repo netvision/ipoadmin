@@ -22,7 +22,7 @@
             class="text-italic text-purple text-left"
           >
             {{ col.label }}
-            
+
           </q-th>
         </q-tr>
       </template>
@@ -37,7 +37,7 @@
         </q-tr>
     </template>
   </q-table>
-  
+
   <div class="q-pa-md">
       <q-btn-group>
         <q-btn label="Add Column" @click="addColModel = true" />
@@ -49,7 +49,7 @@
     <div class="col q-pa-md">
       <q-editor :toolbar="toolbar" v-model="htmlNotes" placeholder="Notes" />
     </div>
-    
+
   </div>
   <div class="q-pa-md">
     <q-btn color="primary" label="Save" @click="savePeers" />
@@ -109,7 +109,7 @@
     <q-dialog v-model="confirm" persistent>
       <q-card>
         <q-card-section class="row items-center">
-          
+
           <span class="q-ml-sm">Delete this row?</span>
         </q-card-section>
 
@@ -119,7 +119,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    
+
 </template>
 
 <script setup>
@@ -157,7 +157,7 @@ const selectedRow = ref({})
 const addColumn = () => {
     let newColumn = {
         name: 'column'+columns.value.length,
-        label: colLabel.value, 
+        label: colLabel.value,
         field: 'column'+columns.value.length,
         align: 'right'
     }
@@ -213,7 +213,7 @@ const savePeers = async() => {
     htmlNotes: htmlNotes.value
   }
   console.log(peers)
-  const res = await axios.put('https://droplet.netserve.in/ipos/'+data.ipo_id, {peers: JSON.stringify(peers)})
+  const res = await axios.put('https://api.ipoinbox.com/ipos/'+data.ipo_id, {peers: JSON.stringify(peers)})
 
     if(res.status == 200) {
         $q.notify({
@@ -221,7 +221,7 @@ const savePeers = async() => {
             icon: 'announcement'
             })
     }
-  
+
 }
 
 onMounted(()=>{
@@ -244,7 +244,7 @@ onMounted(()=>{
   }
 
   console.log(columns.value.length)
-    
+
 })
 </script>
 

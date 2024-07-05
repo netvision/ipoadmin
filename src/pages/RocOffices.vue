@@ -81,7 +81,7 @@ const newOffice = ref({})
 const rocModel = ref(false)
 
 const addOffice = async() => {
-  let res = (newOffice.value.id) ? await axios.put('https://droplet.netserve.in/roc-offices/'+newOffice.value.id, newOffice.value) : await axios.post('https://droplet.netserve.in/roc-offices', newOffice.value)
+  let res = (newOffice.value.id) ? await axios.put('https://api.ipoinbox.com/roc-offices/'+newOffice.value.id, newOffice.value) : await axios.post('https://api.ipoinbox.com/roc-offices', newOffice.value)
   if(res.status == 200 || res.status == 201) {
     if (res.status == 201) offices.value.push(res.data)
     $q.notify({
@@ -103,7 +103,7 @@ const editOffice = (item) => {
 }
 
 const delOffice = async(item) => {
-  let res = await axios.delete('https://droplet.netserve.in/roc-offices/'+item.id)
+  let res = await axios.delete('https://api.ipoinbox.com/roc-offices/'+item.id)
   if(res.status == 204){
     offices.value = offices.value.filter(et => et.id != item.id)
     $q.notify({
@@ -114,6 +114,6 @@ const delOffice = async(item) => {
 }
 
 onMounted(async() => {
-  offices.value = await axios.get('https://droplet.netserve.in/roc-offices?per-page=50').then(r => r.data)
+  offices.value = await axios.get('https://api.ipoinbox.com/roc-offices?per-page=50').then(r => r.data)
 })
 </script>

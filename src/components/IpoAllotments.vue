@@ -35,7 +35,7 @@
             no-thumbnails
             auto-upload
             :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}, {name:'field', value: 'allotment'}]"
-            url="https://droplet.netserve.in/ipo/pdfupload"
+            url="https://api.ipoinbox.com/ipo/pdfupload"
             @uploaded = 'pdfUploaded'
           />
         </q-dialog>
@@ -94,7 +94,7 @@
   const pdfUpload = ref(false)
   const saveAllotments = async() =>{
     const id = +props.IpoId
-    const upIpo = await axios.put('https://droplet.netserve.in/ipos/'+id, ipo.value)
+    const upIpo = await axios.put('https://api.ipoinbox.com/ipos/'+id, ipo.value)
     if(upIpo.status == '200'){
       $q.notify({
               message: 'Updated Successfully',
@@ -108,7 +108,7 @@
   const pdfUploaded = async(files) =>{
     const id = +props.IpoId
     pdf_url.value = JSON.parse(files.xhr.response)
-    const res = await axios.put('https://droplet.netserve.in/ipos/'+id, {basis_of_allotment_pdf: pdf_url.value})
+    const res = await axios.put('https://api.ipoinbox.com/ipos/'+id, {basis_of_allotment_pdf: pdf_url.value})
     ipo.value = res.data
     pdfUpload.value = false
   }
@@ -116,7 +116,7 @@
   const update = async(boa, field) => {
     if(boa[field] !== null){
       boa[field] = boa[field].replace(/(,|[^\d.-]+)+/g, '')
-      let res = await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+boa.id, boa)
+      let res = await axios.put('https://api.ipoinbox.com/ipo-cat-quotas/'+boa.id, boa)
       if(res.status !== 200) boa[field] = 'error'
     }
 
@@ -124,9 +124,9 @@
 
   onMounted(async() =>{
     const id = +props.IpoId
-    let data = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+id+'&expand=cat').then(r=>r.data)
+    let data = await axios.get('https://api.ipoinbox.com/ipo-cat-quotas?ipo_id='+id+'&expand=cat').then(r=>r.data)
     boaData.value = data.sort((a, b) => a.cat.cat_order - b.cat.cat_order).filter(r=>r.quota > 0)
-    const ip = await axios.get('https://droplet.netserve.in/ipos/'+id+'?expand=registrar').then(r => r.data)
+    const ip = await axios.get('https://api.ipoinbox.com/ipos/'+id+'?expand=registrar').then(r => r.data)
     ipo.value = ip
   })
 

@@ -94,7 +94,7 @@ const addTitleModel = ref(false)
 const newTitle = ref('')
 
 const addTitle = async() => {
-  let res = await axios.post('https://droplet.netserve.in/ipo-object-titles', {title: newTitle.value})
+  let res = await axios.post('https://api.ipoinbox.com/ipo-object-titles', {title: newTitle.value})
   if(res){
     titles.value.push(res.data)
     newObject.value.title_id = res.data.id
@@ -119,7 +119,7 @@ const saveObject = async() => {
   item.title_id = item.title.id
   if(!item.id) delete item.title
 
-  let res = (item.id) ? await axios.put('https://droplet.netserve.in/ipo-objects/'+item.id, item) : await axios.post('https://droplet.netserve.in/ipo-objects?expand=title', item)
+  let res = (item.id) ? await axios.put('https://api.ipoinbox.com/ipo-objects/'+item.id, item) : await axios.post('https://api.ipoinbox.com/ipo-objects?expand=title', item)
   if(res.status == 200 || res.status == 201) {
     if (res.status == 201) {
       objects.value.push(res.data)
@@ -143,7 +143,7 @@ const editObject = (item) => {
 }
 
 const delObject = async(item) => {
-  let res = await axios.delete('https://droplet.netserve.in/ipo-objects/'+item.id)
+  let res = await axios.delete('https://api.ipoinbox.com/ipo-objects/'+item.id)
   if(res.status == 204){
     objects.value = objects.value.filter(et => et.id != item.id)
   }
@@ -164,9 +164,9 @@ const total = computed({
 })
 
 onMounted(async() => {
-  objects.value = await axios.get('https://droplet.netserve.in/ipo-objects?expand=title&filter[ipoId][eq]='+props.ipo_id).then(r => r.data)
-  titles.value = await axios.get('https://droplet.netserve.in/ipo-object-titles').then(r => r.data)
-  let ipo = await axios.get('https://droplet.netserve.in/ipos/'+props.ipo_id+'?fields=issue_size').then(r => r.data)
+  objects.value = await axios.get('https://api.ipoinbox.com/ipo-objects?expand=title&filter[ipoId][eq]='+props.ipo_id).then(r => r.data)
+  titles.value = await axios.get('https://api.ipoinbox.com/ipo-object-titles').then(r => r.data)
+  let ipo = await axios.get('https://api.ipoinbox.com/ipos/'+props.ipo_id+'?fields=issue_size').then(r => r.data)
   issueSize.value = 10000000 * Number(ipo.issue_size)
 })
 </script>

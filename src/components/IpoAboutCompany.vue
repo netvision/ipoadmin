@@ -10,7 +10,7 @@
             no-thumbnails
             auto-upload
             :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}]"
-            url="https://droplet.netserve.in/ipo/logo"
+            url="https://api.ipoinbox.com/ipo/logo"
             @uploaded = 'logoUpdate'
             style="max-width: 30%; width:30%"
           />
@@ -24,7 +24,7 @@
             no-thumbnails
             auto-upload
             :form-fields = "[{name:'ipo_id', value: ipo.ipo_id}]"
-            url="https://droplet.netserve.in/ipo/header"
+            url="https://api.ipoinbox.com/ipo/header"
             @uploaded = 'headerUpdate'
             style="max-width: 30%; width:30%"
           />
@@ -108,20 +108,20 @@
   const logoUpdate = async(files) => {
           const id = +props.IpoId
           company_logo.value = JSON.parse(files.xhr.response)
-          await axios.put('https://droplet.netserve.in/ipos/'+id, {company_logo: company_logo.value})
+          await axios.put('https://api.ipoinbox.com/ipos/'+id, {company_logo: company_logo.value})
           logoModel.value = false
         }
   const headerUpdate = async(files) => {
           const id = +props.IpoId
           company_header.value = JSON.parse(files.xhr.response)
-          await axios.put('https://droplet.netserve.in/ipos/'+id, {header_img: company_header.value})
+          await axios.put('https://api.ipoinbox.com/ipos/'+id, {header_img: company_header.value})
           headerModel.value = false
         }
 
 
   onMounted(async () => {
     const id = +props.IpoId
-    const ip = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
+    const ip = await axios.get('https://api.ipoinbox.com/ipos/'+id).then(r => r.data)
     ipo.value = ip
     company_logo.value = (ip.company_logo) ? ip.company_logo : '/placeholder-logo.png'
     company_header.value = (ip.header_img) ? ip.header_img : '/header-placeholder.png'

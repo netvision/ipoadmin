@@ -10,7 +10,7 @@
           <q-card-actions class="q-px-md">
             <q-btn unelevated color="light-green-7" size="lg" class="full-width" label="Login" @click="login" />
           </q-card-actions>
-          
+
         </q-card>
     </q-page>
     <q-dialog v-model='changepw'>
@@ -30,7 +30,6 @@
     </q-dialog>
 </template>
 <script setup>
-import { Auth } from '@aws-amplify/auth'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 const changepw = ref(false)
@@ -40,21 +39,24 @@ const user = ref({})
 const router = useRouter()
 const newPassword = ref('')
 const login = async() =>{
+   /*
     try {
         user.value = await Auth.signIn(email.value, password.value);
         if(user.value.challengeName === 'NEW_PASSWORD_REQUIRED'){
           changepw.value = true
         }
-        else{ 
+        else{
         console.log(user.value.challengeName)
         router.push('/')
         }
     } catch (error) {
         console.log('error signing in', error);
     }
+        */
 }
 
 const update = async() => {
+  /*
   console.log(user.value)
   try{
     const upUser = await Auth.completeNewPassword(
@@ -68,10 +70,13 @@ const update = async() => {
   catch (error) {
     console.log(error)
   }
+    */
 }
 
 onMounted(async()=>{
+  /*
   const isSignedIn = await Auth.currentAuthenticatedUser()
   if(isSignedIn) {router.push('/')}
+  */
 })
 </script>

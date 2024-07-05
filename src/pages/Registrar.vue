@@ -12,7 +12,7 @@
                 </q-item-section>
             </q-item>
         <q-item v-for="(reg, i) in registrars" :key="i">
-            
+
             <q-item-section top>
                 <q-item-label lines="1">
                     <span class="text-weight-medium">{{reg.name}}</span>
@@ -94,16 +94,16 @@ const editReg = (index) =>{
 
 const addRegistrar = async() =>{
     if(newRg.value.id){
-        const upReg = await axios.put('https://droplet.netserve.in/registrars/'+newRg.value.id, newRg.value).then(r => r.data)
+        const upReg = await axios.put('https://api.ipoinbox.com/registrars/'+newRg.value.id, newRg.value).then(r => r.data)
         console.log(upReg)
     }
     else {
-        const newReg = await axios.post('https://droplet.netserve.in/registrars', newRg.value).then(r => r.data)
+        const newReg = await axios.post('https://api.ipoinbox.com/registrars', newRg.value).then(r => r.data)
         registrars.value.push(newReg)
         console.log(newReg)
-    } 
-    
-    
+    }
+
+
     editRegModel.value = false
 }
 
@@ -113,7 +113,7 @@ const resetRegistrarForm = () =>{
 }
 
 onMounted(async()=>{
-    registrars.value = await axios.get('https://droplet.netserve.in/registrars').then(r => r.data)
+    registrars.value = await axios.get('https://api.ipoinbox.com/registrars').then(r => r.data)
 })
 
 </script>

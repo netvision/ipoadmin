@@ -50,11 +50,11 @@
       applications: item.applications
     }
     if(item.id){
-      let res = await axios.put('https://droplet.netserve.in/ipo-subscription-logs/'+item.id, data)
+      let res = await axios.put('https://api.ipoinbox.com/ipo-subscription-logs/'+item.id, data)
       item.disable = false
     }
     else{
-      let res = await axios.post('https://droplet.netserve.in/ipo-subscription-logs', data)
+      let res = await axios.post('https://api.ipoinbox.com/ipo-subscription-logs', data)
       if(res.status === 201) item.id = res.data.id
       item.disable = false
     }
@@ -73,9 +73,9 @@
     daylogs.value[j].logs[i].applications = (v != 'null') ? v.replace(/(,|[^\d.-]+)+/g, '') : 0
   }
   onMounted(async() => {
-   let logs = await axios.get('https://droplet.netserve.in/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
-    let quotas = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
-    ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?fields=open_date,close_date').then(r => r.data)
+   let logs = await axios.get('https://api.ipoinbox.com/ipo-subscription-logs?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
+    let quotas = await axios.get('https://api.ipoinbox.com/ipo-cat-quotas?ipo_id='+ipoId.value+'&expand=cat').then(r=>r.data)
+    ipo.value = await axios.get('https://api.ipoinbox.com/ipos/'+ipoId.value+'?fields=open_date,close_date').then(r => r.data)
     let start = new Date(ipo.value.open_date)
     let close = new Date(ipo.value.close_date)
     if(quotas.length > 0){

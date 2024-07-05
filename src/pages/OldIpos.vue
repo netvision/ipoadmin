@@ -1,6 +1,6 @@
 <template>
     <q-page class="q-pa-md">
-        
+
         <q-list>
             <q-item v-for="(ipo, i) in ipos" :key="i" >
                 <q-item-label>{{ipo.company_name}}- <q-btn label="Subs" @click="updateSubs(ipo)" /></q-item-label>
@@ -16,12 +16,12 @@
                         fresh Issue: {{ip.fresh_issue}}<br />
                         Offer for Sale: {{ip.offer_for_sale}}
                     </q-item>
-                    
+
                     <q-item>
-                        Quota: 
+                        Quota:
                     </q-item>
                     <q-item v-for="cat in cat_data" :key="cat.id">{{cat.short_name}} : {{cat.applications}}</q-item>
-                    
+
                     <q-item>
                         Listed At: {{ip.listing_exchange}}
                     </q-item>
@@ -59,14 +59,14 @@ const saveObjects = async() => {
     ipos.value.forEach(async(ipo) => {
         if(ipo.objects_of_the_Issue_html && ipo.new_id){
             let data = {issue_objects_html : ipo.objects_of_the_Issue_html}
-            let res = await axios.put('https://droplet.netserve.in/ipos/'+ipo.new_id, data)
+            let res = await axios.put('https://api.ipoinbox.com/ipos/'+ipo.new_id, data)
         }
     })
 }
 console.log(ipos.value)
 
 const updateSubs = async(ipo) => {
-    let sub = await axios.get('https://droplet.netserve.in/subscriptions?ipo_id='+ipo.ipo_id+'&expand=cat').then(r => r.data)
+    let sub = await axios.get('https://api.ipoinbox.com/subscriptions?ipo_id='+ipo.ipo_id+'&expand=cat').then(r => r.data)
     let subscriptions = sub.filter(r => r.quota > 0 && r.cat_id != 6 && r.cat_id != 7)
     let start = new Date(ipo.open_date)
     let close = new Date(ipo.close_date)
@@ -97,7 +97,7 @@ const updateSubs = async(ipo) => {
     }
     if(data.length > 0) {
         for(let d of data){
-            let res = await axios.post('https://droplet.netserve.in/ipo-subscription-logs', d)
+            let res = await axios.post('https://api.ipoinbox.com/ipo-subscription-logs', d)
             console.log(res.status)
         }
     }
@@ -105,8 +105,8 @@ const updateSubs = async(ipo) => {
 }
 
 onMounted(async() => {
-    ipos.value =  await axios.get('https://droplet.netserve.in/ipos').then(r => r.data)
-    
+    ipos.value =  await axios.get('https://api.ipoinbox.com/ipos').then(r => r.data)
+
 })
 
  /*
@@ -115,7 +115,7 @@ const format_date = (v) =>{
         if(!v || v == null) return null
         else return v.split('T')[0]
     }
-   
+
 ipos.forEach(async(ipo) => {
     const newIpo = {
         company_name: ipo.company_name,
@@ -142,7 +142,7 @@ ipos.forEach(async(ipo) => {
         t_commencement: format_date(ipo.t_c_commencement),
         t_anchor_unlocking: format_date(ipo.t_c_unlocking)
     }
-    const res = await axios.post('https://droplet.netserve.in/ipos', newIpo)
+    const res = await axios.post('https://api.ipoinbox.com/ipos', newIpo)
         if(res){
             const data = {ipo_id: res.data.ipo_id, company_name: res.data.company_name}
             records.value.push(data)

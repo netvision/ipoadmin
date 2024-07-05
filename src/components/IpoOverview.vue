@@ -370,7 +370,7 @@ const filterAb = async() => {
 }
 
 const addSector = async() => {
-  const newSec = await axios.post('https://droplet.netserve.in/sectors', newSector.value).then(r => r.data)
+  const newSec = await axios.post('https://api.ipoinbox.com/sectors', newSector.value).then(r => r.data)
   sectors.value.push(newSec)
   overview.value.sector = newSec
 }
@@ -391,7 +391,7 @@ const mmfilterAb = () => {
 }
 
 const addMarketMaker = async() => {
-  const res = await axios.post('https://droplet.netserve.in/market-makers', newMarketMaker.value).then(r => r.data)
+  const res = await axios.post('https://api.ipoinbox.com/market-makers', newMarketMaker.value).then(r => r.data)
   marketMakers.value.push(res)
   overview.value.market_maker_id = res.id
 }
@@ -406,7 +406,7 @@ const sanitizeNumber = (v, field) => {
   eval('overview.value.'+field+'='+val)
 }
 const addRegistrar = async() =>{
-  const newReg = await axios.post('https://droplet.netserve.in/registrars', newRg.value).then(r => r.data)
+  const newReg = await axios.post('https://api.ipoinbox.com/registrars', newRg.value).then(r => r.data)
   registrars.value.push(newReg)
   overview.value.registrar = newReg
 }
@@ -419,7 +419,7 @@ const updateAppAmount = () =>{
 }
 
 const addBrlm = async() => {
-  const newBr = await axios.post('https://droplet.netserve.in/brlms', newBrlm.value).then(r => r.data)
+  const newBr = await axios.post('https://api.ipoinbox.com/brlms', newBrlm.value).then(r => r.data)
   console.log(overview.value.brlms)
   brlms.value.push(newBr)
   //overview.value.brlms = (overview.value.brlms.length > 0) ? overview.value.brlms.push(newBr) : [newBr]
@@ -432,13 +432,13 @@ const resetBrlmForm = () => {
 const saveQuota = async(id) => {
   const ipo_id = +props.IpoId
   cat_quotas.value[id] = cat_quotas.value[id].replace(/(,|[^\d.-]+)+/g, '')
-  const cur_quota = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+ipo_id+'&cat_id='+id).then(r => r.data)
+  const cur_quota = await axios.get('https://api.ipoinbox.com/ipo-cat-quotas?ipo_id='+ipo_id+'&cat_id='+id).then(r => r.data)
 
   if(cur_quota.length > 0){
-    await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+cur_quota[0].id, {quota: cat_quotas.value[id]})
+    await axios.put('https://api.ipoinbox.com/ipo-cat-quotas/'+cur_quota[0].id, {quota: cat_quotas.value[id]})
   }
 
-  else await axios.post('https://droplet.netserve.in/ipo-cat-quotas', {quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
+  else await axios.post('https://api.ipoinbox.com/ipo-cat-quotas', {quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
 
   //console.log({quota: cat_quotas.value[id], cat_id: id, ipo_id: ipo_id})
 }
@@ -446,13 +446,13 @@ const saveQuota = async(id) => {
 const saveDisc = async(id) => {
   const ipo_id = +props.IpoId
   cat_disc.value[id] = cat_disc.value[id].replace(/(,|[^\d.-]+)+/g, '')
-  const cur_quota = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+ipo_id+'&cat_id='+id).then(r => r.data)
+  const cur_quota = await axios.get('https://api.ipoinbox.com/ipo-cat-quotas?ipo_id='+ipo_id+'&cat_id='+id).then(r => r.data)
 
   if(cur_quota.length > 0){
-    await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+cur_quota[0].id, {discount: cat_disc.value[id]})
+    await axios.put('https://api.ipoinbox.com/ipo-cat-quotas/'+cur_quota[0].id, {discount: cat_disc.value[id]})
   }
 
-  else await axios.post('https://droplet.netserve.in/ipo-cat-quotas', {discount: cat_disc.value[id], cat_id: id, ipo_id: ipo_id})
+  else await axios.post('https://api.ipoinbox.com/ipo-cat-quotas', {discount: cat_disc.value[id], cat_id: id, ipo_id: ipo_id})
 }
 
 const saveOverview = async() => {
@@ -460,7 +460,7 @@ const saveOverview = async() => {
   overview.value.brlms_json = JSON.stringify(overview.value.brlms)
   overview.value.subsector_ids = JSON.stringify(overview.value.sector_ids)
   overview.value.market_maker_id = JSON.stringify(overview.value.market_makers)
-  const upIpo = await axios.put('https://droplet.netserve.in/ipos/'+id, overview.value)
+  const upIpo = await axios.put('https://api.ipoinbox.com/ipos/'+id, overview.value)
   if(upIpo.status == '200'){
     $q.notify({
           message: 'Updated Successfully',
@@ -473,11 +473,11 @@ const saveOverview = async() => {
 
 onBeforeMount(async()=>{
   const id = +props.IpoId
-  sectors.value = await axios.get('https://droplet.netserve.in/sectors').then(r => r.data)
-  marketMakers.value = await axios.get('https://droplet.netserve.in/market-maker').then(r => r.data)
-  registrars.value = await axios.get('https://droplet.netserve.in/registrars').then(r => r.data)
-  brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
-  const ipo = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
+  sectors.value = await axios.get('https://api.ipoinbox.com/sectors').then(r => r.data)
+  marketMakers.value = await axios.get('https://api.ipoinbox.com/market-maker').then(r => r.data)
+  registrars.value = await axios.get('https://api.ipoinbox.com/registrars').then(r => r.data)
+  brlms.value = await axios.get('https://api.ipoinbox.com/brlms').then(r => r.data)
+  const ipo = await axios.get('https://api.ipoinbox.com/ipos/'+id).then(r => r.data)
 
   overview.value = ipo
   overview.value.brlms = JSON.parse(ipo.brlms_json)

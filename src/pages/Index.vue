@@ -156,7 +156,7 @@
 
   const addIpo = async() => {
     console.log(ipoValues)
-    const nIpo = await axios.post('https://droplet.netserve.in/ipos', ipoValues.value)
+    const nIpo = await axios.post('https://api.ipoinbox.com/ipos', ipoValues.value)
 
     if(nIpo.status == '201'){
       $q.notify({
@@ -221,7 +221,7 @@
 
   onMounted(async()=>{
     //const ipo = await axios.get('https://uat.ipoinbox.com:5000/api/v1/ipo').then(r => r.data)
-    const ipo = await axios.get('https://droplet.netserve.in/ipos?fields=ipo_id,company_name,ipo_type,price_band_low,price_band_high,open_date,close_date&sort=-open_date').then(r => r.data)
+    const ipo = await axios.get('https://api.ipoinbox.com/ipos?fields=ipo_id,company_name,ipo_type,price_band_low,price_band_high,open_date,close_date&sort=-open_date').then(r => r.data)
     //console.log(ipo)
     ipos.value = ipo
   })

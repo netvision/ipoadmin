@@ -58,7 +58,7 @@
           </q-card>
     </q-dialog>
 </q-page>
-  
+
 </template>
 
 <script setup>
@@ -79,7 +79,7 @@ const newBrlmModel = ref(false)
 const newSBrlm = ref({})
 
 const addBrlm = async() => {
-  const newbr = await axios.post('https://droplet.netserve.in/brlms', newBrlm.value).then(r => r.data)
+  const newbr = await axios.post('https://api.ipoinbox.com/brlms', newBrlm.value).then(r => r.data)
   brlms.value.push(newbr)
   newBrlmModel.value = false
 }
@@ -89,17 +89,17 @@ const resetBrlm = () => {
 }
 
 const editName = async(v, i, id) => {
-    const edName = await axios.put('https://droplet.netserve.in/brlms/'+id, {name: v}).then(r => r.data)
+    const edName = await axios.put('https://api.ipoinbox.com/brlms/'+id, {name: v}).then(r => r.data)
     console.log(edName)
 }
 
 const editUrl = async(v, i, id) => {
-    const edUrl = await axios.put('https://droplet.netserve.in/brlms/'+id, {url: v}).then(r => r.data)
+    const edUrl = await axios.put('https://api.ipoinbox.com/brlms/'+id, {url: v}).then(r => r.data)
     console.log(edUrl)
 }
 
 onMounted(async() => {
-    brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
+    brlms.value = await axios.get('https://api.ipoinbox.com/brlms').then(r => r.data)
 })
 </script>
 

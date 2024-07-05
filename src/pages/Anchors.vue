@@ -61,7 +61,7 @@
           </q-card>
     </q-dialog>
 </q-page>
-  
+
 </template>
 
 <script setup>
@@ -83,7 +83,7 @@ const newAnchorModel = ref(false)
 const newSAnchor = ref({})
 
 const addAnchor = async() => {
-  const newAn = await axios.post('https://droplet.netserve.in/anchor', newAnchor.value).then(r => r.data)
+  const newAn = await axios.post('https://api.ipoinbox.com/anchor', newAnchor.value).then(r => r.data)
   anchors.value.push(newAn)
   newAnchorModel.value = false
 }
@@ -93,24 +93,24 @@ const resetAnchor = () => {
 }
 
 const editName = async(v, i, id) => {
-    const edName = await axios.put('https://droplet.netserve.in/anchors/'+id, {name: v}).then(r => r.data)
+    const edName = await axios.put('https://api.ipoinbox.com/anchors/'+id, {name: v}).then(r => r.data)
     console.log(edName)
 }
 
 const editUrl = async(v, i, id) => {
-    const edUrl = await axios.put('https://droplet.netserve.in/anchors/'+id, {details: v}).then(r => r.data)
+    const edUrl = await axios.put('https://api.ipoinbox.com/anchors/'+id, {details: v}).then(r => r.data)
     console.log(edUrl)
 }
 
 const del = async(id) => {
-    let res = await axios.delete('https://droplet.netserve.in/anchors/'+id)
+    let res = await axios.delete('https://api.ipoinbox.com/anchors/'+id)
     if(res.status == 204){
         anchors.value.splice(anchors.value.findIndex(x => x.id == id), 1)
     }
 }
 
 onMounted(async() => {
-    anchors.value = await axios.get('https://droplet.netserve.in/anchors').then(r => r.data)
+    anchors.value = await axios.get('https://api.ipoinbox.com/anchors').then(r => r.data)
     /*
     let test = await axios.get('https://www.bseindia.com/markets/PublicIssues/BSEBidDetails_ofs.aspx?flag=NR&Scripcode=500312')
     let parser = new DOMParser()

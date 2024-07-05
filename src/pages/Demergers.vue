@@ -249,7 +249,7 @@ const closeDemergerModal = () => {
 }
 
 const saveDemerger = async() => {
-  let res = (newDemerger.value.id) ?  await axios.put('https://droplet.netserve.in/demergers/'+newDemerger.value.id, newDemerger.value) : await axios.post('https://droplet.netserve.in/demergers', newDemerger.value)
+  let res = (newDemerger.value.id) ?  await axios.put('https://api.ipoinbox.com/demergers/'+newDemerger.value.id, newDemerger.value) : await axios.post('https://api.ipoinbox.com/demergers', newDemerger.value)
   if(res.status == 201) demergers.value.push(res.data)
   demergerModal.value = false
 }
@@ -263,7 +263,7 @@ const dateFormat = (dateString) => {
 }
 
 onMounted(async() => {
-  let res = await axios.get('https://droplet.netserve.in/demergers').then(r => r.data)
+  let res = await axios.get('https://api.ipoinbox.com/demergers').then(r => r.data)
   let promises = res.map(async(v) => {
     let curPriceDemerged = 'NA'
     let curPriceResulting = 'NA'

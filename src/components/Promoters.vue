@@ -42,7 +42,7 @@
                         :src="newPromoter.photo"
                         @click="photoUpdateModel = true"
                     />
-                    
+
                     </q-card-section>
                     <q-card-section class="col-8">
                         <div class="row no-wrap items-center">
@@ -89,7 +89,7 @@
                 <q-separator />
 
                 <q-card-actions class="flex row justify-end">
-                    
+
                     <q-btn flat color="primary" @click="savePromoter" label="save" />
                 </q-card-actions>
             </q-card>
@@ -100,7 +100,7 @@
                         field-name="photo"
                         no-thumbnails
                         auto-upload
-                        url="https://droplet.netserve.in/promoter/photo"
+                        url="https://api.ipoinbox.com/promoter/photo"
                         @uploaded = 'photoUpdate'
                     />
                 </div>
@@ -184,7 +184,7 @@ const delPromoter = (promoter) => {
 }
 
 const confirmDel = async() => {
-    let res = await axios.delete('https://droplet.netserve.in/promoters/'+delPromoterId.value)
+    let res = await axios.delete('https://api.ipoinbox.com/promoters/'+delPromoterId.value)
     if(res.status == 204){
         promoters.value.splice(promoters.value.findIndex(p => p.id === delPromoterId.value), 1)
         delPromoterId.value = null
@@ -200,20 +200,20 @@ const photoUpdate = async(files) => {
 
 const savePromoter = async() => {
     if(newPromoter.value.id){
-        let res = await axios.put('https://droplet.netserve.in/promoters/'+newPromoter.value.id, newPromoter.value)
+        let res = await axios.put('https://api.ipoinbox.com/promoters/'+newPromoter.value.id, newPromoter.value)
         console.log(res.statusText)
     }
     else{
-        newPromoter.value.photo = (newPromoter.value.photo == "http://localhost:8080/img/promote-placeholder.png") ? null : newPromoter.value.photo 
+        newPromoter.value.photo = (newPromoter.value.photo == "http://localhost:8080/img/promote-placeholder.png") ? null : newPromoter.value.photo
         newPromoter.value.ipo_id = +props.ipo_id
-        let res = await axios.post('https://droplet.netserve.in/promoters', newPromoter.value)
+        let res = await axios.post('https://api.ipoinbox.com/promoters', newPromoter.value)
         if(res.status == 201) promoters.value.push(res.data)
     }
     promoterModel.value = false
 }
 
 const saveNotes = async() => {
-        let res = await axios.put('https://droplet.netserve.in/ipos/'+props.ipo_id, {promotors_html: html_notes.value})
+        let res = await axios.put('https://api.ipoinbox.com/ipos/'+props.ipo_id, {promotors_html: html_notes.value})
         if(res.status == 200){
             $q.notify({
               message: 'Updated Successfully',
@@ -224,7 +224,7 @@ const saveNotes = async() => {
 
 onMounted(async() => {
     let ipo_id = +props.ipo_id
-      promoters.value = await axios.get('https://droplet.netserve.in/promoters?ipo_id='+ipo_id).then(r => r.data)
+      promoters.value = await axios.get('https://api.ipoinbox.com/promoters?ipo_id='+ipo_id).then(r => r.data)
       console.log(promoters.value)
       html_notes.value = props.notes
   })

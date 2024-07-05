@@ -47,7 +47,7 @@
           </q-card>
     </q-dialog>
 </q-page>
-  
+
 </template>
 
 <script setup>
@@ -66,7 +66,7 @@ const newSectorModel = ref(false)
 const newSector = ref({})
 
 const addSector = async() => {
-  const newSec = await axios.post('https://droplet.netserve.in/sectors', newSector.value).then(r => r.data)
+  const newSec = await axios.post('https://api.ipoinbox.com/sectors', newSector.value).then(r => r.data)
   sectors.value.push(newSec)
   newSectorModel.value = false
 }
@@ -76,12 +76,12 @@ const resetSector = () => {
 }
 
 const editSector = async(v, i, id) => {
-    const edSec = await axios.put('https://droplet.netserve.in/sectors/'+id, {name: v}).then(r => r.data)
+    const edSec = await axios.put('https://api.ipoinbox.com/sectors/'+id, {name: v}).then(r => r.data)
     console.log(edSec)
 }
 
 onMounted(async() => {
-    sectors.value = await axios.get('https://droplet.netserve.in/sectors').then(r => r.data)
+    sectors.value = await axios.get('https://api.ipoinbox.com/sectors').then(r => r.data)
 })
 </script>
 

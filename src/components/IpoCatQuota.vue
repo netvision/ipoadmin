@@ -49,11 +49,11 @@ const saveQuota = async (c) => {
   c.quota = Math.abs(c.quota.replace(/(,|[^\d.-]+)+/g, ''))
     try {
       if(c.quota_id){
-        let res = await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+c.quota_id, {quota: c.quota}).then(r => r.data)
+        let res = await axios.put('https://api.ipoinbox.com/ipo-cat-quotas/'+c.quota_id, {quota: c.quota}).then(r => r.data)
         console.log(res)
       }
       else{
-        let res = await axios.post('https://droplet.netserve.in/ipo-cat-quotas', {ipo_id: ipoId.value, cat_id: c.id, quota: c.quota}).then(r => r.data)
+        let res = await axios.post('https://api.ipoinbox.com/ipo-cat-quotas', {ipo_id: ipoId.value, cat_id: c.id, quota: c.quota}).then(r => r.data)
         c.quota_id = res.id
       }
 
@@ -75,11 +75,11 @@ const saveDisc = async(c) => {
   c.discount = Math.abs(c.discount.replace(/(,|[^\d.-]+)+/g, ''))
     try {
       if(c.quota_id){
-        let res = await axios.put('https://droplet.netserve.in/ipo-cat-quotas/'+c.quota_id, {discount: c.discount}).then(r => r.data)
+        let res = await axios.put('https://api.ipoinbox.com/ipo-cat-quotas/'+c.quota_id, {discount: c.discount}).then(r => r.data)
         console.log(res)
       }
       else{
-        let res = await axios.post('https://droplet.netserve.in/ipo-cat-quotas', {ipo_id: ipoId.value, cat_id: c.id, discount: c.discount}).then(r => r.data)
+        let res = await axios.post('https://api.ipoinbox.com/ipo-cat-quotas', {ipo_id: ipoId.value, cat_id: c.id, discount: c.discount}).then(r => r.data)
         c.quota_id = res.id
       }
 
@@ -95,8 +95,8 @@ const saveDisc = async(c) => {
 }
 
 onMounted(async() => {
-  invCategories.value = await axios.get('https://droplet.netserve.in/inv-categories?sort=cat_order').then(r => r.data)
-  let res = await axios.get('https://droplet.netserve.in/ipo-cat-quotas?ipo_id='+ipoId.value).then(r => r.data)
+  invCategories.value = await axios.get('https://api.ipoinbox.com/inv-categories?sort=cat_order').then(r => r.data)
+  let res = await axios.get('https://api.ipoinbox.com/ipo-cat-quotas?ipo_id='+ipoId.value).then(r => r.data)
   let net = res.reduce((acc, r) => {
        return ([4,5,7].includes(r.cat_id)) ? acc - r.quota : acc
     }, total.value)

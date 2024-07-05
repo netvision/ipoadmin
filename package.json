@@ -10,11 +10,9 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@aws-amplify/ui-vue": "^2.0.4",
     "@imengyu/vue3-context-menu": "^1.0.8",
     "@quasar/extras": "^1.0.0",
     "@vueup/vue-quill": "^1.0.0-beta.7",
-    "aws-amplify": "^4.3.10",
     "axios": "^0.21.1",
     "babel-polyfill": "^6.26.0",
     "core-js": "^3.6.5",

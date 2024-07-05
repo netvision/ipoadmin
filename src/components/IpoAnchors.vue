@@ -30,7 +30,7 @@
             no-thumbnails
             auto-upload
             :form-fields = "[{name:'ipo_id', value: ipoId}, {name:'field', value: 'anchors'} ]"
-            url="https://droplet.netserve.in/ipo/pdfupload"
+            url="https://api.ipoinbox.com/ipo/pdfupload"
             @uploaded = 'pdfUploaded'
           />
         </q-dialog>
@@ -149,7 +149,7 @@ const filterAb = () => {
 }
 
 const createSelectValue = async(val, done) => {
-    let newAnchor = await axios.post('https://droplet.netserve.in/anchors', {name: val.trim(), details:'#'})
+    let newAnchor = await axios.post('https://api.ipoinbox.com/anchors', {name: val.trim(), details:'#'})
     if(newAnchor.statusText == '201'){
         options.value.push(newAnchor.data)
         anchor.value.id = newAnchor.data
@@ -159,10 +159,10 @@ const createSelectValue = async(val, done) => {
 
 const addRecord = async() => {
     if(anchor.value.id){
-        let res = await axios.put('https://droplet.netserve.in/ipo-anchors/'+anchor.value.id, anchor.value)
+        let res = await axios.put('https://api.ipoinbox.com/ipo-anchors/'+anchor.value.id, anchor.value)
     }
     else {
-        let res = await axios.post('https://droplet.netserve.in/ipo-anchors', {ipo_id: ipoId.value, anchor_id: anchor.value.a_id.id, no_of_equity_shares: anchor.value.no_of_equity_shares})
+        let res = await axios.post('https://api.ipoinbox.com/ipo-anchors', {ipo_id: ipoId.value, anchor_id: anchor.value.a_id.id, no_of_equity_shares: anchor.value.no_of_equity_shares})
         if(res.status == 201){
             res.data.anchor = anchor.value.a_id
             ipoAnchors.value.push(res.data)
@@ -188,7 +188,7 @@ const edit = (i) => {
 }
 
 const del = async(i) => {
-    let res = await axios.delete('https://droplet.netserve.in/ipo-anchors/'+i.row.id)
+    let res = await axios.delete('https://api.ipoinbox.com/ipo-anchors/'+i.row.id)
     if(res.status == 204){
         ipoAnchors.value.splice(i.rowIndex, 1)
     }
@@ -204,16 +204,16 @@ const removeComa = () => {
 
 const pdfUploaded = async(files) =>{
     let pdf_url = JSON.parse(files.xhr.response)
-    const res = await axios.put('https://droplet.netserve.in/ipos/'+ipoId.value, {anchors_pdf: pdf_url})
+    const res = await axios.put('https://api.ipoinbox.com/ipos/'+ipoId.value, {anchors_pdf: pdf_url})
     ipo.value = res.data
     pdfUpload.value = false
   }
 
 onMounted(async() => {
-    ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value).then(r => r.data)
-    ipoAnchors.value = await axios.get('https://droplet.netserve.in/ipo-anchors?expand=anchor&ipo_id='+ipoId.value).then(r => r.data)
-    anchors.value = await axios.get('https://droplet.netserve.in/anchor').then(r => r.data)
-    //ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value+'?fields=company_name,open_date').then(r => r.data)
+    ipo.value = await axios.get('https://api.ipoinbox.com/ipos/'+ipoId.value).then(r => r.data)
+    ipoAnchors.value = await axios.get('https://api.ipoinbox.com/ipo-anchors?expand=anchor&ipo_id='+ipoId.value).then(r => r.data)
+    anchors.value = await axios.get('https://api.ipoinbox.com/anchor').then(r => r.data)
+    //ipo.value = await axios.get('https://api.ipoinbox.com/ipos/'+ipoId.value+'?fields=company_name,open_date').then(r => r.data)
     //console.log(ipoAnchors.value)
     options.value = anchors.value
     getTotal()

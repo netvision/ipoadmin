@@ -3,7 +3,7 @@
   <q-btn label="save" @click="saveReview" />
 </template>
 <script setup>
-import { ref } from 'vue' 
+import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { api, axios } from '../boot/axios'
 
@@ -22,7 +22,7 @@ const toolbar = [
       ]
 
 const saveReview = async() => {
-    const res = await axios.put('https://droplet.netserve.in/ipos/'+props.ipo_id, {review_html: html_content.value})
+    const res = await axios.put('https://api.ipoinbox.com/ipos/'+props.ipo_id, {review_html: html_content.value})
 
     if(res.status == 200) {
         $q.notify({

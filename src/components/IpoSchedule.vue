@@ -113,7 +113,7 @@
   const schedule = ref({})
   const ipoId = ref(props.IpoId)
   const saveSchedule = async() => {
-    const upIpo = await axios.put('https://droplet.netserve.in/ipos/'+ipoId.value, schedule.value)
+    const upIpo = await axios.put('https://api.ipoinbox.com/ipos/'+ipoId.value, schedule.value)
     if(upIpo.status == '200'){
       $q.notify({
             message: 'Updated Successfully',
@@ -124,7 +124,7 @@
   }
 
   onMounted(async() => {
-   const ip = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value).then(r => r.data)
+   const ip = await axios.get('https://api.ipoinbox.com/ipos/'+ipoId.value).then(r => r.data)
    schedule.value = ip
    //console.log(ip)
   })

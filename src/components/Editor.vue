@@ -1,8 +1,8 @@
 <template>
   <div>
-      <q-editor 
-      v-model="post.body" 
-      :definitions="definitions" 
+      <q-editor
+      v-model="post.body"
+      :definitions="definitions"
       ref="editor"
       :toolbar= "[
         ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
@@ -89,7 +89,7 @@
     <q-card class="my-card">
       <q-card-section>
         <q-uploader
-        url="https://droplet.netserve.in/ipo/editimg"
+        url="https://api.ipoinbox.com/ipo/editimg"
         color="teal"
         field-name="image"
         flat
@@ -132,19 +132,19 @@ export default defineComponent({
             body: this.htmlContent
             },
         imgDialog: false,
-        float: 'left', 
+        float: 'left',
         width: '',
         editImgSrc: ''
 			}
     },
     methods: {
-        insertImg() { 
+        insertImg() {
           this.imgDialog = true
           /*
           // insertImg method
             const post = this.post
             const edit = this.$refs.editor
-            
+
             // create an input file element to open file dialog
             const input = document.createElement('input')
             input.type = 'file'
@@ -153,19 +153,19 @@ export default defineComponent({
             input.onchange = _ => {
                 const files = Array.from(input.files)
                 file = files[0]
-  
+
                // lets load the file as dataUrl
                 const reader = new FileReader()
                 let dataUrl = ''
                 reader.onloadend = function() {
                     dataUrl = reader.result
-                    edit.runCmd('insertHTML','<div><img style="float:left; max-width:300px" src="' + dataUrl + '" /></div>', true) 
+                    edit.runCmd('insertHTML','<div><img style="float:left; max-width:300px" src="' + dataUrl + '" /></div>', true)
                 }
                 reader.readAsDataURL(file)
             }
             input.click()
             */
-            
+
         },
 
         insert(){

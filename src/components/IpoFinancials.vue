@@ -317,7 +317,7 @@ const saveFinancials = async() => {
     htmlNotes: htmlNotes.value
   }
 
-  const res = await axios.put('https://droplet.netserve.in/ipos/'+data.ipo_id, {financials: JSON.stringify(financials)})
+  const res = await axios.put('https://api.ipoinbox.com/ipos/'+data.ipo_id, {financials: JSON.stringify(financials)})
 
     if(res.status == 200) {
         $q.notify({

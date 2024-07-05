@@ -30,7 +30,7 @@
         no-thumbnails
         auto-upload
         :form-fields = "[{name:'ipo_id', value: ipoId}, {name:'field', value: 'prefshareholders'} ]"
-        url="https://droplet.netserve.in/ipo/pdfupload"
+        url="https://api.ipoinbox.com/ipo/pdfupload"
         @uploaded = 'pdfUploaded'
       />
     </q-dialog>
@@ -197,7 +197,7 @@ const columns = ref([
 const filter = (val, update, abort) => {
   update(async() => {
         const needle = val.toLowerCase()
-        options.value = await axios.get('https://droplet.netserve.in/pref-shareholders?filter[name][like]='+val).then(r => r.data)
+        options.value = await axios.get('https://api.ipoinbox.com/pref-shareholders?filter[name][like]='+val).then(r => r.data)
       })
   abort(() => {
     options.value = []
@@ -209,7 +209,7 @@ const filterAb = () => {
 }
 
 const createSelectValue = async(val, done) => {
-    let newShareholder = await axios.post('https://droplet.netserve.in/pref-shareholders', {name: val.trim(), detail:'#'})
+    let newShareholder = await axios.post('https://api.ipoinbox.com/pref-shareholders', {name: val.trim(), detail:'#'})
     if(newShareholder.statusText == '201'){
         options.value.push(newShareholder.data)
         allotee.value.id = newShareholder.data
@@ -223,10 +223,10 @@ const addRecord = async() => {
   allot.allotee_id = allotment.value.allotee.id
   //delete allot.allotee
    if(allot.id){
-        let res = await axios.put('https://droplet.netserve.in/ipo-pref-allotments/'+allot.id, allot)
+        let res = await axios.put('https://api.ipoinbox.com/ipo-pref-allotments/'+allot.id, allot)
     }
     else {
-        let res = await axios.post('https://droplet.netserve.in/ipo-pref-allotments', allot)
+        let res = await axios.post('https://api.ipoinbox.com/ipo-pref-allotments', allot)
         if(res.status == 201){
             allotment.value.id = res.data.id
             ipoPrefAllotments.value.push(allotment.value)
@@ -246,7 +246,7 @@ const addRecord = async() => {
 }
 
 const del = async(item) => {
-    let res = await axios.delete('https://droplet.netserve.in/ipo-pref-allotments/'+item.row.id)
+    let res = await axios.delete('https://api.ipoinbox.com/ipo-pref-allotments/'+item.row.id)
     if(res.status == 204){
         ipoPrefAllotments.value.splice(item.rowIndex, 1)
     }
@@ -263,14 +263,14 @@ const removeComa = () => {
 
 const pdfUploaded = async(files) =>{
     let pdf_url = JSON.parse(files.xhr.response)
-    const res = await axios.put('https://droplet.netserve.in/ipos/'+ipoId.value, {prefshareholders_pdf: pdf_url})
+    const res = await axios.put('https://api.ipoinbox.com/ipos/'+ipoId.value, {prefshareholders_pdf: pdf_url})
     ipo.value = res.data
     pdfUpload.value = false
   }
 
   const savePrefNote = async() => {
     if (ipo.value.ipo_id){
-      let res = await axios.put('https://droplet.netserve.in/ipos/'+ipo.value.ipo_id, ipo.value)
+      let res = await axios.put('https://api.ipoinbox.com/ipos/'+ipo.value.ipo_id, ipo.value)
     if(res.status == 200 || res.status == 201) {
         $q.notify({
             message: 'Updated Successfully',
@@ -286,9 +286,9 @@ const showModel = () => {
 }
 
 onMounted(async() => {
-  ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipoId.value).then(r => r.data)
-  ipoPrefAllotments.value = await axios.get('https://droplet.netserve.in/ipo-pref-allotments?expand=allotee&ipo_id='+ipoId.value).then(r => r.data)
-  //options.value = await axios.get('https://droplet.netserve.in/pref-shareholders').then(r => r.data)
+  ipo.value = await axios.get('https://api.ipoinbox.com/ipos/'+ipoId.value).then(r => r.data)
+  ipoPrefAllotments.value = await axios.get('https://api.ipoinbox.com/ipo-pref-allotments?expand=allotee&ipo_id='+ipoId.value).then(r => r.data)
+  //options.value = await axios.get('https://api.ipoinbox.com/pref-shareholders').then(r => r.data)
   getTotal()
 })
 </script>

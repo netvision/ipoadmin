@@ -299,7 +299,7 @@
         <q-item v-for="item in clients" :key="item.id">
           <q-item-section top avatar>
             <q-avatar>
-              <img v-if="item.logo" :src="item.logo" /><img v-else src="https://droplet.netserve.in/clients-logo/default.png" />
+              <img v-if="item.logo" :src="item.logo" /><img v-else src="https://api.ipoinbox.com/clients-logo/default.png" />
             </q-avatar>
           </q-item-section>
           <q-item-section top>
@@ -321,7 +321,7 @@
             <div class="row no-wrap items-center">
               <div class="col col-6 q-pa-md text-h6 ellipsis">
                 <q-avatar @click="clLogoModel = true">
-                  <img v-if="newClient.logo" :src="newClient.logo" /><img v-else src="https://droplet.netserve.in/clients-logo/default.png" />
+                  <img v-if="newClient.logo" :src="newClient.logo" /><img v-else src="https://api.ipoinbox.com/clients-logo/default.png" />
                 </q-avatar>
               </div>
             </div>
@@ -351,7 +351,7 @@
               field-name="logo"
               no-thumbnails
               auto-upload
-              url="https://droplet.netserve.in/comp-client/logo"
+              url="https://api.ipoinbox.com/comp-client/logo"
               @uploaded = 'clLogoUpdate'
               style="max-width: 30%; width:30%"
             />
@@ -597,12 +597,12 @@ const toolbar = [
       ]
 const oldModal = ref(false)
 const saveOldData = async() => {
-  let res = await axios.patch('https://droplet.netserve.in/ipos/'+ipo_id.value, {about_html: data.value})
+  let res = await axios.patch('https://api.ipoinbox.com/ipos/'+ipo_id.value, {about_html: data.value})
   console.log(res.status)
   oldModal.value = false
 }
 const saveInfo = async() => {
-    let res = (compInfo.value.id) ?  await axios.put('https://droplet.netserve.in/comp-infos/'+compInfo.value.id, compInfo.value) : await axios.post('https://droplet.netserve.in/comp-infos', compInfo.value)
+    let res = (compInfo.value.id) ?  await axios.put('https://api.ipoinbox.com/comp-infos/'+compInfo.value.id, compInfo.value) : await axios.post('https://api.ipoinbox.com/comp-infos', compInfo.value)
     if(res.status == 200 || res.status == 201) {
         $q.notify({
             message: 'Updated Successfully',
@@ -618,7 +618,7 @@ const eventModel = ref(false)
 const eventTypes = ['Award', 'Certificate', 'Milestone', 'Name Change', 'TurnOver', 'Takeover', 'Other']
 const addEvent = async() => {
   console.log(newEvent.value)
-  let res = (newEvent.value.id) ? await axios.put('https://droplet.netserve.in/comp-histories/'+newEvent.value.id, newEvent.value) :  await axios.post('https://droplet.netserve.in/comp-histories', newEvent.value)
+  let res = (newEvent.value.id) ? await axios.put('https://api.ipoinbox.com/comp-histories/'+newEvent.value.id, newEvent.value) :  await axios.post('https://api.ipoinbox.com/comp-histories', newEvent.value)
 
   if(res.status == 201) events.value.push(res.data)
   if(res.status == 200 || res.status == 201) {
@@ -639,7 +639,7 @@ const editEvent = (item) => {
 }
 
 const delEvent = async(item) => {
-  let res = await axios.delete('https://droplet.netserve.in/comp-histories/'+item.id)
+  let res = await axios.delete('https://api.ipoinbox.com/comp-histories/'+item.id)
   if(res.status == 204){
     events.value = events.value.filter(et => et.id != item.id)
   }
@@ -653,7 +653,7 @@ const holdingTypes = ['Holding', 'Subsidiary', 'Joint venture', 'Associate', 'St
 
 const addHolding = async() => {
   console.log(newHolding.value)
-  let res = (newHolding.value.id) ? await axios.put('https://droplet.netserve.in/comp-holdings/'+newHolding.value.id, newHolding.value) : await axios.post('https://droplet.netserve.in/comp-holdings', newHolding.value)
+  let res = (newHolding.value.id) ? await axios.put('https://api.ipoinbox.com/comp-holdings/'+newHolding.value.id, newHolding.value) : await axios.post('https://api.ipoinbox.com/comp-holdings', newHolding.value)
   if(res.status == 200 || res.status == 201) {
     if (res.status == 201) holdings.value.push(res.data)
     newHolding.value = {ipo_id: ipo_id.value}
@@ -673,7 +673,7 @@ const editHolding = (item) => {
 }
 
 const delHolding = async(item) => {
-  let res = await axios.delete('https://droplet.netserve.in/comp-holdings/'+item.id)
+  let res = await axios.delete('https://api.ipoinbox.com/comp-holdings/'+item.id)
   if(res.status == 204){
     holdings.value = holdings.value.filter(et => et.id != item.id)
   }
@@ -690,7 +690,7 @@ const clLogoUpdate = async(files) => {
           clLogoModel.value = false
         }
 const addClient = async() => {
-  let res = (newClient.value.id) ? await axios.put('https://droplet.netserve.in/comp-clients/'+newClient.value.id, newClient.value) : await axios.post('https://droplet.netserve.in/comp-clients', newClient.value)
+  let res = (newClient.value.id) ? await axios.put('https://api.ipoinbox.com/comp-clients/'+newClient.value.id, newClient.value) : await axios.post('https://api.ipoinbox.com/comp-clients', newClient.value)
 
   if(res.status == 200 || res.status == 201) {
     if (res.status == 201) clients.value.push(res.data)
@@ -712,7 +712,7 @@ const editClient = (item) => {
 }
 
 const delClient = async(item) => {
-  let res = await axios.delete('https://droplet.netserve.in/comp-clients/'+item.id)
+  let res = await axios.delete('https://api.ipoinbox.com/comp-clients/'+item.id)
   if(res.status == 204){
     clients.value = clients.value.filter(et => et.id != item.id)
   }
@@ -728,7 +728,7 @@ const propertyTypes = ref([])
 const newPropertyType = ref('')
 
 const addPropertyType = async() => {
-  let res = await axios.post('https://droplet.netserve.in/property-types', {title: newPropertyType.value})
+  let res = await axios.post('https://api.ipoinbox.com/property-types', {title: newPropertyType.value})
   if(res){
     propertyTypes.value.push(res.data)
     newProperty.value.type_id = res.data.id
@@ -749,7 +749,7 @@ const openPropertyModel = () =>{
 const addProperty = async() => {
   let item = newProperty.value
   console.log(item)
-  let res = (item.id) ? await axios.put('https://droplet.netserve.in/comp-properties/'+item.id, item) : await axios.post('https://droplet.netserve.in/comp-properties', item)
+  let res = (item.id) ? await axios.put('https://api.ipoinbox.com/comp-properties/'+item.id, item) : await axios.post('https://api.ipoinbox.com/comp-properties', item)
   if(res.status == 200 || res.status == 201) {
     if (res.status == 201) properties.value.push(res.data)
     $q.notify({
@@ -775,7 +775,7 @@ const editProperty = (item) => {
 }
 
 const delProperty = async(item) => {
-  let res = await axios.delete('https://droplet.netserve.in/comp-properties/'+item.id)
+  let res = await axios.delete('https://api.ipoinbox.com/comp-properties/'+item.id)
   if(res.status == 204){
     properties.value = properties.value.filter(et => et.id != item.id)
   }
@@ -796,7 +796,7 @@ const getlitigationType = (id) => {
 }
 
 const addLitigationType = async() => {
-  let res = await axios.post('https://droplet.netserve.in/litigation-types', {title: newLitigationType.value})
+  let res = await axios.post('https://api.ipoinbox.com/litigation-types', {title: newLitigationType.value})
   if(res){
     litigationTypes.value.push(res.data)
     newLitigation.value.type_id = res.data.id
@@ -812,7 +812,7 @@ const resetLitigationType = () => {
 
 const addLitigation = async() => {
   console.log(newLitigation.value)
-  let res = (newLitigation.value.id) ? await axios.put('https://droplet.netserve.in/comp-litigations/'+newLitigation.value.id, newLitigation.value) : await axios.post('https://droplet.netserve.in/comp-litigations', newLitigation.value)
+  let res = (newLitigation.value.id) ? await axios.put('https://api.ipoinbox.com/comp-litigations/'+newLitigation.value.id, newLitigation.value) : await axios.post('https://api.ipoinbox.com/comp-litigations', newLitigation.value)
   if(res.status == 200 || res.status == 201) {
     if (res.status == 201) litigations.value.push(res.data)
     $q.notify({
@@ -833,24 +833,24 @@ const editLitigation = (item) => {
 }
 
 const delLitigation = async(item) => {
-  let res = await axios.delete('https://droplet.netserve.in/comp-litigations/'+item.id)
+  let res = await axios.delete('https://api.ipoinbox.com/comp-litigations/'+item.id)
   if(res.status == 204){
     litigations.value = litigations.value.filter(et => et.id != item.id)
   }
 }
 
 onMounted(async() => {
-  rocOffices.value = await axios.get('https://droplet.netserve.in/roc-offices?per-page=50').then(r => r.data)
-  let info = await axios.get('https://droplet.netserve.in/comp-info?filter[ipoId][eq]='+ipo_id.value)
+  rocOffices.value = await axios.get('https://api.ipoinbox.com/roc-offices?per-page=50').then(r => r.data)
+  let info = await axios.get('https://api.ipoinbox.com/comp-info?filter[ipoId][eq]='+ipo_id.value)
   if(info.data.length) compInfo.value = info.data[0]
   //console.log(info.data)
-  events.value = await axios.get('https://droplet.netserve.in/comp-history?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
-  holdings.value = await axios.get('https://droplet.netserve.in/comp-holding?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
-  clients.value = await axios.get('https://droplet.netserve.in/comp-client?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
-  properties.value = await axios.get('https://droplet.netserve.in/comp-properties?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
-  propertyTypes.value = await axios.get('https://droplet.netserve.in/property-types').then(r => r.data)
-  litigations.value = await axios.get('https://droplet.netserve.in/comp-litigations?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
-  litigationTypes.value = await axios.get('https://droplet.netserve.in/litigation-types').then(r => r.data)
+  events.value = await axios.get('https://api.ipoinbox.com/comp-history?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
+  holdings.value = await axios.get('https://api.ipoinbox.com/comp-holding?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
+  clients.value = await axios.get('https://api.ipoinbox.com/comp-client?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
+  properties.value = await axios.get('https://api.ipoinbox.com/comp-properties?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
+  propertyTypes.value = await axios.get('https://api.ipoinbox.com/property-types').then(r => r.data)
+  litigations.value = await axios.get('https://api.ipoinbox.com/comp-litigations?per-page=50&filter[ipoId][eq]='+ipo_id.value).then(r => r.data)
+  litigationTypes.value = await axios.get('https://api.ipoinbox.com/litigation-types').then(r => r.data)
   //console.log(litigations.value)
 })
 

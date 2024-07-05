@@ -62,7 +62,7 @@ import IpoPrefShareholders from 'src/components/IpoPrefShareholders.vue'
   const done9 = ref(false)
   const total = ref(0)
   onMounted(async() => {
-    ipo.value = await axios.get('https://droplet.netserve.in/ipos/'+ipo_id).then(r => r.data)
+    ipo.value = await axios.get('https://api.ipoinbox.com/ipos/'+ipo_id).then(r => r.data)
     //console.log(ipo.value)
     step.value = 1
     total.value = Number(ipo.value.fresh_issue ?? 0) + Number(ipo.value.offer_for_sale ?? 0)

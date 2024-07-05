@@ -27,7 +27,7 @@
       <q-btn color="primary" label="Save Swot" @click="saveSwot" />
 </template>
 <script setup>
-import { ref, onMounted  } from 'vue' 
+import { ref, onMounted  } from 'vue'
 import { api, axios } from '../boot/axios'
 
 const props = defineProps({
@@ -44,14 +44,14 @@ const toolbar = [
 
 const saveSwot = async() => {
     const id = +props.ipo_id
-    const swotUp = await axios.put('https://droplet.netserve.in/ipos/'+id, {swot: JSON.stringify(swot.value)})
+    const swotUp = await axios.put('https://api.ipoinbox.com/ipos/'+id, {swot: JSON.stringify(swot.value)})
     console.log(swotUp.data)
   }
 
 onMounted(async () => {
     const id = +props.ipo_id
-    const ip = await axios.get('https://droplet.netserve.in/ipos/'+id).then(r => r.data)
+    const ip = await axios.get('https://api.ipoinbox.com/ipos/'+id).then(r => r.data)
     swot.value = (ip.swot) ? JSON.parse(ip.swot) : {strengths_score : 0, strengths_html: '', weaknesses_score : 0, weaknesses_html: '', opportunities_score: '', opportunities_html: '', threats_score: 0, threats_html: ''}
-    
+
   })
 </script>

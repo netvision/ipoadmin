@@ -92,14 +92,14 @@
         record.percent_of_holding = +record.percent_of_holding
         console.log(record)
         if(record.id){
-            let data = await axios.put('https://droplet.netserve.in/ip-ofs-details/'+record.id, record).then(r => r.data)
+            let data = await axios.put('https://api.ipoinbox.com/ip-ofs-details/'+record.id, record).then(r => r.data)
             if(data){
                 console.log(data)
                 newRecord.value = {}
             }
         }
         else {
-            let data = await axios.post('https://droplet.netserve.in/ip-ofs-details', record).then(r => r.data)
+            let data = await axios.post('https://api.ipoinbox.com/ip-ofs-details', record).then(r => r.data)
             data.amount_in_cr = Math.floor((data.amount / 10000000) * 100) / 100
             details.value.push(data)
             newRecord.value = {}
@@ -107,7 +107,7 @@
     }
 
     onMounted(async() => {
-        let data = await axios.get('https://droplet.netserve.in/ip-ofs-details?ipo_id='+props.ipoId+'&expand=ipo').then(r => r.data)
+        let data = await axios.get('https://api.ipoinbox.com/ip-ofs-details?ipo_id='+props.ipoId+'&expand=ipo').then(r => r.data)
         details.value = data.map( r => {
             r.amount_in_cr = Math.floor((r.amount / 10000000) *100) / 100
             return r

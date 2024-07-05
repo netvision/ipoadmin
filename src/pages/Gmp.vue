@@ -184,7 +184,7 @@
     }
 
     const del = async(i) => {
-        let res = await axios.delete('https://droplet.netserve.in/gmps/'+gmps.value[i].id)
+        let res = await axios.delete('https://api.ipoinbox.com/gmps/'+gmps.value[i].id)
         if(res.status == 204){
             gmps.value.splice(i, 1)
         }
@@ -201,11 +201,11 @@
         gmp.value.gmp_type_id = gmp.value.gmpType.id
 
         if(gmp.value.id){
-            let res = await axios.put('https://droplet.netserve.in/gmps/'+gmp.value.id, gmp.value)
+            let res = await axios.put('https://api.ipoinbox.com/gmps/'+gmp.value.id, gmp.value)
         }
         else{
             gmp.value.gmp_value = gmp.value.gmp_value_high
-            let res = await axios.post('https://droplet.netserve.in/gmps', gmp.value)
+            let res = await axios.post('https://api.ipoinbox.com/gmps', gmp.value)
             if(res.status == 201){
                 gmp.value.id = res.data.id
                 gmps.value.push(gmp.value)
@@ -225,12 +225,12 @@
         if(ip){
             ipo.value = ip
         }
-           gmps.value = await axios.get('https://droplet.netserve.in/gmps?expand=gmpType&ipo_id='+ipo.value.ipo_id).then(r => r.data)
+           gmps.value = await axios.get('https://api.ipoinbox.com/gmps?expand=gmpType&ipo_id='+ipo.value.ipo_id).then(r => r.data)
            gmps.value.map(g => {if(g.gmp_value > 0 && g.gmp_value_high === null) g.gmp_value_high = g.gmp_value})
         }
 
     const createSelectValue = async(val, done) => {
-            let newGmpType = await axios.post('https://droplet.netserve.in/gmp-types', {short_name: val, name: val})
+            let newGmpType = await axios.post('https://api.ipoinbox.com/gmp-types', {short_name: val, name: val})
             if(newGmpType.statusText == '201'){
                 gmps.value.push(newGmpType.data)
                 gmp.value.gmpType = newGmpType.data
@@ -239,10 +239,10 @@
         }
 
     onMounted(async() => {
-        ipos.value = await axios.get('https://droplet.netserve.in/ipos?sort=-open_date').then(r => r.data)
+        ipos.value = await axios.get('https://api.ipoinbox.com/ipos?sort=-open_date').then(r => r.data)
         latestIpos.value = ipos.value.slice(0, 10)
         iposOpt.value = ipos.value
-        gmpTypes.value = await axios.get('https://droplet.netserve.in/gmp-types').then(r => r.data)
+        gmpTypes.value = await axios.get('https://api.ipoinbox.com/gmp-types').then(r => r.data)
 
         console.log(date.formatDate(gmpDate.value, 'DD-MM-YYYY'))
 

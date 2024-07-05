@@ -488,7 +488,7 @@
                               no-thumbnails
                               auto-upload
                               :form-fields = "[{name:'ipo_id', value: newBuyback.id}, {name:'field', value: form_fields}]"
-                              url="https://droplet.netserve.in/ipo/pdfupload"
+                              url="https://api.ipoinbox.com/ipo/pdfupload"
                               @uploaded = 'pdfUploaded'
                             />
                           </q-dialog>
@@ -528,7 +528,7 @@ const openUploadModel = (field) => {
 const pdfUploaded = async(files) =>{
     const id = newBuyback.value.id
     newBuyback.value[form_fields.value+'_pdf'] = JSON.parse(files.xhr.response)
-    //const res = await axios.put('https://droplet.netserve.in/buyback-tenders/'+id, {basis_of_allotment_pdf: pdf_url.value})
+    //const res = await axios.put('https://api.ipoinbox.com/buyback-tenders/'+id, {basis_of_allotment_pdf: pdf_url.value})
     console.log(newBuyback.value)
     pdfUpload.value = false
   }
@@ -540,7 +540,7 @@ const newRg = ref({})
 const newBrlm = ref({})
 
 const addRegistrar = async() =>{
-  const newReg = await axios.post('https://droplet.netserve.in/registrars', newRg.value).then(r => r.data)
+  const newReg = await axios.post('https://api.ipoinbox.com/registrars', newRg.value).then(r => r.data)
   registrars.value.push(newReg)
   newBuyback.value.registrar_id = newReg.id
 }
@@ -549,7 +549,7 @@ const resetRegistrarForm = () => {
 }
 
 const addBrlm = async() => {
-  const newBr = await axios.post('https://droplet.netserve.in/brlms', newBrlm.value).then(r => r.data)
+  const newBr = await axios.post('https://api.ipoinbox.com/brlms', newBrlm.value).then(r => r.data)
   brlms.value.push(newBr)
   newBuyback.value.manager_id = newBr.id
   //overview.value.brlms = (overview.value.brlms.length > 0) ? overview.value.brlms.push(newBr) : [newBr]
@@ -565,7 +565,7 @@ const openBuybackModel = (buyback) => {
 }
 
 const saveBuyback = async() => {
-  let res = (newBuyback.value.id) ?  await axios.put('https://droplet.netserve.in/buyback-tenders/'+newBuyback.value.id, newBuyback.value) : await axios.post('https://droplet.netserve.in/buyback-tenders', newBuyback.value)
+  let res = (newBuyback.value.id) ?  await axios.put('https://api.ipoinbox.com/buyback-tenders/'+newBuyback.value.id, newBuyback.value) : await axios.post('https://api.ipoinbox.com/buyback-tenders', newBuyback.value)
   if(res.status == 201) buybacks.value.push(res.data)
   buybackModel.value = false
 }
@@ -612,10 +612,10 @@ const getRatio = (per) =>{
 }
 
 onMounted(async() => {
-  buybacks.value = await axios.get('https://droplet.netserve.in/buyback-tenders').then( r => r.data)
+  buybacks.value = await axios.get('https://api.ipoinbox.com/buyback-tenders').then( r => r.data)
   //console.log(buybacks.value)
-  registrars.value = await axios.get('https://droplet.netserve.in/registrars').then(r => r.data)
-  brlms.value = await axios.get('https://droplet.netserve.in/brlms').then(r => r.data)
+  registrars.value = await axios.get('https://api.ipoinbox.com/registrars').then(r => r.data)
+  brlms.value = await axios.get('https://api.ipoinbox.com/brlms').then(r => r.data)
 })
 </script>
 

@@ -1,7 +1,7 @@
 <template>
     <q-page class="q-pa-md">
         <h4 class="text-h4">Overview - {{ipo.company_name}} - {{ipo.new_id}}</h4>
-        
+
         <div>{{ipo.objects_of_the_Issue_html}}</div>
         <q-list>
             <q-item>
@@ -26,7 +26,7 @@
                 BRLMs: {{ipo.brlm}}
             </q-item>
             <q-item>
-                Quota: 
+                Quota:
             </q-item>
             <q-item v-for="cat in cat_data" :key="cat.id">{{cat.short_name}} : {{cat.applications}}</q-item>
         </q-list>
@@ -34,7 +34,7 @@
         <q-list>
             <q-item v-for="sub in subscriptions" :key="sub.id">{{sub.short_name}}:  {{sub.subscription_shares}}</q-item>
         </q-list>
-        
+
     </q-page>
 </template>
 <script setup>
@@ -53,18 +53,18 @@
 
     const saveBse = async() => {
         if(ipo.new_id){
-            let res = await axios.post('https://droplet.netserve.in/listings', bse_data.value )
+            let res = await axios.post('https://api.ipoinbox.com/listings', bse_data.value )
             console.log(res)
         }
     }
 
     const saveNse = async() => {
         if(ipo.new_id){
-            let res = await axios.post('https://droplet.netserve.in/listings', nse_data.value )
+            let res = await axios.post('https://api.ipoinbox.com/listings', nse_data.value )
             console.log(res)
         }
     }
-    
+
     const format_date = (v) =>{
         if(!v || v == null) return null
         else return v.split('T')[0]
@@ -109,5 +109,5 @@
              }
          }
     })
-    
+
 </script>

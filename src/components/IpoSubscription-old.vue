@@ -27,12 +27,12 @@
 
     </tr>
   </table>
-  
+
 </div>
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue' 
+  import { ref, onMounted } from 'vue'
   import { api, axios } from '../boot/axios'
   const subscriptions = ref([])
   const props = defineProps({
@@ -56,13 +56,13 @@
     eval('subscriptions.value[i].'+d+' = '+value)
     eval('data.'+d+'='+value)
     console.log(data)
-    const subs = await axios.put('https://droplet.netserve.in/subscriptions/'+id, data)
+    const subs = await axios.put('https://api.ipoinbox.com/subscriptions/'+id, data)
     console.log(subs)
-    
+
   }
-  
+
   onMounted(async() => {
-    const sub = await axios.get('https://droplet.netserve.in/subscriptions?ipo_id='+ipoId.value+'&expand=cat').then(r => r.data)
+    const sub = await axios.get('https://api.ipoinbox.com/subscriptions?ipo_id='+ipoId.value+'&expand=cat').then(r => r.data)
     subscriptions.value = sub.filter(r => r.quota > 0)
   })
 

@@ -99,13 +99,13 @@ const saveData = async(v, f) =>{
         bse.value[f] = val
         data[f] = val
         }
-    const upbse = await axios.put('https://droplet.netserve.in/listings/'+bse.value.id, data)
+    const upbse = await axios.put('https://api.ipoinbox.com/listings/'+bse.value.id, data)
     console.log(upbse)
     console.log(data)
 }
 onMounted(async() =>{
-    const data = await axios.get('https://droplet.netserve.in/listings?exchange=BSE&ipo_id='+id.value).then( r=> r.data)
+    const data = await axios.get('https://api.ipoinbox.com/listings?exchange=BSE&ipo_id='+id.value).then( r=> r.data)
     if(data.length > 0) bse.value = data[0]
-    else bse.value = await axios.post('https://droplet.netserve.in/listings', {ipo_id: id.value, exchange: 'BSE'}).then(r => r.data)
+    else bse.value = await axios.post('https://api.ipoinbox.com/listings', {ipo_id: id.value, exchange: 'BSE'}).then(r => r.data)
 })
 </script>

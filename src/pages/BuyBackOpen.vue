@@ -263,11 +263,11 @@ const closeBuybackModal = () => {
 
 const addBuyback = async() => {
   if(buyback.value.id){
-    let res = await axios.put('https://droplet.netserve.in/ip-buyback-opens/'+buyback.value.id, buyback.value)
+    let res = await axios.put('https://api.ipoinbox.com/ip-buyback-opens/'+buyback.value.id, buyback.value)
     console.log(res.status)
   }
   else{
-    let res = await axios.post('https://droplet.netserve.in/ip-buyback-opens', buyback.value)
+    let res = await axios.post('https://api.ipoinbox.com/ip-buyback-opens', buyback.value)
     console.log(res.status)
   }
   window.location.reload()
@@ -324,10 +324,10 @@ const addRecord = async() => {
   record.value.nse = record.value.nse ?? 0
   record.value.bse = record.value.bse ?? 0
   if(!record.value.id){
-    let res = await axios.post('https://droplet.netserve.in/ip-buyback-open-records', record.value)
+    let res = await axios.post('https://api.ipoinbox.com/ip-buyback-open-records', record.value)
   }
   else {
-    let res = await axios.put('https://droplet.netserve.in/ip-buyback-open-records/'+record.value.id, record.value)
+    let res = await axios.put('https://api.ipoinbox.com/ip-buyback-open-records/'+record.value.id, record.value)
   }
   window.location.reload()
 }
@@ -369,7 +369,7 @@ const sanitizeVal = (v, f) => {
 }
 
 onMounted(async () => {
-  let res = await axios.get('https://droplet.netserve.in/ip-buyback-opens?sort=-start_date&expand=records').then(r => r.data)
+  let res = await axios.get('https://api.ipoinbox.com/ip-buyback-opens?sort=-start_date&expand=records').then(r => r.data)
 
   let promises = res.map(async (v) =>{
     let curPrice = 'NA'
@@ -379,9 +379,9 @@ onMounted(async () => {
     let canAddRecords = true
     let hasRecords = true
     if(v.nse_code){
-      //await axios.get('https://droplet.netserve.in/ipo/nselive?code='+v.nse_code.trim()).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
-      //let liveData = await axios.get('https://droplet.netserve.in/ipo/nselive?code='+v.nse_code.trim()).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
-      let curData = await axios.get('https://droplet.netserve.in/ipo/getbhav?code='+v.nse_code.trim()).then(r => r.data[0])
+      //await axios.get('https://api.ipoinbox.com/ipo/nselive?code='+v.nse_code.trim()).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
+      //let liveData = await axios.get('https://api.ipoinbox.com/ipo/nselive?code='+v.nse_code.trim()).then(r => r.data.replace(/\n/g, '').replace(/'/g, "\"").replace(/None/g, "0").replace(/False/g, "0"))
+      let curData = await axios.get('https://api.ipoinbox.com/ipo/getbhav?code='+v.nse_code.trim()).then(r => r.data[0])
       console.log(curData)
       curPrice = curData[' CLOSE_PRICE'].trim()
     }
