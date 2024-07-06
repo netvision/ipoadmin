@@ -1,7 +1,7 @@
 <template>
 <div class="q-pa-md relative-position">
-  <q-img :src="company_header" style="width:100%; height:225px" fit="fill" @click="headerModel = true"></q-img>
-  <q-img :src="company_logo" alt="click to change" style="width:150px; height:100px; position:absolute; bottom:10px; right:50px;" fit="contain" @click="logoModel = true"></q-img>
+  <q-img :src="'https://api.ipoinbox.com/'+company_header" style="width:100%; height:225px" fit="fill" @click="headerModel = true"></q-img>
+  <q-img :src="'https://api.ipoinbox.com/'+company_logo" alt="click to change" style="width:150px; height:100px; position:absolute; bottom:10px; right:50px;" fit="contain" @click="logoModel = true"></q-img>
   <q-dialog v-model="logoModel">
     <div class="col q-pa-md">
           <q-uploader
