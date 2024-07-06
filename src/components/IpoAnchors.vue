@@ -16,7 +16,7 @@
             </q-item-section>
             <q-item-section top side>
               <div class="text-grey-8 q-gutter-xs">
-                <q-btn class="gt-xs" size="12px" flat dense round icon="open_in_new" type="a" :href="ipo.anchors_pdf" target="__blank" />
+                <q-btn class="gt-xs" size="12px" flat dense round icon="open_in_new" type="a" :href="'https://api.ipoinbox.com/'+ipo.anchors_pdf" target="__blank" />
                 <q-btn class="gt-xs" size="12px" flat dense round icon="change_circle" @click="pdfUpload = true" />
               </div>
             </q-item-section>
